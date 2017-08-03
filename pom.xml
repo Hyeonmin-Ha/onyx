@@ -13,12 +13,13 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <beam.version>2.0.0</beam.version>
+        <spark.version>2.2.0</spark.version>
         <reef.version>0.15.0</reef.version>
         <mockito.version>1.10.19</mockito.version>
         <powermock.version>1.6.6</powermock.version>
         <netlib.version>1.1.2</netlib.version>
         <apache.commons.version>2.1.1</apache.commons.version>
-        <jackson.version>2.8.8</jackson.version>
+        <jackson.version>2.6.5</jackson.version>
         <protobuf.version>2.5.0</protobuf.version>
         <slf4j.version>1.7.14</slf4j.version>
         <commons.lang.version>3.5</commons.lang.version>
@@ -70,6 +71,16 @@
             <groupId>org.apache.beam</groupId>
             <artifactId>beam-sdks-java-io-hadoop-input-format</artifactId>
             <version>${beam.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.11</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.11</artifactId>
+            <version>${spark.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
