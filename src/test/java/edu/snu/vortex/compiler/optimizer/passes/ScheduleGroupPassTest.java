@@ -22,6 +22,7 @@ import edu.snu.vortex.compiler.ir.IREdge;
 import edu.snu.vortex.compiler.ir.IRVertex;
 import edu.snu.vortex.compiler.ir.attribute.Attribute;
 import edu.snu.vortex.compiler.optimizer.Optimizer;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.annotation.vertex.ScheduleGroupPass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

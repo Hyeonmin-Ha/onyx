@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.snu.vortex.compiler.optimizer.passes.optimization;
+package edu.snu.vortex.compiler.optimizer.passes.static_optimization.restructuration;
 
 import edu.snu.vortex.client.JobLauncher;
-import edu.snu.vortex.compiler.CompilerTestUtil;
 import edu.snu.vortex.common.coder.Coder;
 import edu.snu.vortex.compiler.frontend.beam.BoundedSourceVertex;
 import edu.snu.vortex.compiler.frontend.beam.transform.DoTransform;

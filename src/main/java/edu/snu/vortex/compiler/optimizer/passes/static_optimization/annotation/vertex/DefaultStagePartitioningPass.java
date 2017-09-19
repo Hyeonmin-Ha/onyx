@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.snu.vortex.compiler.optimizer.passes;
+package edu.snu.vortex.compiler.optimizer.passes.static_optimization.annotation.vertex;
 
 import edu.snu.vortex.common.dag.DAG;
 import edu.snu.vortex.compiler.ir.IREdge;
 import edu.snu.vortex.compiler.ir.IRVertex;
 import edu.snu.vortex.compiler.ir.attribute.Attribute;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.StaticOptimizationPass;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import static edu.snu.vortex.compiler.ir.attribute.Attribute.Memory;
  * connect it to the stage, and otherwise we don't.
  */
 public final class DefaultStagePartitioningPass implements StaticOptimizationPass {
+  // StageId Attr
   @Override
   public DAG<IRVertex, IREdge> process(final DAG<IRVertex, IREdge> irDAG) {
     final AtomicInteger stageNum = new AtomicInteger(0);

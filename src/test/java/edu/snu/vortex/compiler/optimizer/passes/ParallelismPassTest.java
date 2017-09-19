@@ -21,6 +21,7 @@ import edu.snu.vortex.compiler.ir.IREdge;
 import edu.snu.vortex.compiler.ir.IRVertex;
 import edu.snu.vortex.compiler.ir.attribute.Attribute;
 import edu.snu.vortex.common.dag.DAG;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.annotation.vertex.ParallelismPass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

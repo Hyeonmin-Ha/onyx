@@ -21,6 +21,8 @@ import edu.snu.vortex.compiler.CompilerTestUtil;
 import edu.snu.vortex.compiler.ir.IREdge;
 import edu.snu.vortex.compiler.ir.IRVertex;
 import edu.snu.vortex.compiler.ir.attribute.Attribute;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.annotation.edge.DisaggregationPass;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.annotation.vertex.IFilePass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

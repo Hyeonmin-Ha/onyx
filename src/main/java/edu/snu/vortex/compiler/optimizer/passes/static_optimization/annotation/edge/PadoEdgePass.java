@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.snu.vortex.compiler.optimizer.passes;
+package edu.snu.vortex.compiler.optimizer.passes.static_optimization.annotation.edge;
 
 import edu.snu.vortex.compiler.ir.IREdge;
 import edu.snu.vortex.compiler.ir.IRVertex;
 import edu.snu.vortex.compiler.ir.attribute.Attribute;
 import edu.snu.vortex.common.dag.DAG;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.StaticOptimizationPass;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ import java.util.List;
  * Pado pass for tagging edges.
  */
 public final class PadoEdgePass implements StaticOptimizationPass {
+  // DataStore, DataFlowModel Attr
   @Override
   public DAG<IRVertex, IREdge> process(final DAG<IRVertex, IREdge> dag) throws Exception {
     dag.getVertices().forEach(vertex -> {

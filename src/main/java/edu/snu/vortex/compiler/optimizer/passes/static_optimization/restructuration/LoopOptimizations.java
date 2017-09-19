@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.snu.vortex.compiler.optimizer.passes.optimization;
+package edu.snu.vortex.compiler.optimizer.passes.static_optimization.restructuration;
 
 import edu.snu.vortex.compiler.ir.IREdge;
 import edu.snu.vortex.compiler.ir.IRVertex;
 import edu.snu.vortex.compiler.ir.LoopVertex;
 import edu.snu.vortex.common.dag.DAG;
 import edu.snu.vortex.common.dag.DAGBuilder;
-import edu.snu.vortex.compiler.optimizer.passes.StaticOptimizationPass;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.StaticOptimizationPass;
 
 import java.util.*;
 import java.util.function.IntPredicate;

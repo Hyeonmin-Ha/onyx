@@ -19,10 +19,16 @@ import edu.snu.vortex.compiler.ir.IREdge;
 import edu.snu.vortex.compiler.ir.IRVertex;
 import edu.snu.vortex.compiler.ir.MetricCollectionBarrierVertex;
 import edu.snu.vortex.compiler.ir.attribute.Attribute;
-import edu.snu.vortex.compiler.optimizer.passes.*;
 import edu.snu.vortex.compiler.optimizer.passes.dynamic_optimization.DataSkewDynamicOptimizationPass;
-import edu.snu.vortex.compiler.optimizer.passes.optimization.LoopOptimizations;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.annotation.edge.DisaggregationPass;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.restructuration.DataSkewPass;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.restructuration.LoopGroupingPass;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.restructuration.LoopUnrollingPass;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.StaticOptimizationPass;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.annotation.edge.PadoEdgePass;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.restructuration.LoopOptimizations;
 import edu.snu.vortex.common.dag.DAG;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.annotation.vertex.*;
 import edu.snu.vortex.runtime.common.plan.physical.PhysicalPlan;
 
 import java.util.*;

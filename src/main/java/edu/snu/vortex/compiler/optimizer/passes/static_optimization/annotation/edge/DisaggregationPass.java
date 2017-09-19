@@ -13,30 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.snu.vortex.compiler.optimizer.passes;
+package edu.snu.vortex.compiler.optimizer.passes.static_optimization.annotation.edge;
 
-import edu.snu.vortex.common.dag.DAG;
 import edu.snu.vortex.compiler.ir.IREdge;
 import edu.snu.vortex.compiler.ir.IRVertex;
 import edu.snu.vortex.compiler.ir.attribute.Attribute;
+import edu.snu.vortex.common.dag.DAG;
+import edu.snu.vortex.compiler.optimizer.passes.static_optimization.StaticOptimizationPass;
 
 import java.util.List;
 
 /**
- * Pass which enables I-File style write optimization.
- * It sets IFileWrite attribute on ScatterGather edges with RemoteFile partition store.
+ * Disaggregated Resources pass for tagging vertices.
  */
-public final class IFilePass implements StaticOptimizationPass {
+public final class DisaggregationPass implements StaticOptimizationPass {
+  // DataStore, DataFlowModel Attr
   @Override
   public DAG<IRVertex, IREdge> process(final DAG<IRVertex, IREdge> dag) throws Exception {
+    dag.topologicalDo(vertex -> {
+      vertex.setAttr(Attribute.Key.Placement, Attribute.Compute);
+    });
+
     dag.getVertices().forEach(vertex -> {
       final List<IREdge> inEdges = dag.getIncomingEdgesOf(vertex);
-      inEdges.forEach(edge -> {
-        if (edge.getType().equals(IREdge.Type.ScatterGather)
-            && edge.getAttr(Attribute.Key.ChannelDataPlacement).equals(Attribute.RemoteFile)) {
-          edge.setAttr(Attribute.Key.WriteOptimization, Attribute.IFileWrite);
-        }
-      });
+      if (!inEdges.isEmpty()) {
+        inEdges.forEach(edge -> {
+          if (edge.getType().equals(IREdge.Type.OneToOne)) {
+            edge.setAttr(Attribute.Key.ChannelDataPlacement, Attribute.Memory);
+            edge.setAttr(Attribute.Key.ChannelTransferPolicy, Attribute.Pull);
+          } else {
+            edge.setAttr(Attribute.Key.ChannelDataPlacement, Attribute.RemoteFile);
+            edge.setAttr(Attribute.Key.ChannelTransferPolicy, Attribute.Pull);
+          }
+        });
+      }
     });
     return dag;
   }
