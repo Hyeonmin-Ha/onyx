@@ -283,6 +283,9 @@ public final class TaskGroupExecutor {
           sourceParallelism.getAndAdd(inputReader.getSourceParallelism());
           // Add consumers which will push the data to the data queue when it ready to the futures.
           futures.forEach(compFuture -> compFuture.whenComplete((data, exception) -> {
+            LOG.info("Received an input of Task {} (vertex {}) in edge {}, srcVertexId {}.",
+                operatorTask.getId(), operatorTask.getRuntimeVertexId(), inputReader.getSrcVertexId(),
+                inputReader.getRuntimeEdge(), inputReader.getSrcVertexId());
             if (exception != null) {
               throw new PartitionFetchException(exception);
             }
