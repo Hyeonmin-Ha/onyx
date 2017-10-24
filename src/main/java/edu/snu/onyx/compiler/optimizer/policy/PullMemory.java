@@ -30,7 +30,11 @@ public final class PullMemory implements Policy {
 
   public PullMemory() {
     this.policy = new PolicyBuilder()
-        .registerCompileTimePass(new InitiationCompositePass())
+        .registerCompileTimePass(new ReducerParallelismPass())
+        .registerCompileTimePass(new DefaultVertexExecutorPlacementPass())
+        .registerCompileTimePass(new DefaultPartitionerPass())
+        .registerCompileTimePass(new DefaultEdgeDataFlowModelPass())
+        .registerCompileTimePass(new DefaultEdgeDataStorePass())
         .registerCompileTimePass(new SmallScaleMemoryPass())
         .registerCompileTimePass(new DefaultStagePartitioningPass())
         .registerCompileTimePass(new ScheduleGroupPass())
