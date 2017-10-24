@@ -17,6 +17,7 @@ package edu.snu.onyx.compiler.optimizer.policy;
 
 import edu.snu.onyx.compiler.optimizer.pass.compiletime.CompileTimePass;
 import edu.snu.onyx.compiler.optimizer.pass.compiletime.annotating.*;
+import edu.snu.onyx.compiler.optimizer.pass.compiletime.composite.InitiationCompositePass;
 import edu.snu.onyx.compiler.optimizer.pass.runtime.RuntimePass;
 
 import java.util.List;
@@ -29,11 +30,12 @@ public final class PullMemory implements Policy {
 
   public PullMemory() {
     this.policy = new PolicyBuilder()
-        .registerCompileTimePass(new ReducerParallelismPass())
-        .registerCompileTimePass(new DefaultVertexExecutorPlacementPass())
-        .registerCompileTimePass(new DefaultPartitionerPass())
-        .registerCompileTimePass(new DefaultEdgeDataFlowModelPass())
-        .registerCompileTimePass(new DefaultEdgeDataStorePass())
+        .registerCompileTimePass(new InitiationCompositePass())
+//        .registerCompileTimePass(new ReducerParallelismPass())
+//        .registerCompileTimePass(new DefaultVertexExecutorPlacementPass())
+//        .registerCompileTimePass(new DefaultPartitionerPass())
+//        .registerCompileTimePass(new DefaultEdgeDataFlowModelPass())
+//        .registerCompileTimePass(new DefaultEdgeDataStorePass())
         .registerCompileTimePass(new SmallScaleMemoryPass())
         .registerCompileTimePass(new DefaultStagePartitioningPass())
         .registerCompileTimePass(new ScheduleGroupPass())
