@@ -57,7 +57,7 @@ public final class ReducerParallelismPass extends AnnotatingPass {
                   ScatterGather.class.equals(edge.getProperty(ExecutionProperty.Key.DataCommunicationPattern)))
               .findAny();
           if (shuffle.isPresent()) {
-            vertex.setProperty(ParallelismProperty.of(8));
+            vertex.setProperty(ParallelismProperty.of(16));
           } else {
             final OptionalInt parallelism = inEdges.stream()
                 // No reason to propagate via Broadcast edges, as the data streams that will use the broadcasted data
