@@ -53,7 +53,7 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
   public OutputWriter(final int hashRangeMultiplier,
                       final int srcTaskIdx,
                       final String srcRuntimeVertexId,
-                      @Nullable final IRVertex dstRuntimeVertex, // Null if it is not a runtime vertex.
+                      @Nullable final IRVertex dstRuntimeVertex, // Null if this output edge is a local edge.
                       final RuntimeEdge<?> runtimeEdge,
                       final PartitionManagerWorker partitionManagerWorker) {
     super(runtimeEdge.getId());
@@ -124,7 +124,13 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
   @Override
   public void close() {
     // Commit partition.
-    partitionManagerWorker.commitPartition(partitionId, channelDataPlacement, accumulatedBlockSizeInfo, srcVertexId);
+    if (dstVertex == null) { // Local (intra-stage) edge.
+      partitionManagerWorker.commitPartition(
+          partitionId, channelDataPlacement, accumulatedBlockSizeInfo, srcVertexId, 0);
+    } else {
+      partitionManagerWorker.commitPartition(
+          partitionId, channelDataPlacement, accumulatedBlockSizeInfo, srcVertexId, getDstParallelism());
+    }
   }
 
   private void writeOneToOne(final List<Block> blocksToWrite) {
@@ -179,6 +185,8 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
    * @return the parallelism of the destination task.
    */
   private int getDstParallelism() {
-    return dstVertex == null ? 1 : dstVertex.getProperty(ExecutionProperty.Key.Parallelism);
+    return dstVertex == null
+        || OneToOne.class.equals(runtimeEdge.<Class>getProperty(ExecutionProperty.Key.DataCommunicationPattern))
+        ? 1 : dstVertex.getProperty(ExecutionProperty.Key.Parallelism);
   }
 }
