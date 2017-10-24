@@ -363,9 +363,9 @@ public final class PartitionManagerWorker {
           public void run() {
             try {
               final PartitionStore spillStore = getPartitionStore(partitionStoreToSpill);
-              spillStore.putToPartition(partitionId,
+              /*spillStore.putToPartition(partitionId,
                   currentStore.getBlocksFromPartition(partitionId), false);
-              spillStore.commitPartition(partitionId);
+              spillStore.commitPartition(partitionId);*/
               currentStore.removePartition(partitionId);
               LOG.info("RetrieveDataFromPartition: {} is spilt to {}.", partitionId, partitionStoreToSpill);
             } catch (final PartitionFetchException e) {
