@@ -317,8 +317,8 @@ public final class DataTransferTest {
       }
       dataReadList.add(dataRead);
     });
-
-    // Read again
+/*
+    // Read again (Test for data spill)
     final List<List<Element>> dataReadList2 = new ArrayList<>();
     IntStream.range(0, PARALLELISM_TEN).forEach(dstTaskIndex -> {
       final InputReader reader =
@@ -331,7 +331,7 @@ public final class DataTransferTest {
       }
       dataReadList2.add(dataRead);
     });
-
+*/
     // Compare (should be the same)
     final List<Element> flattenedWrittenData = flatten(dataWrittenList);
     final List<Element> flattenedReadData = flatten(dataReadList);
@@ -344,7 +344,7 @@ public final class DataTransferTest {
       assertEquals(flattenedWrittenData.size(), flattenedReadData.size());
       flattenedReadData.forEach(rData -> assertTrue(flattenedWrittenData.contains(rData)));
     }
-
+/*
     // Compare2 (should be the same)
     final List<Element> flattenedReadData2 = flatten(dataReadList2);
     if (commPattern.equals(Broadcast.class)) {
@@ -355,7 +355,7 @@ public final class DataTransferTest {
     } else {
       assertEquals(flattenedWrittenData.size(), flattenedReadData2.size());
       flattenedReadData2.forEach(rData -> assertTrue(flattenedWrittenData.remove(rData)));
-    }
+    }*/
   }
 
   private Pair<IRVertex, IRVertex> setupVertices(final String edgeId,
