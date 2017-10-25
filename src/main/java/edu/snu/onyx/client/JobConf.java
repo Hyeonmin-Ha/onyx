@@ -168,7 +168,7 @@ public final class JobConf extends ConfigurationModuleBuilder {
    * These threads are responsible for de-serializing bytes into partition.
    */
   @NamedParameter(doc = "Number of threads for inbound partition transfer", short_name = "partition_threads_inbound",
-      default_value = "5")
+      default_value = "10")
   public final class PartitionTransferInboundNumThreads implements Name<Integer> {
   }
 
