@@ -16,10 +16,12 @@
 package edu.snu.onyx.runtime.master.resource;
 
 import com.google.protobuf.ByteString;
+import edu.snu.onyx.compiler.ir.RelayTransform;
 import edu.snu.onyx.runtime.common.RuntimeIdGenerator;
 import edu.snu.onyx.runtime.common.comm.ControlMessage;
 import edu.snu.onyx.runtime.common.message.MessageEnvironment;
 import edu.snu.onyx.runtime.common.message.MessageSender;
+import edu.snu.onyx.runtime.common.plan.physical.OperatorTask;
 import edu.snu.onyx.runtime.common.plan.physical.ScheduledTaskGroup;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.reef.driver.context.ActiveContext;
@@ -42,6 +44,7 @@ public final class ExecutorRepresenter {
   private final Set<String> runningTaskGroups;
   private final Set<String> completeTaskGroups;
   private final Set<String> failedTaskGroups;
+  private final Set<String> smallTaskGroups; // Scheduler hack
   private final MessageSender<ControlMessage.Message> messageSender;
   private final ActiveContext activeContext;
 
@@ -55,17 +58,24 @@ public final class ExecutorRepresenter {
     this.runningTaskGroups = new HashSet<>();
     this.completeTaskGroups = new HashSet<>();
     this.failedTaskGroups = new HashSet<>();
+    this.smallTaskGroups = new HashSet<>();
     this.activeContext = activeContext;
   }
 
   public void onExecutorFailed() {
     runningTaskGroups.forEach(taskGroupId -> failedTaskGroups.add(taskGroupId));
     runningTaskGroups.clear();
+    smallTaskGroups.clear();
   }
 
   public void onTaskGroupScheduled(final ScheduledTaskGroup scheduledTaskGroup) {
     runningTaskGroups.add(scheduledTaskGroup.getTaskGroup().getTaskGroupId());
     failedTaskGroups.remove(scheduledTaskGroup.getTaskGroup().getTaskGroupId());
+    if (scheduledTaskGroup.getTaskGroup().getTaskDAG().getTopologicalSort().stream()
+        .filter(task -> task instanceof OperatorTask)
+        .anyMatch(opTask -> ((OperatorTask) opTask).getTransform() instanceof RelayTransform)) { // Scheduler hack
+      smallTaskGroups.add(scheduledTaskGroup.getTaskGroup().getTaskGroupId());
+    }
 
     try {
       final ByteString byteString = ByteString.copyFrom(SerializationUtils.serialize(scheduledTaskGroup));
@@ -93,11 +103,13 @@ public final class ExecutorRepresenter {
 
   public void onTaskGroupExecutionComplete(final String taskGroupId) {
     runningTaskGroups.remove(taskGroupId);
+    smallTaskGroups.remove(taskGroupId);
     completeTaskGroups.add(taskGroupId);
   }
 
   public void onTaskGroupExecutionFailed(final String taskGroupId) {
     runningTaskGroups.remove(taskGroupId);
+    smallTaskGroups.remove(taskGroupId);
     failedTaskGroups.add(taskGroupId);
   }
 
@@ -111,6 +123,10 @@ public final class ExecutorRepresenter {
 
   public Set<String> getCompleteTaskGroups() {
     return completeTaskGroups;
+  }
+
+  public Set<String> getSmallTaskGroups() {
+    return smallTaskGroups;
   }
 
   public String getExecutorId() {
