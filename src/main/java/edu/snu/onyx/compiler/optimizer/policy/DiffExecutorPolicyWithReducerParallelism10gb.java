@@ -35,7 +35,7 @@ public final class DiffExecutorPolicyWithReducerParallelism10gb implements Polic
         .registerCompileTimePass(new DefaultEdgeDataFlowModelPass())
         .registerCompileTimePass(new SmallScalePushPass())
         .registerCompileTimePass(new DefaultEdgeDataStorePass())
-//        .registerCompileTimePass(new SmallScaleMemoryPass())
+        .registerCompileTimePass(new SmallScaleMemoryPass())
         .registerCompileTimePass(new DefaultStagePartitioningPass())
         .registerCompileTimePass(new ScheduleGroupPass())
         .build();
