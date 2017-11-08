@@ -179,6 +179,6 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
    * @return the parallelism of the destination task.
    */
   private int getDstParallelism() {
-    return dstVertex == null ? 1 : dstVertex.getProperty(ExecutionProperty.Key.Parallelism);
+    return dstVertex.getProperty(ExecutionProperty.Key.Parallelism);
   }
 }

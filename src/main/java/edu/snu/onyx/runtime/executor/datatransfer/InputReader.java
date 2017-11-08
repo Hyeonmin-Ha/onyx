@@ -31,6 +31,7 @@ import edu.snu.onyx.runtime.executor.data.PartitionStore;
 import edu.snu.onyx.runtime.executor.datatransfer.communication.Broadcast;
 import edu.snu.onyx.runtime.executor.datatransfer.communication.OneToOne;
 import edu.snu.onyx.runtime.executor.datatransfer.communication.ScatterGather;
+import org.apache.avro.generic.GenericData;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -70,6 +71,16 @@ public final class InputReader extends DataTransfer {
     this.srcVertex = srcVertex;
     this.runtimeEdge = runtimeEdge;
     this.partitionManagerWorker = partitionManagerWorker;
+  }
+
+  /**
+   * Reads input data element-wise depending on the communication pattern of the srcVertex.
+   *
+   * @return the read data.
+   */
+  // TODO #432,#576 Support intra- and inter-TaskGroup element-wise data transfer.
+  public List<CompletableFuture<Element>> readElement() {
+    return new ArrayList<>();
   }
 
   /**
@@ -148,11 +159,6 @@ public final class InputReader extends DataTransfer {
   }
 
   public String getSrcVertexId() {
-    // this src vertex can be either a real vertex or a task. we must check!
-    if (srcVertex != null) {
-      return srcVertex.getId();
-    }
-
     return ((Task) runtimeEdge.getSrc()).getRuntimeVertexId();
   }
 
@@ -174,13 +180,8 @@ public final class InputReader extends DataTransfer {
    * @return the parallelism of the source task.
    */
   public int getSourceParallelism() {
-    if (srcVertex != null) {
-      final Integer numSrcTasks = (Integer) srcVertex.getProperty(ExecutionProperty.Key.Parallelism);
-      return numSrcTasks == null ? 1 : numSrcTasks;
-    } else {
-      // Memory input reader
-      return 1;
-    }
+    final Integer numSrcTasks = srcVertex.getProperty(ExecutionProperty.Key.Parallelism);
+    return numSrcTasks == null ? 1 : numSrcTasks;
   }
 
   /**

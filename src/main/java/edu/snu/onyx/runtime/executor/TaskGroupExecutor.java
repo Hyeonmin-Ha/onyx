@@ -17,8 +17,9 @@ package edu.snu.onyx.runtime.executor;
 
 import edu.snu.onyx.common.Pair;
 import edu.snu.onyx.compiler.ir.*;
+//import edu.snu.onyx.compiler.ir.executionproperty.ExecutionProperty;
+//import edu.snu.onyx.runtime.common.RuntimeIdGenerator;
 import edu.snu.onyx.compiler.ir.executionproperty.ExecutionProperty;
-import edu.snu.onyx.runtime.common.RuntimeIdGenerator;
 import edu.snu.onyx.runtime.common.plan.RuntimeEdge;
 import edu.snu.onyx.runtime.common.plan.physical.*;
 import edu.snu.onyx.runtime.common.state.TaskGroupState;
@@ -31,7 +32,7 @@ import edu.snu.onyx.runtime.executor.datatransfer.InputReader;
 import edu.snu.onyx.runtime.executor.datatransfer.OutputWriter;
 import edu.snu.onyx.runtime.master.irimpl.ContextImpl;
 import edu.snu.onyx.runtime.master.irimpl.OutputCollectorImpl;
-import edu.snu.onyx.common.dag.DAG;
+//import edu.snu.onyx.common.dag.DAG;
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
@@ -56,6 +57,9 @@ public final class TaskGroupExecutor {
   private final List<PhysicalStageEdge> stageIncomingEdges;
   private final List<PhysicalStageEdge> stageOutgoingEdges;
   private final DataTransferFactory channelFactory;
+  // For intra-TG element-wise pipelining
+  private Pair<BoundedSourceTask, Iterable<Element>> inputFromBoundedSource;
+  private final AtomicInteger sourceParallelism;
 
   /**
    * Map of task IDs in this task group to their readers/writers.
@@ -78,6 +82,8 @@ public final class TaskGroupExecutor {
     this.stageIncomingEdges = stageIncomingEdges;
     this.stageOutgoingEdges = stageOutgoingEdges;
     this.channelFactory = channelFactory;
+    this.inputFromBoundedSource = null;
+    this.sourceParallelism = new AtomicInteger(0);
 
     this.taskIdToInputReaderMap = new HashMap<>();
     this.taskIdToOutputWriterMap = new HashMap<>();
@@ -91,7 +97,7 @@ public final class TaskGroupExecutor {
 
   /**
    * Initializes readers and writers depending on the execution properties.
-   * Note that there are edges that are cross-stage and stage-internal.
+   * Reader and writer exist per TaskGroup, so we consider only cross-stage edges.
    */
   private void initializeDataTransfer() {
     taskGroup.getTaskDAG().topologicalDo((task -> {
@@ -102,6 +108,7 @@ public final class TaskGroupExecutor {
         final InputReader inputReader = channelFactory.createReader(
             task, physicalStageEdge.getSrcVertex(), physicalStageEdge);
         addInputReader(task, inputReader);
+        sourceParallelism.getAndAdd(physicalStageEdge.getSrcVertex().getProperty(ExecutionProperty.Key.Parallelism));
       });
 
       outEdgesToOtherStages.forEach(physicalStageEdge -> {
@@ -109,12 +116,6 @@ public final class TaskGroupExecutor {
             task, physicalStageEdge.getDstVertex(), physicalStageEdge);
         addOutputWriter(task, outputWriter);
       });
-
-      final List<RuntimeEdge<Task>> inEdgesWithinStage = taskGroup.getTaskDAG().getIncomingEdgesOf(task);
-      inEdgesWithinStage.forEach(internalEdge -> createLocalReader(task, internalEdge));
-
-      final List<RuntimeEdge<Task>> outEdgesWithinStage = taskGroup.getTaskDAG().getOutgoingEdgesOf(task);
-      outEdgesWithinStage.forEach(internalEdge -> createLocalWriter(task, internalEdge));
     }));
   }
 
@@ -131,17 +132,6 @@ public final class TaskGroupExecutor {
         .collect(Collectors.toSet());
   }
 
-  // Helper functions to initializes stage-internal edges.
-  private void createLocalReader(final Task task, final RuntimeEdge<Task> internalEdge) {
-    final InputReader inputReader = channelFactory.createLocalReader(task, internalEdge);
-    addInputReader(task, inputReader);
-  }
-
-  private void createLocalWriter(final Task task, final RuntimeEdge<Task> internalEdge) {
-    final OutputWriter outputWriter = channelFactory.createLocalWriter(task, internalEdge);
-    addOutputWriter(task, outputWriter);
-  }
-
   // Helper functions to add the initialized reader/writer to the maintained map.
   private void addInputReader(final Task task, final InputReader inputReader) {
     taskIdToInputReaderMap.computeIfAbsent(task.getId(), readerList -> new ArrayList<>());
@@ -149,7 +139,7 @@ public final class TaskGroupExecutor {
   }
 
   private void addOutputWriter(final Task task, final OutputWriter outputWriter) {
-    taskIdToOutputWriterMap.computeIfAbsent(task.getId(), readerList -> new ArrayList<>());
+    taskIdToOutputWriterMap.computeIfAbsent(task.getId(), writerList -> new ArrayList<>());
     taskIdToOutputWriterMap.get(task.getId()).add(outputWriter);
   }
 
@@ -175,12 +165,10 @@ public final class TaskGroupExecutor {
           LOG.info("{} Execution Complete!", taskGroup.getTaskGroupId());
         } else if (task instanceof OperatorTask) {
           launchOperatorTask((OperatorTask) task);
-          garbageCollectLocalIntermediateData(task);
           taskGroupStateManager.onTaskStateChanged(task.getId(), TaskState.State.COMPLETE, Optional.empty());
           LOG.info("{} Execution Complete!", taskGroup.getTaskGroupId());
         } else if (task instanceof MetricCollectionBarrierTask) {
           launchMetricCollectionBarrierTask((MetricCollectionBarrierTask) task);
-          garbageCollectLocalIntermediateData(task);
           taskGroupStateManager.onTaskStateChanged(task.getId(), TaskState.State.ON_HOLD, Optional.empty());
           LOG.info("{} Execution Complete!", taskGroup.getTaskGroupId());
         } else {
@@ -204,34 +192,12 @@ public final class TaskGroupExecutor {
   }
 
   /**
-   * Data on stage-internal edges can be garbage collected after they're consumed.
-   * Without garbage collection, JVM will be filled with no-longer needed data, and will eventually crash with an OOM.
-   * TODO #266: Introduce Caching
-   * @param executedTask that consumed the data
-   */
-  private void garbageCollectLocalIntermediateData(final Task executedTask) {
-    final DAG<Task, RuntimeEdge<Task>> dag = taskGroup.getTaskDAG();
-    dag.getIncomingEdgesOf(executedTask).stream() // inEdges within the stage
-        .forEach(edge -> {
-          final String partitionId = RuntimeIdGenerator.generatePartitionId(edge.getId(), edge.getSrc().getIndex());
-          partitionManagerWorker
-              .removePartition(partitionId, edge.getProperty(ExecutionProperty.Key.DataStore));
-        });
-  }
-
-  /**
    * Processes a BoundedSourceTask.
+   * Reads input data from the bounded source at once.
    * @param boundedSourceTask to execute
-   * @throws Exception occurred during input read.
    */
   private void launchBoundedSourceTask(final BoundedSourceTask boundedSourceTask) throws Exception {
-    final Reader reader = boundedSourceTask.getReader();
-    final Iterable<Element> readData = reader.read();
-
-    taskIdToOutputWriterMap.get(boundedSourceTask.getId()).forEach(outputWriter -> {
-      outputWriter.write(readData);
-      outputWriter.close();
-    });
+    inputFromBoundedSource = Pair.of(boundedSourceTask, boundedSourceTask.getReader().read());
   }
 
   /**
@@ -266,32 +232,28 @@ public final class TaskGroupExecutor {
     final Transform transform = operatorTask.getTransform();
     transform.prepare(transformContext, outputCollector);
 
-    // Check for non-side inputs
+    // Check for non-side inputs.
     // This blocking queue contains the pairs having data and source vertex ids.
-    final BlockingQueue<Pair<Iterable<Element>, String>> dataQueue = new LinkedBlockingQueue<>();
-    final AtomicInteger sourceParallelism = new AtomicInteger(0);
+    final BlockingQueue<Element> dataQueue = new LinkedBlockingQueue<>();
     taskIdToInputReaderMap.get(operatorTask.getId()).stream().filter(inputReader -> !inputReader.isSideInputReader())
-        .forEach(inputReader -> {
-          final List<CompletableFuture<Iterable<Element>>> futures = inputReader.read();
-          final String srcVtxId = inputReader.getSrcVertexId();
-          sourceParallelism.getAndAdd(inputReader.getSourceParallelism());
-          // Add consumers which will push the data to the data queue when it ready to the futures.
-          futures.forEach(compFuture -> compFuture.whenComplete((data, exception) -> {
-            if (exception != null) {
-              throw new PartitionFetchException(exception);
-            }
-            dataQueue.add(Pair.of(data, srcVtxId));
-          }));
-        });
+          .forEach(inputReader -> {
+            final List<CompletableFuture<Element>> futures = inputReader.readElement();
+            // Add consumers which will push the data to the data queue when it ready to the futures.
+            futures.forEach(compFuture -> compFuture.whenComplete((data, exception) -> {
+              if (exception != null) {
+                throw new PartitionFetchException(exception);
+              }
+              dataQueue.add(data);
+            }));
+          });
 
     // Consumes all of the partitions from incoming edges.
     IntStream.range(0, sourceParallelism.get()).forEach(srcTaskNum -> {
       try {
         // Because the data queue is a blocking queue, we may need to wait some available data to be pushed.
-        final Pair<Iterable<Element>, String> availableData = dataQueue.take();
-        transform.onData(availableData.left(), availableData.right());
+        transform.onData(dataQueue.take());
       } catch (final InterruptedException e) {
-        throw new PartitionFetchException(e);
+        throw new RuntimeException(e);
       }
 
       // Check whether there is any output data from the transform and write the output of this task to the writer.
