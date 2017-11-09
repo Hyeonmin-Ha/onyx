@@ -113,10 +113,8 @@ public final class JobConf extends ConfigurationModuleBuilder {
    * 1) Master's TaskGroup scheduler can use this number in scheduling.
    *    (e.g., schedule TaskGroup to the executor currently with the maximum number of available slots)
    * 2) Executor's number of TaskGroup execution threads is set to this number.
-   *    For intra- and inter-TaskGroup element-wise pipelining, Tasks should run in parallel,
-   *    hence default value is set to larger than 1.
    */
-  @NamedParameter(doc = "Executor capacity", short_name = "executor_capacity", default_value = "5")
+  @NamedParameter(doc = "Executor capacity", short_name = "executor_capacity", default_value = "1")
   public final class ExecutorCapacity implements Name<Integer> {
   }
 
