@@ -42,6 +42,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.jvm.hotspot.jdi.ArrayReferenceImpl;
+
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -57,9 +59,11 @@ public final class TaskGroupExecutor {
   private final List<PhysicalStageEdge> stageIncomingEdges;
   private final List<PhysicalStageEdge> stageOutgoingEdges;
   private final DataTransferFactory channelFactory;
-  // For intra-TG element-wise pipelining
-  private Pair<BoundedSourceTask, Iterable<Element>> inputFromBoundedSource;
   private final AtomicInteger sourceParallelism;
+  // For intra-TaskGroup element-wise data transfer.
+  // Inter-Task data are transferred via OutputCollector of each Task.
+  private Pair<BoundedSourceTask, Iterable<Element>> inputFromBoundedSource;
+  private final List<Pair<String, OutputCollectorImpl>> taskIdToOutputCollectorList;
 
   /**
    * Map of task IDs in this task group to their readers/writers.
@@ -68,8 +72,6 @@ public final class TaskGroupExecutor {
   private final Map<String, List<OutputWriter>> taskIdToOutputWriterMap;
 
   private boolean isExecutionRequested;
-
-  private final PartitionManagerWorker partitionManagerWorker;
 
   public TaskGroupExecutor(final TaskGroup taskGroup,
                            final TaskGroupStateManager taskGroupStateManager,
@@ -82,15 +84,15 @@ public final class TaskGroupExecutor {
     this.stageIncomingEdges = stageIncomingEdges;
     this.stageOutgoingEdges = stageOutgoingEdges;
     this.channelFactory = channelFactory;
+
     this.inputFromBoundedSource = null;
     this.sourceParallelism = new AtomicInteger(0);
+    this.taskIdToOutputCollectorList = new ArrayList<>();
 
     this.taskIdToInputReaderMap = new HashMap<>();
     this.taskIdToOutputWriterMap = new HashMap<>();
 
     this.isExecutionRequested = false;
-
-    this.partitionManagerWorker = partitionManagerWorker;
 
     initializeDataTransfer();
   }
@@ -100,6 +102,8 @@ public final class TaskGroupExecutor {
    * Reader and writer exist per TaskGroup, so we consider only cross-stage edges.
    */
   private void initializeDataTransfer() {
+    final AtomicInteger taskIdx = new AtomicInteger(0);
+
     taskGroup.getTaskDAG().topologicalDo((task -> {
       final Set<PhysicalStageEdge> inEdgesFromOtherStages = getInEdgesFromOtherStages(task);
       final Set<PhysicalStageEdge> outEdgesToOtherStages = getOutEdgesToOtherStages(task);
@@ -116,6 +120,8 @@ public final class TaskGroupExecutor {
             task, physicalStageEdge.getDstVertex(), physicalStageEdge);
         addOutputWriter(task, outputWriter);
       });
+
+      addOutputCollector(task, taskIdx.getAndIncrement());
     }));
   }
 
@@ -132,7 +138,7 @@ public final class TaskGroupExecutor {
         .collect(Collectors.toSet());
   }
 
-  // Helper functions to add the initialized reader/writer to the maintained map.
+  // Helper functions to add the initialized reader/writer/inter-Task data storage to the maintained map.
   private void addInputReader(final Task task, final InputReader inputReader) {
     taskIdToInputReaderMap.computeIfAbsent(task.getId(), readerList -> new ArrayList<>());
     taskIdToInputReaderMap.get(task.getId()).add(inputReader);
@@ -141,6 +147,18 @@ public final class TaskGroupExecutor {
   private void addOutputWriter(final Task task, final OutputWriter outputWriter) {
     taskIdToOutputWriterMap.computeIfAbsent(task.getId(), writerList -> new ArrayList<>());
     taskIdToOutputWriterMap.get(task.getId()).add(outputWriter);
+  }
+
+  private void addOutputCollector(final Task task, final int taskIdx) {
+    taskIdToOutputCollectorList.add(Pair.of(task.getId(), new OutputCollectorImpl()));
+  }
+
+  private boolean hasInputReader(final Task task) {
+    return taskIdToInputReaderMap.containsKey(task.getId());
+  }
+
+  private boolean hasOutputWriter(final Task task) {
+    return taskIdToOutputWriterMap.containsKey(task.getId());
   }
 
   /**
@@ -227,15 +245,15 @@ public final class TaskGroupExecutor {
         });
 
     final Transform.Context transformContext = new ContextImpl(sideInputMap);
-    final OutputCollectorImpl outputCollector = new OutputCollectorImpl();
-
     final Transform transform = operatorTask.getTransform();
+    final OutputCollectorImpl outputCollector = taskIdToOutputCollectorMap.get(operatorTask.getId());
     transform.prepare(transformContext, outputCollector);
 
     // Check for non-side inputs.
-    // This blocking queue contains the pairs having data and source vertex ids.
     final BlockingQueue<Element> dataQueue = new LinkedBlockingQueue<>();
-    taskIdToInputReaderMap.get(operatorTask.getId()).stream().filter(inputReader -> !inputReader.isSideInputReader())
+    if (hasInputReader(operatorTask)) {
+      // If this task accepts inter-stage data, read them from InputReader.
+      taskIdToInputReaderMap.get(operatorTask.getId()).stream().filter(inputReader -> !inputReader.isSideInputReader())
           .forEach(inputReader -> {
             final List<CompletableFuture<Element>> futures = inputReader.readElement();
             // Add consumers which will push the data to the data queue when it ready to the futures.
@@ -246,6 +264,14 @@ public final class TaskGroupExecutor {
               dataQueue.add(data);
             }));
           });
+    } else {
+      // If else, this task accepts intra-stage data.
+      // Read them from previous Task's OutputCollector.
+
+      // Here, this task should know who the 'prev Task' is.
+      // For this, taskIdToOutputCollector should be a list that contains topo-sorted Tasks.
+      // Thus, initialize taskIdToOutputCollector from initializeDataTransfer().
+    }
 
     // Consumes all of the partitions from incoming edges.
     IntStream.range(0, sourceParallelism.get()).forEach(srcTaskNum -> {
@@ -256,17 +282,19 @@ public final class TaskGroupExecutor {
         throw new RuntimeException(e);
       }
 
-      // Check whether there is any output data from the transform and write the output of this task to the writer.
-      final List<Element> output = outputCollector.collectOutputList();
-      if (!output.isEmpty() && taskIdToOutputWriterMap.containsKey(operatorTask.getId())) {
-        taskIdToOutputWriterMap.get(operatorTask.getId()).forEach(outputWriter -> outputWriter.write(output));
-      } // If else, this is a sink task.
+      if (hasOutputWriter(operatorTask)) {
+        // Check whether there is any output data from the transform and write the output of this task to the writer.
+        final List<Element> output = outputCollector.collectOutputList();
+        if (!output.isEmpty()) {
+          taskIdToOutputWriterMap.get(operatorTask.getId()).forEach(outputWriter -> outputWriter.write(output));
+        } // If else, this is a sink task.
+      }
     });
     transform.close();
 
     // Check whether there is any output data from the transform and write the output of this task to the writer.
     final List<Element> output = outputCollector.collectOutputList();
-    if (taskIdToOutputWriterMap.containsKey(operatorTask.getId())) {
+    if (hasOutputWriter(operatorTask)) {
       taskIdToOutputWriterMap.get(operatorTask.getId()).forEach(outputWriter -> {
         if (!output.isEmpty()) {
           outputWriter.write(output);
@@ -284,10 +312,8 @@ public final class TaskGroupExecutor {
    */
   private void launchMetricCollectionBarrierTask(final MetricCollectionBarrierTask task) {
     final BlockingQueue<Iterable<Element>> dataQueue = new LinkedBlockingQueue<>();
-    final AtomicInteger sourceParallelism = new AtomicInteger(0);
     taskIdToInputReaderMap.get(task.getId()).stream().filter(inputReader -> !inputReader.isSideInputReader())
         .forEach(inputReader -> {
-          sourceParallelism.getAndAdd(inputReader.getSourceParallelism());
           inputReader.read().forEach(compFuture -> compFuture.thenAccept(dataQueue::add));
         });
 

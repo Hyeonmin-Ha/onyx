@@ -20,24 +20,29 @@ import edu.snu.onyx.compiler.ir.OutputCollector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Output Collector Implementation.
  */
 public final class OutputCollectorImpl implements OutputCollector {
-  private AtomicReference<List<Element>> outputList;
+  private AtomicReference<LinkedBlockingQueue<Element>> outputQueue;
 
   /**
    * Constructor of a new OutputCollector.
    */
   public OutputCollectorImpl() {
-    outputList = new AtomicReference<>(new ArrayList<>());
+    outputQueue = new AtomicReference<>(new LinkedBlockingQueue<>());
   }
 
   @Override
   public void emit(final Element output) {
-    outputList.get().add(output);
+    try {
+      outputQueue.get().put(output);
+    } catch (InterruptedException e) {
+      throw new RuntimeException("Error while emitting intra-Task output to OutputCollectorImpl");
+    }
   }
 
   @Override
@@ -46,11 +51,25 @@ public final class OutputCollectorImpl implements OutputCollector {
   }
 
   /**
+   * Inter-Task data is transferred from sender-side Task's OutputCollectorImpl to receiver-side Task.
+   * @return the output element that is transferred to the next Task of TaskGroup.
+   */
+  public Element remove() {
+    return outputQueue.get().remove();
+  }
+
+  /**
    * Collects the accumulated output and replace the output list.
    *
    * @return the list of output elements.
-   */
+  */
   public List<Element> collectOutputList() {
-    return outputList.getAndSet(new ArrayList<>());
+    LinkedBlockingQueue<Element> currentOutputQueue = outputQueue.getAndSet(new LinkedBlockingQueue<>());
+    List<Element> outputList = new ArrayList<>();
+    while (currentOutputQueue.size() > 0) {
+      outputList.add(currentOutputQueue.remove());
+    }
+    return outputList;
   }
+
 }
