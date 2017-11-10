@@ -62,7 +62,6 @@ public final class TaskGroupExecutor {
   private final AtomicInteger sourceParallelism;
   // For intra-TaskGroup element-wise data transfer.
   // Inter-Task data are transferred via OutputCollector of each Task.
-  private Pair<BoundedSourceTask, Iterable<Element>> inputFromBoundedSource;
   private final List<Pair<String, OutputCollectorImpl>> taskIdToOutputCollectorList;
 
   /**
@@ -85,7 +84,6 @@ public final class TaskGroupExecutor {
     this.stageOutgoingEdges = stageOutgoingEdges;
     this.channelFactory = channelFactory;
 
-    this.inputFromBoundedSource = null;
     this.sourceParallelism = new AtomicInteger(0);
     this.taskIdToOutputCollectorList = new ArrayList<>();
 
@@ -215,7 +213,13 @@ public final class TaskGroupExecutor {
    * @param boundedSourceTask to execute
    */
   private void launchBoundedSourceTask(final BoundedSourceTask boundedSourceTask) throws Exception {
-    inputFromBoundedSource = Pair.of(boundedSourceTask, boundedSourceTask.getReader().read());
+    final Reader reader = boundedSourceTask.getReader();
+    final Iterable readData = reader.read();
+
+    taskIdToOutputWriterMap.get(boundedSourceTask.getId()).forEach(outputWriter -> {
+      outputWriter.write(readData);
+      outputWriter.close();
+    });
   }
 
   /**
@@ -250,12 +254,12 @@ public final class TaskGroupExecutor {
     transform.prepare(transformContext, outputCollector);
 
     // Check for non-side inputs.
-    final BlockingQueue<Element> dataQueue = new LinkedBlockingQueue<>();
+    final BlockingQueue<Object> dataQueue = new LinkedBlockingQueue<>();
     if (hasInputReader(operatorTask)) {
       // If this task accepts inter-stage data, read them from InputReader.
       taskIdToInputReaderMap.get(operatorTask.getId()).stream().filter(inputReader -> !inputReader.isSideInputReader())
           .forEach(inputReader -> {
-            final List<CompletableFuture<Element>> futures = inputReader.readElement();
+            final List<CompletableFuture<Object>> futures = inputReader.readElement();
             // Add consumers which will push the data to the data queue when it ready to the futures.
             futures.forEach(compFuture -> compFuture.whenComplete((data, exception) -> {
               if (exception != null) {
@@ -284,7 +288,7 @@ public final class TaskGroupExecutor {
 
       if (hasOutputWriter(operatorTask)) {
         // Check whether there is any output data from the transform and write the output of this task to the writer.
-        final List<Element> output = outputCollector.collectOutputList();
+        final List output = outputCollector.collectOutputList();
         if (!output.isEmpty()) {
           taskIdToOutputWriterMap.get(operatorTask.getId()).forEach(outputWriter -> outputWriter.write(output));
         } // If else, this is a sink task.
@@ -293,7 +297,7 @@ public final class TaskGroupExecutor {
     transform.close();
 
     // Check whether there is any output data from the transform and write the output of this task to the writer.
-    final List<Element> output = outputCollector.collectOutputList();
+    final List output = outputCollector.collectOutputList();
     if (hasOutputWriter(operatorTask)) {
       taskIdToOutputWriterMap.get(operatorTask.getId()).forEach(outputWriter -> {
         if (!output.isEmpty()) {
@@ -311,16 +315,16 @@ public final class TaskGroupExecutor {
    * @param task the task to carry on the data.
    */
   private void launchMetricCollectionBarrierTask(final MetricCollectionBarrierTask task) {
-    final BlockingQueue<Iterable<Element>> dataQueue = new LinkedBlockingQueue<>();
+    final BlockingQueue<Iterable> dataQueue = new LinkedBlockingQueue<>();
     taskIdToInputReaderMap.get(task.getId()).stream().filter(inputReader -> !inputReader.isSideInputReader())
         .forEach(inputReader -> {
           inputReader.read().forEach(compFuture -> compFuture.thenAccept(dataQueue::add));
         });
 
-    final List<Element> data = new ArrayList<>();
+    final List data = new ArrayList<>();
     IntStream.range(0, sourceParallelism.get()).forEach(srcTaskNum -> {
       try {
-        final Iterable<Element> availableData = dataQueue.take();
+        final Iterable availableData = dataQueue.take();
         availableData.forEach(data::add);
       } catch (final InterruptedException e) {
         throw new PartitionFetchException(e);

@@ -18,21 +18,22 @@ package edu.snu.onyx.compiler.ir;
 /**
  * A {@link Transform} relays input data from upstream vertex to downstream vertex promptly.
  * This transform can be used for merging input data into the {@link OutputCollector}.
+ * @param <T> input/output type.
  */
-public final class RelayTransform implements Transform {
-  private OutputCollector outputCollector;
+public final class RelayTransform<T> implements Transform<T, T> {
+  private OutputCollector<T> outputCollector;
 
   public RelayTransform() {
     // Do nothing.
   }
 
   @Override
-  public void prepare(final Context context, final OutputCollector oc) {
+  public void prepare(final Context context, final OutputCollector<T> oc) {
     this.outputCollector = oc;
   }
 
   @Override
-  public void onData(final Element data) {
+  public void onData(final T data) {
     outputCollector.emit(data);
   }
 

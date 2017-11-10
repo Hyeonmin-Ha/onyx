@@ -17,7 +17,6 @@ package edu.snu.onyx.runtime.executor.data;
 
 import edu.snu.onyx.client.JobConf;
 import edu.snu.onyx.common.coder.Coder;
-import edu.snu.onyx.compiler.ir.Element;
 import edu.snu.onyx.runtime.exception.PartitionFetchException;
 import edu.snu.onyx.runtime.exception.PartitionWriteException;
 import edu.snu.onyx.runtime.executor.data.metadata.LocalFileMetadata;
@@ -51,12 +50,30 @@ public final class LocalFileStore extends FileStore {
   }
 
   /**
+   * Creates a new partition.
+   *
+   * @param partitionId the ID of the partition to create.
+   * @see PartitionStore#createPartition(String).
+   */
+  @Override
+  public void createPartition(final String partitionId) {
+    removePartition(partitionId);
+
+    final Coder coder = getCoderFromWorker(partitionId);
+    final LocalFileMetadata metadata = new LocalFileMetadata(false);
+
+    final FilePartition partition =
+        new FilePartition(coder, partitionIdToFilePath(partitionId), metadata);
+    partitionIdToFilePartition.put(partitionId, partition);
+  }
+
+  /**
    * Retrieves data in a specific hash range from a partition.
    *
    * @see PartitionStore#getFromPartition(String, HashRange).
    */
   @Override
-  public Optional<Iterable<Element>> getFromPartition(final String partitionId,
+  public Optional<Iterable> getFromPartition(final String partitionId,
                                                       final HashRange hashRange) throws PartitionFetchException {
     // Deserialize the target data in the corresponding file.
     final FilePartition partition = partitionIdToFilePartition.get(partitionId);
@@ -83,13 +100,12 @@ public final class LocalFileStore extends FileStore {
                                              final boolean commitPerBlock) throws PartitionWriteException {
     final Coder coder = getCoderFromWorker(partitionId);
     final List<Long> blockSizeList;
-    final LocalFileMetadata metadata = new LocalFileMetadata(commitPerBlock);
 
     try {
-      FilePartition partition =
-          new FilePartition(coder, partitionIdToFilePath(partitionId), metadata);
-      partitionIdToFilePartition.putIfAbsent(partitionId, partition);
-      partition = partitionIdToFilePartition.get(partitionId);
+      final FilePartition partition = partitionIdToFilePartition.get(partitionId);
+      if (partition == null) {
+        throw new PartitionWriteException(new Throwable("The partition " + partitionId + "is not created yet."));
+      }
 
       // Serialize and write the given blocks.
       blockSizeList = putBlocks(coder, partition, blocks);

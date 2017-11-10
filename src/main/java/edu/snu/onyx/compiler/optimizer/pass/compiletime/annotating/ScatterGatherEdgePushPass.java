@@ -18,34 +18,35 @@ package edu.snu.onyx.compiler.optimizer.pass.compiletime.annotating;
 import edu.snu.onyx.common.dag.DAG;
 import edu.snu.onyx.compiler.ir.IREdge;
 import edu.snu.onyx.compiler.ir.IRVertex;
-import edu.snu.onyx.compiler.ir.MetricCollectionBarrierVertex;
 import edu.snu.onyx.compiler.ir.executionproperty.ExecutionProperty;
-import edu.snu.onyx.compiler.ir.executionproperty.edge.PartitionerProperty;
-import edu.snu.onyx.compiler.optimizer.pass.runtime.DataSkewRuntimePass;
-import edu.snu.onyx.compiler.ir.partitioner.DataSkewHashPartitioner;
+import edu.snu.onyx.compiler.ir.executionproperty.edge.DataFlowModelProperty;
+import edu.snu.onyx.runtime.executor.datatransfer.communication.ScatterGather;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 
 /**
- * Pado pass for tagging edges with {@link PartitionerProperty}.
+ * A pass for tagging scatter-gather edges different from the default ones.
+ * It sets DataFlowModel ExecutionProperty as "push".
  */
-public final class DataSkewEdgePartitionerPass extends AnnotatingPass {
-  public static final String SIMPLE_NAME = "DataSkewEdgePartitionerPass";
+public final class ScatterGatherEdgePushPass extends AnnotatingPass {
 
-  public DataSkewEdgePartitionerPass() {
-    super(ExecutionProperty.Key.Partitioner, Collections.singleton(ExecutionProperty.Key.DataCommunicationPattern));
+  public ScatterGatherEdgePushPass() {
+    super(ExecutionProperty.Key.DataFlowModel, Stream.of(
+        ExecutionProperty.Key.DataCommunicationPattern
+    ).collect(Collectors.toSet()));
   }
 
   @Override
   public DAG<IRVertex, IREdge> apply(final DAG<IRVertex, IREdge> dag) {
     dag.getVertices().forEach(vertex -> {
-      if (vertex instanceof MetricCollectionBarrierVertex) {
-        final List<IREdge> outEdges = dag.getOutgoingEdgesOf(vertex);
-        outEdges.forEach(edge -> {
-          // double checking.
-          if (DataSkewRuntimePass.class.equals(edge.getProperty(ExecutionProperty.Key.MetricCollection))) {
-            edge.setProperty(PartitionerProperty.of(DataSkewHashPartitioner.class));
+      final List<IREdge> inEdges = dag.getIncomingEdgesOf(vertex);
+      if (!inEdges.isEmpty()) {
+        inEdges.forEach(edge -> {
+          if (ScatterGather.class.equals(edge.getProperty(ExecutionProperty.Key.DataCommunicationPattern))) {
+            edge.setProperty(DataFlowModelProperty.of(DataFlowModelProperty.Value.Push));
           }
         });
       }

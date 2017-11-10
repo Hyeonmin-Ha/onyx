@@ -15,7 +15,6 @@
  */
 package edu.snu.onyx.runtime.executor.data;
 
-import edu.snu.onyx.compiler.ir.Element;
 import edu.snu.onyx.runtime.exception.PartitionWriteException;
 import edu.snu.onyx.runtime.executor.data.partition.MemoryPartition;
 
@@ -42,18 +41,23 @@ public final class MemoryStore implements PartitionStore {
     this.partitionMap = new ConcurrentHashMap<>();
   }
 
+  @Override
+  public void createPartition(final String partitionId) {
+    partitionMap.put(partitionId, new MemoryPartition());
+  }
+
   /**
    * @see PartitionStore#getFromPartition(String, HashRange).
    */
   @Override
-  public Optional<Iterable<Element>> getFromPartition(final String partitionId,
+  public Optional<Iterable> getFromPartition(final String partitionId,
                                                       final HashRange hashRange) {
     final MemoryPartition partition = partitionMap.get(partitionId);
 
     if (partition != null) {
       final Iterable<Block> blocks = partition.getBlocks();
       // Retrieves data in the hash range from the target partition
-      final List<Iterable<Element>> retrievedData = new ArrayList<>();
+      final List<Iterable> retrievedData = new ArrayList<>();
       blocks.forEach(block -> {
         if (hashRange.includes(block.getKey())) {
           retrievedData.add(block.getData());
@@ -73,9 +77,13 @@ public final class MemoryStore implements PartitionStore {
   public Optional<List<Long>> putToPartition(final String partitionId,
                                              final Iterable<Block> blocks,
                                              final boolean commitPerBlock) throws PartitionWriteException {
-    partitionMap.putIfAbsent(partitionId, new MemoryPartition());
     try {
-      partitionMap.get(partitionId).appendBlocks(blocks);
+      final MemoryPartition partition = partitionMap.get(partitionId);
+      if (partition == null) {
+        throw new PartitionWriteException(new Throwable("The partition " + partitionId + "is not created yet."));
+      }
+      partition.appendBlocks(blocks);
+
       // The partition is not serialized.
       return Optional.empty();
     } catch (final IOException e) {
@@ -111,10 +119,10 @@ public final class MemoryStore implements PartitionStore {
    * @param blocks the iterable of blocks to concatenate.
    * @return the concatenated iterable of all elements.
    */
-  private Iterable<Element> concatBlocks(final Iterable<Iterable<Element>> blocks) {
-    final List<Element> concatStreamBase = new ArrayList<>();
-    Stream<Element> concatStream = concatStreamBase.stream();
-    for (final Iterable<Element> block : blocks) {
+  private Iterable concatBlocks(final Iterable<Iterable> blocks) {
+    final List concatStreamBase = new ArrayList<>();
+    Stream<Object> concatStream = concatStreamBase.stream();
+    for (final Iterable block : blocks) {
       concatStream = Stream.concat(concatStream, StreamSupport.stream(block.spliterator(), false));
     }
     return concatStream.collect(Collectors.toList());

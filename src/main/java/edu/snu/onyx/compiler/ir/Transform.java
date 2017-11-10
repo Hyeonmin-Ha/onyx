@@ -16,27 +16,28 @@
 package edu.snu.onyx.compiler.ir;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Interface for specifying 'What' to do with data.
  * It is to be implemented in the compiler frontend, possibly for every operator in a dataflow language.
  * 'How' and 'When' to do with its input/output data are up to the runtime.
+ * @param <I> input type.
+ * @param <O> output type.
  */
-public interface Transform extends Serializable {
+public interface Transform<I, O> extends Serializable {
   /**
    * Prepare the transform.
    * @param context of the transform.
    * @param outputCollector that collects outputs.
    */
-  void prepare(Context context, OutputCollector outputCollector);
+  void prepare(Context context, OutputCollector<O> outputCollector);
 
   /**
    * On data received.
    * @param data data received.
    */
-  void onData(Element data);
+  void onData(I data);
 
   /**
    * Close the transform.
@@ -45,20 +46,8 @@ public interface Transform extends Serializable {
 
   /**
    * Context of the transform.
-   * It is currently unused, but might come in handy
-   * when we have more sophisticated operations like Join.
    */
   interface Context {
-    /**
-     * @return source vertex ids.
-     */
-    List<String> getSrcVertexIds();
-
-    /**
-     * @return destination vertex ids.
-     */
-    List<String> getDstVertexIds();
-
     /**
      * @return sideInputs.
      */

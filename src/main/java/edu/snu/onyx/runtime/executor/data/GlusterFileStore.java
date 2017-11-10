@@ -17,7 +17,6 @@ package edu.snu.onyx.runtime.executor.data;
 
 import edu.snu.onyx.client.JobConf;
 import edu.snu.onyx.common.coder.Coder;
-import edu.snu.onyx.compiler.ir.Element;
 import edu.snu.onyx.runtime.exception.PartitionFetchException;
 import edu.snu.onyx.runtime.exception.PartitionWriteException;
 import edu.snu.onyx.runtime.executor.PersistentConnectionToMasterMap;
@@ -64,12 +63,23 @@ public final class GlusterFileStore extends FileStore implements RemoteFileStore
   }
 
   /**
+   * Creates a new partition.
+   *
+   * @param partitionId the ID of the partition to create.
+   * @see PartitionStore#createPartition(String).
+   */
+  @Override
+  public void createPartition(final String partitionId) {
+    removePartition(partitionId);
+  }
+
+  /**
    * Retrieves a deserialized partition of data through remote disks.
    *
    * @see PartitionStore#getFromPartition(String, HashRange).
    */
   @Override
-  public Optional<Iterable<Element>> getFromPartition(final String partitionId,
+  public Optional<Iterable> getFromPartition(final String partitionId,
                                                       final HashRange hashRange) throws PartitionFetchException {
     final String filePath = partitionIdToFilePath(partitionId);
     if (!new File(filePath).isFile()) {

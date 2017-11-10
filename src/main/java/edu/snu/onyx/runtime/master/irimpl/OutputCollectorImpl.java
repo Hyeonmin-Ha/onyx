@@ -15,7 +15,6 @@
  */
 package edu.snu.onyx.runtime.master.irimpl;
 
-import edu.snu.onyx.compiler.ir.Element;
 import edu.snu.onyx.compiler.ir.OutputCollector;
 
 import java.util.ArrayList;
@@ -25,9 +24,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Output Collector Implementation.
+ * @param <O> output type.
  */
-public final class OutputCollectorImpl implements OutputCollector {
-  private AtomicReference<LinkedBlockingQueue<Element>> outputQueue;
+public final class OutputCollectorImpl<O> implements OutputCollector<O> {
+  private AtomicReference<LinkedBlockingQueue<O>> outputQueue;
 
   /**
    * Constructor of a new OutputCollector.
@@ -37,7 +37,7 @@ public final class OutputCollectorImpl implements OutputCollector {
   }
 
   @Override
-  public void emit(final Element output) {
+  public void emit(final O output) {
     try {
       outputQueue.get().put(output);
     } catch (InterruptedException e) {
@@ -46,7 +46,7 @@ public final class OutputCollectorImpl implements OutputCollector {
   }
 
   @Override
-  public void emit(final String dstVertexId, final Element output) {
+  public void emit(final String dstVertexId, final Object output) {
     throw new UnsupportedOperationException("emit(dstVertexId, output) in OutputCollectorImpl.");
   }
 
@@ -54,7 +54,7 @@ public final class OutputCollectorImpl implements OutputCollector {
    * Inter-Task data is transferred from sender-side Task's OutputCollectorImpl to receiver-side Task.
    * @return the output element that is transferred to the next Task of TaskGroup.
    */
-  public Element remove() {
+  public O remove() {
     return outputQueue.get().remove();
   }
 
@@ -63,13 +63,12 @@ public final class OutputCollectorImpl implements OutputCollector {
    *
    * @return the list of output elements.
   */
-  public List<Element> collectOutputList() {
-    LinkedBlockingQueue<Element> currentOutputQueue = outputQueue.getAndSet(new LinkedBlockingQueue<>());
-    List<Element> outputList = new ArrayList<>();
+  public List<O> collectOutputList() {
+    LinkedBlockingQueue<O> currentOutputQueue = outputQueue.getAndSet(new LinkedBlockingQueue<>());
+    List<O> outputList = new ArrayList<>();
     while (currentOutputQueue.size() > 0) {
       outputList.add(currentOutputQueue.remove());
     }
     return outputList;
   }
-
 }

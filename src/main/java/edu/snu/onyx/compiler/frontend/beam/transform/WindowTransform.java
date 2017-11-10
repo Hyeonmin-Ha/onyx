@@ -15,7 +15,6 @@
  */
 package edu.snu.onyx.compiler.frontend.beam.transform;
 
-import edu.snu.onyx.compiler.ir.Element;
 import edu.snu.onyx.compiler.ir.OutputCollector;
 import edu.snu.onyx.compiler.ir.Transform;
 import org.apache.beam.sdk.transforms.windowing.WindowFn;
@@ -24,10 +23,11 @@ import org.apache.beam.sdk.transforms.windowing.WindowFn;
  * Windowing transform implementation.
  * This transform simply windows the given elements into finite windows according to a user-specified WindowTransform.
  * As this functionality is unnecessary for batch processing workloads and for Runtime, this is left as below.
+ * @param <T> input/output type.
  */
-public final class WindowTransform implements Transform {
+public final class WindowTransform<T> implements Transform<T, T> {
   private final WindowFn windowFn;
-  private OutputCollector outputCollector;
+  private OutputCollector<T> outputCollector;
 
   /**
    * Default Constructor.
@@ -38,12 +38,12 @@ public final class WindowTransform implements Transform {
   }
 
   @Override
-  public void prepare(final Context context, final OutputCollector oc) {
+  public void prepare(final Context context, final OutputCollector<T> oc) {
     this.outputCollector = oc;
   }
 
   @Override
-  public void onData(final Element data) {
+  public void onData(final T data) {
     // TODO #36: Actually assign windows
     outputCollector.emit(data);
   }
