@@ -73,16 +73,6 @@ public final class InputReader extends DataTransfer {
   }
 
   /**
-   * Reads input data element-wise depending on the communication pattern of the srcVertex.
-   *
-   * @return the read data.
-   */
-  // TODO #432,#576 Support intra- and inter-TaskGroup element-wise data transfer.
-  public List<CompletableFuture<T>> readElement() {
-    return new ArrayList<>();
-  }
-
-  /**
    * Reads input data depending on the communication pattern of the srcVertex.
    *
    * @return the read data.

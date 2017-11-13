@@ -231,10 +231,19 @@ public final class TaskGroupExecutor {
     final Reader reader = boundedSourceTask.getReader();
     final Iterable readData = reader.read();
 
-    taskIdToOutputWriterMap.get(boundedSourceTask.getId()).forEach(outputWriter -> {
-      outputWriter.write(readData);
-      outputWriter.close();
-    });
+    // For inter-stage data, we need to write them to OutputWriters.
+    // For intra-stage data, we need to emit data to OutputCollectorImpl.
+    if (hasOutputWriter(boundedSourceTask)) {
+      taskIdToOutputWriterMap.get(boundedSourceTask.getId()).forEach(outputWriter -> {
+        outputWriter.write(readData);
+        outputWriter.close();
+      });
+    } else {
+      OutputCollectorImpl outputCollector = taskIdToLocalWriterMap.get(boundedSourceTask.getId());
+      readData.forEach(data -> {
+        outputCollector.emit(data);
+      });
+    }
   }
 
   /**
@@ -274,7 +283,8 @@ public final class TaskGroupExecutor {
       // If this task accepts inter-stage data, read them from InputReader.
       taskIdToInputReaderMap.get(operatorTask.getId()).stream().filter(inputReader -> !inputReader.isSideInputReader())
           .forEach(inputReader -> {
-            final List<CompletableFuture<Object>> futures = inputReader.readElement();
+            // For inter-stage data, read them as Iterable.
+            final List<CompletableFuture<Iterable>> futures = inputReader.read();
             // Add consumers which will push the data to the data queue when it ready to the futures.
             futures.forEach(compFuture -> compFuture.whenComplete((data, exception) -> {
               if (exception != null) {
@@ -342,12 +352,24 @@ public final class TaskGroupExecutor {
         final Iterable availableData = dataQueue.take();
         availableData.forEach(data::add);
       } catch (final InterruptedException e) {
-        throw new PartitionFetchException(e);
+        throw new RuntimeException(e);
       }
     });
-    taskIdToOutputWriterMap.get(task.getId()).forEach(outputWriter -> {
-      outputWriter.write(data);
-      outputWriter.close();
-    });
+
+    // For inter-stage data, we need to write them to OutputWriters.
+    // For intra-stage data, we need to emit data to OutputCollectorImpl.
+    if (!data.isEmpty()) {
+      if (hasOutputWriter(task)) {
+        taskIdToOutputWriterMap.get(task.getId()).forEach(outputWriter -> {
+          outputWriter.write(data);
+          outputWriter.close();
+        });
+      } else {
+        OutputCollectorImpl outputCollector = taskIdToLocalWriterMap.get(task.getId());
+        data.forEach(element -> {
+            outputCollector.emit(element);
+        });
+      }
+    }
   }
 }
