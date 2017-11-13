@@ -62,7 +62,8 @@ public final class TaskGroupExecutor {
   private final AtomicInteger sourceParallelism;
   // For intra-TaskGroup element-wise data transfer.
   // Inter-Task data are transferred via OutputCollector of each Task.
-  private final List<Pair<String, OutputCollectorImpl>> taskIdToOutputCollectorList;
+  private final Map<String, OutputCollectorImpl> taskIdToLocalWriterMap;
+  private final Map<String, List<OutputCollectorImpl>> taskIdToLocalReaderMap;
 
   /**
    * Map of task IDs in this task group to their readers/writers.
@@ -76,8 +77,7 @@ public final class TaskGroupExecutor {
                            final TaskGroupStateManager taskGroupStateManager,
                            final List<PhysicalStageEdge> stageIncomingEdges,
                            final List<PhysicalStageEdge> stageOutgoingEdges,
-                           final DataTransferFactory channelFactory,
-                           final PartitionManagerWorker partitionManagerWorker) {
+                           final DataTransferFactory channelFactory) {
     this.taskGroup = taskGroup;
     this.taskGroupStateManager = taskGroupStateManager;
     this.stageIncomingEdges = stageIncomingEdges;
@@ -85,7 +85,8 @@ public final class TaskGroupExecutor {
     this.channelFactory = channelFactory;
 
     this.sourceParallelism = new AtomicInteger(0);
-    this.taskIdToOutputCollectorList = new ArrayList<>();
+    this.taskIdToLocalWriterMap = new HashMap<>();
+    this.taskIdToLocalReaderMap = new HashMap<>();
 
     this.taskIdToInputReaderMap = new HashMap<>();
     this.taskIdToOutputWriterMap = new HashMap<>();
@@ -119,7 +120,8 @@ public final class TaskGroupExecutor {
         addOutputWriter(task, outputWriter);
       });
 
-      addOutputCollector(task, taskIdx.getAndIncrement());
+      addOutputCollector(task);
+      addLocalReaders(task);
     }));
   }
 
@@ -147,8 +149,21 @@ public final class TaskGroupExecutor {
     taskIdToOutputWriterMap.get(task.getId()).add(outputWriter);
   }
 
-  private void addOutputCollector(final Task task, final int taskIdx) {
-    taskIdToOutputCollectorList.add(Pair.of(task.getId(), new OutputCollectorImpl()));
+  private void addOutputCollector(final Task task) {
+    taskIdToLocalWriterMap.put(task.getId(), new OutputCollectorImpl());
+  }
+
+  // Create a map of Task and its parent Task's OutputCollectorImpls, which are the Task's
+  // local(intra-TaskGroup) readers.
+  private void addLocalReaders(final Task task) {
+    List<OutputCollectorImpl> localReaders = new ArrayList<>();
+    List<Task> parentTasks = taskGroup.getTaskDAG().getParents(task.getRuntimeVertexId());
+
+    parentTasks.forEach(parentTask -> {
+          localReaders.add(taskIdToLocalWriterMap.get(parentTask.getId()));
+    });
+
+    taskIdToLocalReaderMap.put(task.getId(), localReaders);
   }
 
   private boolean hasInputReader(final Task task) {
@@ -250,7 +265,7 @@ public final class TaskGroupExecutor {
 
     final Transform.Context transformContext = new ContextImpl(sideInputMap);
     final Transform transform = operatorTask.getTransform();
-    final OutputCollectorImpl outputCollector = taskIdToOutputCollectorMap.get(operatorTask.getId());
+    final OutputCollectorImpl outputCollector = taskIdToLocalWriterMap.get(operatorTask.getId());
     transform.prepare(transformContext, outputCollector);
 
     // Check for non-side inputs.
@@ -270,11 +285,11 @@ public final class TaskGroupExecutor {
           });
     } else {
       // If else, this task accepts intra-stage data.
-      // Read them from previous Task's OutputCollector.
-
-      // Here, this task should know who the 'prev Task' is.
-      // For this, taskIdToOutputCollector should be a list that contains topo-sorted Tasks.
-      // Thus, initialize taskIdToOutputCollector from initializeDataTransfer().
+      // Intra-stage data are read from parent Task's OutputCollectors.
+      taskIdToLocalReaderMap.get(operatorTask.getId())
+          .forEach(localReader -> {
+            dataQueue.add(localReader.collectOutputList());
+          });
     }
 
     // Consumes all of the partitions from incoming edges.
@@ -286,27 +301,27 @@ public final class TaskGroupExecutor {
         throw new RuntimeException(e);
       }
 
-      if (hasOutputWriter(operatorTask)) {
-        // Check whether there is any output data from the transform and write the output of this task to the writer.
-        final List output = outputCollector.collectOutputList();
-        if (!output.isEmpty()) {
+      // For inter-stage data, we need to write them to OutputWriters.
+      // For intra-stage data, child Tasks will read them from OutputCollectorImpls; no write operation is needed.
+      final List output = outputCollector.collectOutputList();
+      if (!output.isEmpty()) {
+        if (hasOutputWriter(operatorTask)) {
           taskIdToOutputWriterMap.get(operatorTask.getId()).forEach(outputWriter -> outputWriter.write(output));
-        } // If else, this is a sink task.
+        }
       }
     });
     transform.close();
 
     // Check whether there is any output data from the transform and write the output of this task to the writer.
+    // Here, too, we need to consider only inter-stage data and write them to OutputWriters.
     final List output = outputCollector.collectOutputList();
-    if (hasOutputWriter(operatorTask)) {
-      taskIdToOutputWriterMap.get(operatorTask.getId()).forEach(outputWriter -> {
-        if (!output.isEmpty()) {
-          outputWriter.write(output);
-        }
-        outputWriter.close();
-      });
-    } else {
-      LOG.info("This is a sink task: {}", operatorTask.getId());
+    if (!output.isEmpty()) {
+      if (hasOutputWriter(operatorTask)) {
+        taskIdToOutputWriterMap.get(operatorTask.getId()).forEach(outputWriter -> {
+            outputWriter.write(output);
+            outputWriter.close();
+        });
+      }
     }
   }
 
