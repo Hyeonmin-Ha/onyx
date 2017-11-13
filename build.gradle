@@ -1,0 +1,59 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'edu.snu'
+version = '0.1-SNAPSHOT'
+
+description = """"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+repositories {
+     maven { url "http://repo.maven.apache.org/maven2" }
+     maven { url "file://${projectDir}/src/main/resources/repository" }
+}
+
+ext {
+    hadoop_ver = '2.7.2'
+    reef_ver = '0.17.0-SNAPSHOT'
+    slf4j_ver = '1.7.20'
+    beam_ver = '2.0.0'
+    mockito_ver = '1.10.19'
+    netlib_ver = '1.1.2'
+    apache_commons2_ver = '2.1.1'
+    apache_commons3_ver = '3.5'
+    jackson_ver = '2.2.3'
+    junit_ver = '4.12'
+    powermock_ver = '1.6.6'
+    protobuf_ver = '2.5.0'
+    snappy_ver = '1.1.1.3'
+}
+
+dependencies {
+    compile group: 'org.apache.hadoop', name: 'hadoop-aws', version: hadoop_ver
+    compile group: 'com.google.protobuf', name: 'protobuf-java', version: protobuf_ver
+    compile group: 'org.xerial.snappy', name: 'snappy-java', version: snappy_ver
+    compile group: 'org.apache.reef', name: 'wake', version: reef_ver
+    compile group: 'org.apache.reef', name: 'reef-io', version: reef_ver
+    compile group: 'org.apache.reef', name: 'reef-common', version: reef_ver
+    compile group: 'org.apache.reef', name: 'reef-runtime-local', version: reef_ver
+    compile group: 'org.apache.reef', name: 'reef-runtime-yarn', version: reef_ver
+    compile group: 'org.slf4j', name: 'slf4j-api', version: slf4j_ver
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4j_ver
+    compile group: 'org.apache.beam', name: 'beam-sdks-java-core', version: beam_ver
+    compile group: 'org.apache.beam', name: 'beam-sdks-java-io-hadoop-input-format', version: beam_ver
+    compile group: 'org.mockito', name: 'mockito-all', version: mockito_ver
+    compile group: 'com.github.fommil.netlib', name: 'all', version: netlib_ver
+    compile group: 'org.apache.commons', name: 'commons-configuration2', version: apache_commons2_ver
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: apache_commons3_ver
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jackson_ver
+    testCompile group: 'junit', name: 'junit', version: junit_ver
+    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: powermock_ver
+    testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: powermock_ver
+    compileOnly group: 'org.apache.hadoop', name: 'hadoop-common', version: hadoop_ver
+    compileOnly group: 'org.apache.hadoop', name: 'hadoop-mapreduce-client-core', version: hadoop_ver
+}
