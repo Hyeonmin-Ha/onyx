@@ -98,7 +98,7 @@ public final class TaskGroupExecutor {
     final AtomicInteger taskIdx = new AtomicInteger(0);
 
     taskGroup.getTaskDAG().topologicalDo((task -> {
-      LOG.info("initializeDataTransfer: Task {}", task.getId());
+      LOG.info("initDataTrans: Task {}", task.getId());
       final Set<PhysicalStageEdge> inEdgesFromOtherStages = getInEdgesFromOtherStages(task);
       final Set<PhysicalStageEdge> outEdgesToOtherStages = getOutEdgesToOtherStages(task);
 
@@ -106,12 +106,12 @@ public final class TaskGroupExecutor {
         final InputReader inputReader = channelFactory.createReader(
             task, physicalStageEdge.getSrcVertex(), physicalStageEdge);
         addInputReader(task, inputReader);
-        LOG.info("initializeDataTransfer: Added InputReader, Task {}", task.getId());
+        LOG.info("initDataTrans: Added InputReader, Task {}", task.getId());
         sourceParallelism.getAndAdd(physicalStageEdge.getSrcVertex().getProperty(ExecutionProperty.Key.Parallelism));
       });
 
       outEdgesToOtherStages.forEach(physicalStageEdge -> {
-        LOG.info("initializeDataTransfer: Added OutputWriter Task {}", task.getId());
+        LOG.info("initDataTransfer: Added OutputWriter Task {}", task.getId());
         final OutputWriter outputWriter = channelFactory.createWriter(
             task, physicalStageEdge.getDstVertex(), physicalStageEdge);
         addOutputWriter(task, outputWriter);
@@ -119,7 +119,7 @@ public final class TaskGroupExecutor {
 
       addOutputCollector(task);
       if (!hasInputReader(task)) {
-        LOG.info("initializeDataTransfer: Adding LocalReader, Task {}", task.getId());
+        LOG.info("initDataTransfer: Adding LocalReader, Task {}", task.getId());
         addLocalReaders(task);
       }
     }));
@@ -157,13 +157,17 @@ public final class TaskGroupExecutor {
   // local(intra-TaskGroup) readers.
   private void addLocalReaders(final Task task) {
     List<OutputCollectorImpl> localReaders = new ArrayList<>();
-    List<Task> parentTasks = taskGroup.getTaskDAG().getParents(task.getRuntimeVertexId());
+    List<Task> parentTasks = taskGroup.getTaskDAG().getParents(task.getId());//(task.getRuntimeVertexId());
 
-    parentTasks.forEach(parentTask -> {
-      localReaders.add(taskIdToLocalWriterMap.get(parentTask.getId()));
-    });
+    if (parentTasks != null) {
+      parentTasks.forEach(parentTask -> {
+        localReaders.add(taskIdToLocalWriterMap.get(parentTask.getId()));
+      });
 
-    taskIdToLocalReaderMap.put(task.getId(), localReaders);
+      taskIdToLocalReaderMap.put(task.getId(), localReaders);
+    } else {
+      taskIdToLocalReaderMap.put(task.getId(), null);
+    }
   }
 
   private boolean hasInputReader(final Task task) {
