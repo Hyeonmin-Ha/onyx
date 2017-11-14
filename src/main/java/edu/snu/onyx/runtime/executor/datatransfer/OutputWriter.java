@@ -54,7 +54,7 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
   public OutputWriter(final int hashRangeMultiplier,
                       final int srcTaskIdx,
                       final String srcRuntimeVertexId,
-                      @Nullable final IRVertex dstRuntimeVertex, // Null if it is not a runtime vertex.
+                      @Nullable final IRVertex dstRuntimeVertex,
                       final RuntimeEdge<?> runtimeEdge,
                       final PartitionManagerWorker partitionManagerWorker) {
     super(runtimeEdge.getId());

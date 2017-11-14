@@ -98,6 +98,7 @@ public final class TaskGroupExecutor {
     final AtomicInteger taskIdx = new AtomicInteger(0);
 
     taskGroup.getTaskDAG().topologicalDo((task -> {
+      LOG.info("initializeDataTransfer: Task {}", task.getId());
       final Set<PhysicalStageEdge> inEdgesFromOtherStages = getInEdgesFromOtherStages(task);
       final Set<PhysicalStageEdge> outEdgesToOtherStages = getOutEdgesToOtherStages(task);
 
@@ -105,17 +106,22 @@ public final class TaskGroupExecutor {
         final InputReader inputReader = channelFactory.createReader(
             task, physicalStageEdge.getSrcVertex(), physicalStageEdge);
         addInputReader(task, inputReader);
+        LOG.info("initializeDataTransfer: Added InputReader, Task {}", task.getId());
         sourceParallelism.getAndAdd(physicalStageEdge.getSrcVertex().getProperty(ExecutionProperty.Key.Parallelism));
       });
 
       outEdgesToOtherStages.forEach(physicalStageEdge -> {
+        LOG.info("initializeDataTransfer: Added OutputWriter Task {}", task.getId());
         final OutputWriter outputWriter = channelFactory.createWriter(
             task, physicalStageEdge.getDstVertex(), physicalStageEdge);
         addOutputWriter(task, outputWriter);
       });
 
       addOutputCollector(task);
-      addLocalReaders(task);
+      if (!hasInputReader(task)) {
+        LOG.info("initializeDataTransfer: Adding LocalReader, Task {}", task.getId());
+        addLocalReaders(task);
+      }
     }));
   }
 
@@ -154,7 +160,7 @@ public final class TaskGroupExecutor {
     List<Task> parentTasks = taskGroup.getTaskDAG().getParents(task.getRuntimeVertexId());
 
     parentTasks.forEach(parentTask -> {
-          localReaders.add(taskIdToLocalWriterMap.get(parentTask.getId()));
+      localReaders.add(taskIdToLocalWriterMap.get(parentTask.getId()));
     });
 
     taskIdToLocalReaderMap.put(task.getId(), localReaders);
