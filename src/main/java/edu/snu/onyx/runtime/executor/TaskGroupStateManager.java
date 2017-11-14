@@ -148,8 +148,8 @@ public final class TaskGroupStateManager {
   public synchronized void onTaskStateChanged(final String taskId, final TaskState.State newState,
                                               final Optional<TaskGroupState.RecoverableFailureCause> cause) {
     final StateMachine taskStateChanged = idToTaskStates.get(taskId).getStateMachine();
-    LOG.debug("Task State Transition: id {} from {} to {}",
-        new Object[]{taskGroupId, taskStateChanged.getCurrentState(), newState});
+    LOG.debug("Task State Transition: Task {} of {} from {} to {}",
+        new Object[]{taskId, taskGroupId, taskStateChanged.getCurrentState(), newState});
     taskStateChanged.setState(newState);
 
     final Map<String, Object> metric = new HashMap<>();
