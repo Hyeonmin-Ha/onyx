@@ -59,7 +59,6 @@ public final class TaskGroupExecutorTest {
   private static final int DATA_SIZE = 100;
   private static final String CONTAINER_TYPE = "CONTAINER_TYPE";
   private static final int SOURCE_PARALLELISM = 5;
-  private PartitionManagerWorker partitionManagerWorker;
   private List elements;
   private Map<String, List<Iterable>> taskIdToOutputData;
   private DataTransferFactory dataTransferFactory;
@@ -71,7 +70,6 @@ public final class TaskGroupExecutorTest {
   public void setUp() throws Exception {
     elements = getRangedNumList(0, DATA_SIZE);
     taskIdToStateList = new HashMap<>();
-    partitionManagerWorker = mock(PartitionManagerWorker.class);
     expectedTaskStateList = new ArrayList<>();
     expectedTaskStateList.add(TaskState.State.EXECUTING);
     expectedTaskStateList.add(TaskState.State.COMPLETE);
@@ -93,9 +91,7 @@ public final class TaskGroupExecutorTest {
     // Mock a DataTransferFactory.
     taskIdToOutputData = new HashMap<>();
     dataTransferFactory = mock(DataTransferFactory.class);
-    when(dataTransferFactory.createLocalReader(any(), any())).then(new IntraStageReaderAnswer());
     when(dataTransferFactory.createReader(any(), any(), any())).then(new InterStageReaderAnswer());
-    when(dataTransferFactory.createLocalWriter(any(), any())).then(new WriterAnswer());
     when(dataTransferFactory.createWriter(any(), any(), any())).then(new WriterAnswer());
   }
 
@@ -118,6 +114,7 @@ public final class TaskGroupExecutorTest {
         return elements;
       }
     };
+
     final BoundedSourceTask<Integer> boundedSourceTask =
         new BoundedSourceTask<>(sourceTaskId, sourceIrVertexId, 0, sourceReader, taskGroupId);
 
@@ -130,7 +127,7 @@ public final class TaskGroupExecutorTest {
     // Execute the task group.
     final TaskGroupExecutor taskGroupExecutor = new TaskGroupExecutor(
         sourceTaskGroup, taskGroupStateManager, Collections.emptyList(), Collections.singletonList(stageOutEdge),
-        dataTransferFactory, partitionManagerWorker);
+        dataTransferFactory);
     taskGroupExecutor.execute();
 
     // Check the output.
@@ -186,7 +183,7 @@ public final class TaskGroupExecutorTest {
     // Execute the task group.
     final TaskGroupExecutor taskGroupExecutor = new TaskGroupExecutor(
         operatorTaskGroup, taskGroupStateManager, Collections.singletonList(stageInEdge),
-        Collections.singletonList(stageOutEdge), dataTransferFactory, partitionManagerWorker);
+        Collections.singletonList(stageOutEdge), dataTransferFactory);
     taskGroupExecutor.execute();
 
     // Check the output.
@@ -290,8 +287,8 @@ public final class TaskGroupExecutorTest {
     }
 
     @Override
-    public void onData(final Iterable<T> elements, final String srcVertexId) {
-      elements.forEach(element -> outputCollector.emit(element));
+    public void onData(final T element) {
+      outputCollector.emit(element);
     }
 
     @Override

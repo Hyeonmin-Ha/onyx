@@ -30,7 +30,6 @@ import edu.snu.onyx.runtime.executor.data.PartitionStore;
 import edu.snu.onyx.runtime.executor.datatransfer.communication.Broadcast;
 import edu.snu.onyx.runtime.executor.datatransfer.communication.OneToOne;
 import edu.snu.onyx.runtime.executor.datatransfer.communication.ScatterGather;
-import org.apache.avro.generic.GenericData;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

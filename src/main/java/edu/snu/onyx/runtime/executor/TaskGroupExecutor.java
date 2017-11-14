@@ -15,10 +15,7 @@
  */
 package edu.snu.onyx.runtime.executor;
 
-import edu.snu.onyx.common.Pair;
 import edu.snu.onyx.compiler.ir.*;
-//import edu.snu.onyx.compiler.ir.executionproperty.ExecutionProperty;
-//import edu.snu.onyx.runtime.common.RuntimeIdGenerator;
 import edu.snu.onyx.compiler.ir.executionproperty.ExecutionProperty;
 import edu.snu.onyx.runtime.common.plan.RuntimeEdge;
 import edu.snu.onyx.runtime.common.plan.physical.*;
@@ -26,13 +23,11 @@ import edu.snu.onyx.runtime.common.state.TaskGroupState;
 import edu.snu.onyx.runtime.common.state.TaskState;
 import edu.snu.onyx.runtime.exception.PartitionFetchException;
 import edu.snu.onyx.runtime.exception.PartitionWriteException;
-import edu.snu.onyx.runtime.executor.data.PartitionManagerWorker;
 import edu.snu.onyx.runtime.executor.datatransfer.DataTransferFactory;
 import edu.snu.onyx.runtime.executor.datatransfer.InputReader;
 import edu.snu.onyx.runtime.executor.datatransfer.OutputWriter;
 import edu.snu.onyx.runtime.master.irimpl.ContextImpl;
 import edu.snu.onyx.runtime.master.irimpl.OutputCollectorImpl;
-//import edu.snu.onyx.common.dag.DAG;
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
@@ -42,7 +37,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.jvm.hotspot.jdi.ArrayReferenceImpl;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -225,7 +219,8 @@ public final class TaskGroupExecutor {
   /**
    * Processes a BoundedSourceTask.
    * Reads input data from the bounded source at once.
-   * @param boundedSourceTask to execute
+   * @param boundedSourceTask to execute.
+   * @throws Exception RuntimeException.
    */
   private void launchBoundedSourceTask(final BoundedSourceTask boundedSourceTask) throws Exception {
     final Reader reader = boundedSourceTask.getReader();
@@ -240,9 +235,14 @@ public final class TaskGroupExecutor {
       });
     } else {
       OutputCollectorImpl outputCollector = taskIdToLocalWriterMap.get(boundedSourceTask.getId());
-      readData.forEach(data -> {
-        outputCollector.emit(data);
-      });
+      try {
+        readData.forEach(data -> {
+          outputCollector.emit(data);
+          LOG.info("launchBoundedSourceVertex: outputCollector.emit({})", data);
+        });
+      } catch (final Exception e) {
+        throw new RuntimeException();
+      }
     }
   }
 
