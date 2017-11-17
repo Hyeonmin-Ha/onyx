@@ -17,7 +17,7 @@ public class TestMultiParallelismPolicy implements Policy {
   @Override
   public List<CompileTimePass> getCompileTimePasses() {
     final List<CompileTimePass> list = new ArrayList<>();
-    list.add(new ParallelismPass(3));
+    list.add(new ParallelismPass(2));
     list.addAll(testPolicy.getCompileTimePasses());
     return list;
   }
