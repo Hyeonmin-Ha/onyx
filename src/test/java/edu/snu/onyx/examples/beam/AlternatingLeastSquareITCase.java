@@ -66,6 +66,7 @@ public final class AlternatingLeastSquareITCase {
         .build());
   }
 
+  @Test (timeout = TIMEOUT)
   public void testMultiParallelism() throws Exception {
     JobLauncher.main(builder
         .addJobId(MultinomialLogisticRegressionITCase.class.getSimpleName() + "_multiparallelism")

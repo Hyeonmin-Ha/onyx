@@ -43,7 +43,6 @@ public final class DefaultStagePartitioningPass extends AnnotatingPass {
   public DefaultStagePartitioningPass() {
     super(ExecutionProperty.Key.StageId, Stream.of(
         ExecutionProperty.Key.ExecutorPlacement,
-        ExecutionProperty.Key.Parallelism,
         ExecutionProperty.Key.DataStore
     ).collect(Collectors.toSet()));
   }

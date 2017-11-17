@@ -21,7 +21,6 @@ import edu.snu.onyx.compiler.ir.IREdge;
 import edu.snu.onyx.compiler.ir.IRVertex;
 import edu.snu.onyx.common.dag.DAG;
 import edu.snu.onyx.compiler.ir.executionproperty.ExecutionProperty;
-import edu.snu.onyx.compiler.ir.executionproperty.vertex.ExecutorPlacementProperty;
 import edu.snu.onyx.runtime.executor.data.stores.GlusterFileStore;
 import edu.snu.onyx.runtime.executor.data.stores.MemoryStore;
 import edu.snu.onyx.runtime.executor.datatransfer.communication.OneToOne;

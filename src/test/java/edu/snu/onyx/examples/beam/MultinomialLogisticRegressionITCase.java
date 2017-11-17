@@ -67,6 +67,7 @@ public final class MultinomialLogisticRegressionITCase {
         .build());
   }
 
+  @Test (timeout = TIMEOUT)
   public void testMultiParallelism() throws Exception {
     JobLauncher.main(builder
         .addJobId(MultinomialLogisticRegressionITCase.class.getSimpleName() + "_multiparallelism")
