@@ -69,6 +69,10 @@ public final class ClosableBlockingQueue<T> implements AutoCloseable {
     notifyAll();
   }
 
+  public synchronized boolean isClosed() {
+    return closed;
+  }
+
   /**
    * Retrieves and removes the head of this queue, waiting if necessary.
    *

@@ -110,6 +110,11 @@ public final class PartitionManagerWorker {
     store.createPartition(partitionId);
   }
 
+
+  public boolean isInputStreamClosed() {
+    return partitionTransfer.isInputStreamClosed();
+  }
+
   /**
    * Retrieves data from the stored partition. A specific hash value range can be designated.
    * This can be invoked multiple times per partitionId (maybe due to failures).
@@ -185,7 +190,7 @@ public final class PartitionManagerWorker {
       // This is the executor id that we wanted to know
       final String remoteWorkerId = partitionLocationInfoMsg.getOwnerExecutorId();
       return partitionTransfer.initiatePull(remoteWorkerId, false, partitionStore, partitionId,
-          runtimeEdgeId, hashRange).getCompleteFuture();
+            runtimeEdgeId, hashRange).getCompleteFuture();
     });
   }
 

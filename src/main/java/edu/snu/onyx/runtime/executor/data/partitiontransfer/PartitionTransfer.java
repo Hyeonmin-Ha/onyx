@@ -52,6 +52,8 @@ public final class PartitionTransfer extends SimpleChannelInboundHandler<Partiti
   private final String localExecutorId;
   private final int bufferSize;
 
+  private boolean isInputStreamClosed = false;
+  private final ConcurrentMap<PartitionInputStream, Boolean> inputStreamToStatusMap = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, ChannelFuture> executorIdToChannelFutureMap = new ConcurrentHashMap<>();
   private final ConcurrentMap<Channel, String> channelToExecutorIdMap = new ConcurrentHashMap<>();
   private final ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
@@ -98,8 +100,7 @@ public final class PartitionTransfer extends SimpleChannelInboundHandler<Partiti
    * @param partitionId             the id of the partition to transfer
    * @param runtimeEdgeId           the runtime edge id
    * @param hashRange               the hash range
-   * @return a {@link PartitionInputStream} from which the received
-   *         {@link edu.snu.onyx.compiler.ir.Element}s can be read
+   * @return a {@link PartitionInputStream} from which the received data can be read
    */
   public PartitionInputStream initiatePull(final String executorId,
                                            final boolean encodePartialPartition,
@@ -107,11 +108,13 @@ public final class PartitionTransfer extends SimpleChannelInboundHandler<Partiti
                                            final String partitionId,
                                            final String runtimeEdgeId,
                                            final HashRange hashRange) {
-    final PartitionInputStream stream = new PartitionInputStream(executorId, encodePartialPartition,
+    final PartitionInputStream inputStream = new PartitionInputStream(executorId, encodePartialPartition,
         Optional.of(partitionStore), partitionId, runtimeEdgeId, hashRange);
-    stream.setCoderAndExecutorService(partitionManagerWorker.get().getCoder(runtimeEdgeId), inboundExecutorService);
-    write(executorId, stream, stream::onExceptionCaught);
-    return stream;
+    inputStreamToStatusMap.putIfAbsent(inputStream, false);
+    inputStream.setCoderAndExecutorService(partitionManagerWorker.get().getCoder(runtimeEdgeId),
+        inboundExecutorService);
+    write(executorId, inputStream, inputStream::onExceptionCaught);
+    return inputStream;
   }
 
   /**
@@ -122,7 +125,7 @@ public final class PartitionTransfer extends SimpleChannelInboundHandler<Partiti
    * @param partitionId             the id of the partition to transfer
    * @param runtimeEdgeId           the runtime edge id
    * @param hashRange               the hash range
-   * @return a {@link PartitionOutputStream} to which {@link edu.snu.onyx.compiler.ir.Element}s can be written
+   * @return a {@link PartitionOutputStream} to which data can be written
    */
   public PartitionOutputStream initiatePush(final String executorId,
                                             final boolean encodePartialPartition,
@@ -135,6 +138,10 @@ public final class PartitionTransfer extends SimpleChannelInboundHandler<Partiti
         outboundExecutorService, bufferSize);
     write(executorId, stream, stream::onExceptionCaught);
     return stream;
+  }
+
+  public boolean isInputStreamClosed() {
+    return isInputStreamClosed;
   }
 
   /**
@@ -171,6 +178,13 @@ public final class PartitionTransfer extends SimpleChannelInboundHandler<Partiti
             .addListener(new ControlMessageWriteFutureListener(channelFuture, remoteExecutorId, onError));
         return;
       }
+      // This channelFuture's job is ended here.
+      // Check whether the following PartitionInputStream is closed as well.
+      isInputStreamClosed = ((PartitionInputStream) stream).isInputStreamClosed();
+      LOG.info("log: PartitionTransfer: inputstream.isClosed(): {} ", isInputStreamClosed);
+
+      //inputStreamToStatusMap.replace((PartitionInputStream)stream, );
+
       executorIdToChannelFutureMap.remove(remoteExecutorId, channelFuture);
       if (future.cause() != null) {
         onError.accept(future.cause());

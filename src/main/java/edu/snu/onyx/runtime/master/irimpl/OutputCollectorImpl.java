@@ -58,6 +58,14 @@ public final class OutputCollectorImpl<O> implements OutputCollector<O> {
     return outputQueue.get().remove();
   }
 
+  public boolean isEmpty() {
+    return outputQueue.get().isEmpty();
+  }
+
+  public Object[] getQueueElements() {
+    return outputQueue.get().toArray();
+  }
+
   /**
    * Collects the accumulated output and replace the output list.
    *

@@ -113,7 +113,8 @@ public final class Executor {
           taskGroupStateManager,
           scheduledTaskGroup.getTaskGroupIncomingEdges(),
           scheduledTaskGroup.getTaskGroupOutgoingEdges(),
-          dataTransferFactory).execute();
+          dataTransferFactory,
+          partitionManagerWorker).execute();
     } catch (final Exception e) {
       persistentConnectionToMasterMap.getMessageSender(MessageEnvironment.RUNTIME_MASTER_MESSAGE_LISTENER_ID).send(
           ControlMessage.Message.newBuilder()

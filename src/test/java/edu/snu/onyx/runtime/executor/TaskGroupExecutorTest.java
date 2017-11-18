@@ -59,6 +59,7 @@ public final class TaskGroupExecutorTest {
   private static final int DATA_SIZE = 100;
   private static final String CONTAINER_TYPE = "CONTAINER_TYPE";
   private static final int SOURCE_PARALLELISM = 5;
+  private PartitionManagerWorker partitionManagerWorker;
   private List elements;
   private Map<String, List<Iterable>> taskIdToOutputData;
   private DataTransferFactory dataTransferFactory;
@@ -70,11 +71,13 @@ public final class TaskGroupExecutorTest {
   public void setUp() throws Exception {
     elements = getRangedNumList(0, DATA_SIZE);
     taskIdToStateList = new HashMap<>();
+    partitionManagerWorker = mock(PartitionManagerWorker.class);
     expectedTaskStateList = new ArrayList<>();
     expectedTaskStateList.add(TaskState.State.EXECUTING);
     expectedTaskStateList.add(TaskState.State.COMPLETE);
 
     // Mock a TaskGroupStateManager. It accumulates the state change into a list.
+    /*
     taskGroupStateManager = mock(TaskGroupStateManager.class);
     doAnswer(new Answer() {
       @Override
@@ -87,7 +90,7 @@ public final class TaskGroupExecutorTest {
         return null;
       }
     }).when(taskGroupStateManager).onTaskStateChanged(any(), any(), any());
-
+    */
     // Mock a DataTransferFactory.
     taskIdToOutputData = new HashMap<>();
     dataTransferFactory = mock(DataTransferFactory.class);
@@ -127,7 +130,7 @@ public final class TaskGroupExecutorTest {
     // Execute the task group.
     final TaskGroupExecutor taskGroupExecutor = new TaskGroupExecutor(
         sourceTaskGroup, taskGroupStateManager, Collections.emptyList(), Collections.singletonList(stageOutEdge),
-        dataTransferFactory);
+        dataTransferFactory, partitionManagerWorker);
     taskGroupExecutor.execute();
 
     // Check the output.
@@ -183,7 +186,7 @@ public final class TaskGroupExecutorTest {
     // Execute the task group.
     final TaskGroupExecutor taskGroupExecutor = new TaskGroupExecutor(
         operatorTaskGroup, taskGroupStateManager, Collections.singletonList(stageInEdge),
-        Collections.singletonList(stageOutEdge), dataTransferFactory);
+        Collections.singletonList(stageOutEdge), dataTransferFactory, partitionManagerWorker);
     taskGroupExecutor.execute();
 
     // Check the output.
