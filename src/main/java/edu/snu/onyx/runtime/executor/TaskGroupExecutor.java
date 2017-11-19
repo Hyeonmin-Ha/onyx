@@ -437,7 +437,6 @@ public final class TaskGroupExecutor {
             }
           });
     }
-    
     // Consumes the received element from incoming edges.
     IntStream.range(0, sourceParallelism.get()).forEach(srcTaskNum -> {
       try {

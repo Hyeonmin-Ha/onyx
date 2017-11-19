@@ -30,6 +30,8 @@ import edu.snu.onyx.runtime.executor.datatransfer.communication.Broadcast;
 import edu.snu.onyx.runtime.executor.datatransfer.communication.OneToOne;
 import edu.snu.onyx.runtime.executor.datatransfer.communication.ScatterGather;
 import edu.snu.onyx.compiler.ir.partitioner.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -38,6 +40,8 @@ import java.util.*;
  * Represents the output data transfer from a task.
  */
 public final class OutputWriter extends DataTransfer implements AutoCloseable {
+  private static final Logger LOG = LoggerFactory.getLogger(OutputWriter.class.getName());
+
   private final String partitionId;
   private final RuntimeEdge<?> runtimeEdge;
   private final String srcVertexId;
@@ -97,6 +101,10 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
 
     final KeyExtractor keyExtractor = runtimeEdge.getProperty(ExecutionProperty.Key.KeyExtractor);
     final List<Block> blocksToWrite = partitioner.partition(dataToWrite, dstParallelism, keyExtractor);
+
+    LOG.info("log: OutputWriter.write({}): Partitioner {} blocksToWrite {}", dataToWrite.toString(),
+        partitioner.getClass().getSimpleName(),
+        blocksToWrite.toArray().toString());
 
     // Write the grouped blocks into partitions.
     // TODO #492: Modularize the data communication pattern.

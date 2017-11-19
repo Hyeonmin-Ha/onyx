@@ -208,8 +208,8 @@ public final class PartitionManagerWorker {
                                         final Iterable<Block> blocks,
                                         final Class<? extends PartitionStore> partitionStore,
                                         final boolean commitPerBlock) {
-    LOG.info("PutBlocks: {}", partitionId);
     final PartitionStore store = getPartitionStore(partitionStore);
+    LOG.info("PutBlocks: {}, PartitionStore {}", partitionId, store.getClass().getSimpleName());
 
     try {
       return store.putToPartition(partitionId, blocks, commitPerBlock);
