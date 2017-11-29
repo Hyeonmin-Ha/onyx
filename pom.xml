@@ -4,9 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.snu</groupId>
-    <artifactId>onyx</artifactId>
+    <groupId>edu.snu.onyx</groupId>
+    <artifactId>onyx-project</artifactId>
     <version>0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Onyx Project</name>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -18,13 +20,30 @@
         <powermock.version>1.6.6</powermock.version>
         <netlib.version>1.1.2</netlib.version>
         <apache.commons.version>2.1.1</apache.commons.version>
-        <jackson.version>2.2.3</jackson.version>
+        <jackson.version>2.8.8</jackson.version>
         <protobuf.version>2.5.0</protobuf.version>
         <slf4j.version>1.7.20</slf4j.version>
         <commons.lang.version>3.5</commons.lang.version>
         <hadoop.version>2.7.2</hadoop.version>
         <log4j.configuration>file://config/log4j.properties</log4j.configuration>
+        <grpc.version>1.7.0</grpc.version>
+        <netty.version>4.1.16.Final</netty.version>
+        <guava.version>19.0</guava.version>
     </properties>
+
+    <modules>
+        <module>conf</module>
+        <module>client</module>
+        <module>common</module>
+        <module>compiler/backend</module>
+        <module>compiler/frontend</module>
+        <module>compiler/optimizer</module>
+	    <module>examples</module>
+        <module>runtime/common</module>
+    	<module>runtime/executor</module>
+	    <module>runtime/master</module>
+        <module>tests</module>
+    </modules>
 
     <repositories>
         <repository>
@@ -34,11 +53,6 @@
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-aws</artifactId>
-            <version>${hadoop.version}</version>
-        </dependency>
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
@@ -94,6 +108,18 @@
             <artifactId>beam-sdks-java-io-hadoop-input-format</artifactId>
             <version>${beam.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -113,7 +139,7 @@
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-easymock</artifactId>
+            <artifactId>powermock-api-mockito</artifactId>
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
@@ -129,16 +155,33 @@
             <version>${apache.commons.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons.lang.version}</version>
         </dependency>
-        <!-- hadoop should come last to be 'overwritten'. If not, some very bad dependency conflicts occur -->
+        <!-- GRPC -->
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-testing</artifactId>
+            <version>${grpc.version}</version>
+            <scope>test</scope>
+        </dependency>
+	<!-- hadoop should come last to be 'overwritten'. If not, some very bad dependency conflicts occur -->
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-common</artifactId>
@@ -151,9 +194,39 @@
             <version>${hadoop.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-aws</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency> 
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <!-- Follow netty version of grpc which is more later than the netty version of reef-wake -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <!-- Follow guava version of grpc -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>1.5.0.Final</version>
+            </extension>
+        </extensions>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -165,28 +238,6 @@
                             <goal>integration-test</goal>
                             <goal>verify</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <outputFile>
-                                ${project.build.directory}/${project.artifactId}-${project.version}-shaded.jar
-                            </outputFile>
-                            <transformers>
-                                <!-- Required for using beam-hadoop: See https://stackoverflow.com/questions/44365545 -->
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                            </transformers>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -231,24 +282,19 @@
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>0.5.0</version>
+                <configuration>
+                    <pluginId>grpc-java</pluginId>
+                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>generate-sources</id>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <tasks>
-                                <mkdir dir="target/generated-sources"/>
-                                <exec executable="protoc">
-                                    <arg value="--proto_path=src/main/resources/protobuf/"/>
-                                    <arg value="--java_out=target/generated-sources"/>
-                                    <arg value="src/main/resources/protobuf/ControlMessage.proto"/>
-                                </exec>
-                            </tasks>
-                            <sourceRoot>${project.basedir}/target/generated-sources</sourceRoot>
-                        </configuration>
                         <goals>
-                            <goal>run</goal>
+                            <goal>compile</goal>
+                            <goal>compile-custom</goal>
                         </goals>
                     </execution>
                 </executions>
