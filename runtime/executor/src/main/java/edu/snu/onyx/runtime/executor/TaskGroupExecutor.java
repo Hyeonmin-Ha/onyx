@@ -153,8 +153,6 @@ public final class TaskGroupExecutor {
     if (sourceParallelism.get() == 0) {
       sourceParallelism.getAndAdd(1);
     }
-
-    LOG.info("log: {} End of initTGExec", taskGroup.getTaskGroupId());
   }
 
   // Helper functions to initializes cross-stage edges.
@@ -310,7 +308,7 @@ public final class TaskGroupExecutor {
   }
 
   public boolean isTaskGroupComplete() {
-    LOG.info("log: {} Complete!", taskGroup.getTaskGroupId());
+    //LOG.info("log: {} Complete!", taskGroup.getTaskGroupId());
     return taskTypeToTaskIdMap.isEmpty();
   }
 
