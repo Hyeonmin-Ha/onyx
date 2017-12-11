@@ -134,18 +134,16 @@ public final class TaskGroupExecutor {
       // Add OutputCollectors for inter- and intra-stage data transfer
       addLocalWriter(task);
 
-      LOG.info("log: {} getIncomingEdgesOf({})({}): {}", taskGroup.getTaskGroupId(),
-          task.getId(), task.getRuntimeVertexId(),
-          taskGroup.getTaskDAG().getIncomingEdgesOf(task));
-
       // Add LocalReaders for intra-stage data transfer
       if (!taskGroup.getTaskDAG().getIncomingEdgesOf(task).isEmpty()
           && !hasInputReader(task)) {
         addLocalReaders(task);
+        LOG.info("log: Added LocalReaders {} {} {}", taskGroup.getTaskGroupId(),
+            task.getId(), task.getRuntimeVertexId());
       }
 
       // Add initial Task states
-      LOG.info("log: taskTypeToTaskIdMap: Adding {} {}:{}",
+      LOG.info("log: taskTypeToTaskIdMap: Added {} {}:{}",
           taskGroup.getTaskGroupId(), task.getClass().getSimpleName(), task.getId());
       taskTypeToTaskIdMap.put(task.getId(), task.getClass().getName());
     }));
@@ -190,7 +188,7 @@ public final class TaskGroupExecutor {
     List<Task> parentTasks = taskGroup.getTaskDAG().getParents(task.getId());
 
     if (parentTasks != null) {
-      LOG.info("log: Adding LocalReader, {} {} {}", taskGroup.getTaskGroupId(),
+      LOG.info("log: Added LocalReader, {} {} {}", taskGroup.getTaskGroupId(),
           task.getId(), task.getRuntimeVertexId());
       parentTasks.forEach(parent -> LOG.info("log: Parents of {} {}: {}", taskGroup.getTaskGroupId(),
           task.getRuntimeVertexId(), parent.getRuntimeVertexId()));
@@ -257,6 +255,9 @@ public final class TaskGroupExecutor {
         }
       });
     }
+
+    taskGroupStateManager.onTaskGroupStateChanged(TaskGroupState.State.COMPLETE, Optional.empty(), Optional.empty());
+    LOG.info("log: {} Complete!", taskGroup.getTaskGroupId());
   }
 
   private boolean isLocalReadersEmpty(final Task task) {
@@ -308,7 +309,6 @@ public final class TaskGroupExecutor {
   }
 
   public boolean isTaskGroupComplete() {
-    //LOG.info("log: {} Complete!", taskGroup.getTaskGroupId());
     return taskTypeToTaskIdMap.isEmpty();
   }
 
@@ -340,7 +340,7 @@ public final class TaskGroupExecutor {
         try {
           readData.forEach(data -> {
             outputCollector.emit(data);
-            LOG.info("log: {} {} {} Adding {} to LocalWriter", taskGroup.getTaskGroupId(),
+            LOG.info("log: {} {} {} Put {} to LocalWriter", taskGroup.getTaskGroupId(),
                 boundedSourceTask.getId(), boundedSourceTask.getRuntimeVertexId(), data);
           });
         } catch (final Exception e) {
@@ -363,15 +363,16 @@ public final class TaskGroupExecutor {
 
     LOG.info("log: Start of launchOperatorTask {} {} {}", taskGroup.getTaskGroupId(),
         operatorTask.getId(), operatorTask.getRuntimeVertexId());
-    LOG.info("log: sideInputReaders {} {}", taskGroup.getTaskGroupId(),
-        taskIdToInputReaderMap.get(operatorTask.getId()));  //.stream().filter(InputReader::isSideInputReader));
+
     // Check for side inputs
     if (hasInputReader(operatorTask)) {
       taskIdToInputReaderMap.get(operatorTask.getId()).stream().filter(InputReader::isSideInputReader)
-          .forEach(inputReader -> {
+          .forEach(sideInputReader -> {
+            LOG.info("log: sideInputReader of {} {} {}", taskGroup.getTaskGroupId(), operatorTask.getId(),
+                operatorTask.getRuntimeVertexId());
             try {
-              final Object sideInput = inputReader.getSideInput().get();
-              final RuntimeEdge inEdge = inputReader.getRuntimeEdge();
+              final Object sideInput = sideInputReader.getSideInput().get();
+              final RuntimeEdge inEdge = sideInputReader.getRuntimeEdge();
               final Transform srcTransform;
               if (inEdge instanceof PhysicalStageEdge) {
                 srcTransform = ((OperatorVertex) ((PhysicalStageEdge) inEdge).getSrcVertex())
