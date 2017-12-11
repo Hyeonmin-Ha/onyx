@@ -28,6 +28,7 @@ import edu.snu.onyx.common.ir.Transform;
 import edu.snu.onyx.common.ir.executionproperty.ExecutionProperty;
 import edu.snu.onyx.compiler.optimizer.CompiletimeOptimizer;
 import edu.snu.onyx.compiler.optimizer.examples.EmptyComponents;
+import edu.snu.onyx.conf.JobConf;
 import edu.snu.onyx.tests.runtime.RuntimeTestUtil;
 import edu.snu.onyx.runtime.common.comm.ControlMessage;
 import edu.snu.onyx.runtime.common.message.MessageSender;
@@ -45,6 +46,7 @@ import edu.snu.onyx.common.dag.DAGBuilder;
 import edu.snu.onyx.runtime.master.scheduler.*;
 import edu.snu.onyx.tests.compiler.optimizer.TestPolicy;
 import org.apache.reef.driver.context.ActiveContext;
+import org.apache.reef.tang.Injector;
 import org.apache.reef.tang.Tang;
 import org.apache.reef.tang.exceptions.InjectionException;
 import org.junit.Before;
@@ -133,7 +135,9 @@ public final class BatchSingleJobSchedulerTest {
     scheduler.onExecutorAdded(b1.getExecutorId());
     scheduler.onExecutorAdded(b2.getExecutorId());
 
-    physicalPlanGenerator = Tang.Factory.getTang().newInjector().getInstance(PhysicalPlanGenerator.class);
+    final Injector injector = Tang.Factory.getTang().newInjector();
+    injector.bindVolatileParameter(JobConf.DAGDirectory.class, "");
+    physicalPlanGenerator = injector.getInstance(PhysicalPlanGenerator.class);
   }
 
   /**
@@ -169,16 +173,16 @@ public final class BatchSingleJobSchedulerTest {
     v5.setProperty(ExecutorPlacementProperty.of(ExecutorPlacementProperty.TRANSIENT));
     irDAGBuilder.addVertex(v5);
 
-    final IREdge e1 = new IREdge(DataCommunicationPatternProperty.Value.ScatterGather, v1, v2, Coder.DUMMY_CODER);
+    final IREdge e1 = new IREdge(DataCommunicationPatternProperty.Value.Shuffle, v1, v2, Coder.DUMMY_CODER);
     irDAGBuilder.connectVertices(e1);
 
-    final IREdge e2 = new IREdge(DataCommunicationPatternProperty.Value.ScatterGather, v3, v2, Coder.DUMMY_CODER);
+    final IREdge e2 = new IREdge(DataCommunicationPatternProperty.Value.Shuffle, v3, v2, Coder.DUMMY_CODER);
     irDAGBuilder.connectVertices(e2);
 
-    final IREdge e4 = new IREdge(DataCommunicationPatternProperty.Value.ScatterGather, v2, v4, Coder.DUMMY_CODER);
+    final IREdge e4 = new IREdge(DataCommunicationPatternProperty.Value.Shuffle, v2, v4, Coder.DUMMY_CODER);
     irDAGBuilder.connectVertices(e4);
 
-    final IREdge e5 = new IREdge(DataCommunicationPatternProperty.Value.ScatterGather, v2, v5, Coder.DUMMY_CODER);
+    final IREdge e5 = new IREdge(DataCommunicationPatternProperty.Value.Shuffle, v2, v5, Coder.DUMMY_CODER);
     irDAGBuilder.connectVertices(e5);
 
     final DAG<IRVertex, IREdge> pullIRDAG = CompiletimeOptimizer.optimize(irDAGBuilder.buildWithoutSourceSinkCheck(),
@@ -220,16 +224,16 @@ public final class BatchSingleJobSchedulerTest {
     v5.setProperty(ExecutorPlacementProperty.of(ExecutorPlacementProperty.TRANSIENT));
     irDAGBuilder.addVertex(v5);
 
-    final IREdge e1 = new IREdge(DataCommunicationPatternProperty.Value.ScatterGather, v1, v2, Coder.DUMMY_CODER);
+    final IREdge e1 = new IREdge(DataCommunicationPatternProperty.Value.Shuffle, v1, v2, Coder.DUMMY_CODER);
     irDAGBuilder.connectVertices(e1);
 
-    final IREdge e2 = new IREdge(DataCommunicationPatternProperty.Value.ScatterGather, v3, v2, Coder.DUMMY_CODER);
+    final IREdge e2 = new IREdge(DataCommunicationPatternProperty.Value.Shuffle, v3, v2, Coder.DUMMY_CODER);
     irDAGBuilder.connectVertices(e2);
 
-    final IREdge e4 = new IREdge(DataCommunicationPatternProperty.Value.ScatterGather, v2, v4, Coder.DUMMY_CODER);
+    final IREdge e4 = new IREdge(DataCommunicationPatternProperty.Value.Shuffle, v2, v4, Coder.DUMMY_CODER);
     irDAGBuilder.connectVertices(e4);
 
-    final IREdge e5 = new IREdge(DataCommunicationPatternProperty.Value.ScatterGather, v2, v5, Coder.DUMMY_CODER);
+    final IREdge e5 = new IREdge(DataCommunicationPatternProperty.Value.Shuffle, v2, v5, Coder.DUMMY_CODER);
     irDAGBuilder.connectVertices(e5);
 
     final DAG<IRVertex, IREdge> pushIRDAG =

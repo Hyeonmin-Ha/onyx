@@ -21,6 +21,7 @@ import edu.snu.onyx.common.ir.edge.IREdge;
 import edu.snu.onyx.common.ir.edge.executionproperty.DataCommunicationPatternProperty;
 import edu.snu.onyx.common.ir.edge.executionproperty.DataFlowModelProperty;
 import edu.snu.onyx.common.ir.edge.executionproperty.DataStoreProperty;
+import edu.snu.onyx.common.ir.edge.executionproperty.UsedDataHandlingProperty;
 import edu.snu.onyx.common.ir.executionproperty.ExecutionProperty;
 import edu.snu.onyx.common.ir.vertex.IRVertex;
 import edu.snu.onyx.compiler.optimizer.pass.compiletime.composite.SailfishPass;
@@ -52,15 +53,17 @@ public class SailfishPassTest {
 
     processedDAG.getTopologicalSort().forEach(irVertex -> {
       if (processedDAG.getIncomingEdgesOf(irVertex).stream().anyMatch(irEdge ->
-          irEdge.getProperty(ExecutionProperty.Key.DataCommunicationPattern)
-            .equals(DataCommunicationPatternProperty.Value.ScatterGather))) {
+              DataCommunicationPatternProperty.Value.Shuffle
+          .equals(irEdge.getProperty(ExecutionProperty.Key.DataCommunicationPattern)))) {
         // Merger vertex
         processedDAG.getIncomingEdgesOf(irVertex).forEach(edgeToMerger -> {
-          if (edgeToMerger.getProperty(ExecutionProperty.Key.DataCommunicationPattern)
-              .equals(DataCommunicationPatternProperty.Value.ScatterGather)) {
+          if (DataCommunicationPatternProperty.Value.Shuffle
+          .equals(edgeToMerger.getProperty(ExecutionProperty.Key.DataCommunicationPattern))) {
             assertEquals(DataFlowModelProperty.Value.Push,
                 edgeToMerger.getProperty(ExecutionProperty.Key.DataFlowModel));
-            assertEquals(DataStoreProperty.Value.MemoryStore,
+            assertEquals(UsedDataHandlingProperty.Value.Discard,
+                edgeToMerger.getProperty(ExecutionProperty.Key.UsedDataHandling));
+            assertEquals(DataStoreProperty.Value.SerializedMemoryStore,
                 edgeToMerger.getProperty(ExecutionProperty.Key.DataStore));
           } else {
             assertEquals(DataFlowModelProperty.Value.Pull,

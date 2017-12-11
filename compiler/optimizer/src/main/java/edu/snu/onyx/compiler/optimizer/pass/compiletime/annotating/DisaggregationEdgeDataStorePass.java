@@ -29,8 +29,6 @@ import java.util.List;
  * This pass handles the DataStore ExecutionProperty.
  */
 public final class DisaggregationEdgeDataStorePass extends AnnotatingPass {
-  public static final String SIMPLE_NAME = "DisaggregationEdgeDataStorePass";
-
   public DisaggregationEdgeDataStorePass() {
     super(ExecutionProperty.Key.DataStore, Collections.singleton(ExecutionProperty.Key.DataStore));
   }
@@ -40,8 +38,8 @@ public final class DisaggregationEdgeDataStorePass extends AnnotatingPass {
     dag.getVertices().forEach(vertex -> { // Initialize the DataStore of the DAG with GlusterFileStore.
       final List<IREdge> inEdges = dag.getIncomingEdgesOf(vertex);
       inEdges.forEach(edge -> {
-        if (edge.getProperty(ExecutionProperty.Key.DataStore)
-            .equals(DataStoreProperty.Value.LocalFileStore)) {
+        if (DataStoreProperty.Value.LocalFileStore
+              .equals(edge.getProperty(ExecutionProperty.Key.DataStore))) {
           edge.setProperty(DataStoreProperty.of(DataStoreProperty.Value.GlusterFileStore));
         }
       });

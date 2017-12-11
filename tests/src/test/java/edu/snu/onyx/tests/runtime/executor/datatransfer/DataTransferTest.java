@@ -17,10 +17,7 @@ package edu.snu.onyx.tests.runtime.executor.datatransfer;
 
 import edu.snu.onyx.common.eventhandler.PubSubEventHandlerWrapper;
 import edu.snu.onyx.common.ir.edge.IREdge;
-import edu.snu.onyx.common.ir.edge.executionproperty.DataCommunicationPatternProperty;
-import edu.snu.onyx.common.ir.edge.executionproperty.DataStoreProperty;
-import edu.snu.onyx.common.ir.edge.executionproperty.KeyExtractorProperty;
-import edu.snu.onyx.common.ir.edge.executionproperty.PartitionerProperty;
+import edu.snu.onyx.common.ir.edge.executionproperty.*;
 import edu.snu.onyx.common.ir.vertex.BoundedSourceVertex;
 import edu.snu.onyx.common.ir.vertex.IRVertex;
 import edu.snu.onyx.common.ir.vertex.executionproperty.ParallelismProperty;
@@ -104,8 +101,8 @@ public final class DataTransferTest {
   private static final DataStoreProperty.Value SER_MEMORY_STORE = DataStoreProperty.Value.SerializedMemoryStore;
   private static final DataStoreProperty.Value LOCAL_FILE_STORE = DataStoreProperty.Value.LocalFileStore;
   private static final DataStoreProperty.Value REMOTE_FILE_STORE = DataStoreProperty.Value.GlusterFileStore;
-  private static final String tmp_LOCAL_FILE_DIRECTORY = "./tmpLocalFiles";
-  private static final String tmp_REMOTE_FILE_DIRECTORY = "./tmpRemoteFiles";
+  private static final String TMP_LOCAL_FILE_DIRECTORY = "./tmpLocalFiles";
+  private static final String TMP_REMOTE_FILE_DIRECTORY = "./tmpRemoteFiles";
   private static final int PARALLELISM_TEN = 10;
   private static final String EDGE_PREFIX_TEMPLATE = "Dummy(%d)";
   private static final AtomicInteger TEST_INDEX = new AtomicInteger(0);
@@ -157,8 +154,8 @@ public final class DataTransferTest {
 
   @After
   public void tearDown() throws IOException {
-    FileUtils.deleteDirectory(new File(tmp_LOCAL_FILE_DIRECTORY));
-    FileUtils.deleteDirectory(new File(tmp_REMOTE_FILE_DIRECTORY));
+    FileUtils.deleteDirectory(new File(TMP_LOCAL_FILE_DIRECTORY));
+    FileUtils.deleteDirectory(new File(TMP_REMOTE_FILE_DIRECTORY));
   }
 
   private PartitionManagerWorker createWorker(final String executorId, final LocalMessageDispatcher messageDispatcher,
@@ -172,8 +169,8 @@ public final class DataTransferTest {
     final Injector injector = nameClientInjector.forkInjector(executorConfiguration);
     injector.bindVolatileInstance(MessageEnvironment.class, messageEnvironment);
     injector.bindVolatileInstance(PersistentConnectionToMasterMap.class, conToMaster);
-    injector.bindVolatileParameter(JobConf.FileDirectory.class, tmp_LOCAL_FILE_DIRECTORY);
-    injector.bindVolatileParameter(JobConf.GlusterVolumeDirectory.class, tmp_REMOTE_FILE_DIRECTORY);
+    injector.bindVolatileParameter(JobConf.FileDirectory.class, TMP_LOCAL_FILE_DIRECTORY);
+    injector.bindVolatileParameter(JobConf.GlusterVolumeDirectory.class, TMP_REMOTE_FILE_DIRECTORY);
     final PartitionManagerWorker partitionManagerWorker;
     final MetricManagerWorker metricManagerWorker;
     try {
@@ -230,28 +227,28 @@ public final class DataTransferTest {
     writeAndRead(worker1, worker2, DataCommunicationPatternProperty.Value.BroadCast, MEMORY_STORE);
 
     // test ManyToMany same worker
-    writeAndRead(worker1, worker1, DataCommunicationPatternProperty.Value.ScatterGather, MEMORY_STORE);
+    writeAndRead(worker1, worker1, DataCommunicationPatternProperty.Value.Shuffle, MEMORY_STORE);
 
     // test ManyToMany different worker
-    writeAndRead(worker1, worker2, DataCommunicationPatternProperty.Value.ScatterGather, MEMORY_STORE);
+    writeAndRead(worker1, worker2, DataCommunicationPatternProperty.Value.Shuffle, MEMORY_STORE);
 
     // test ManyToMany same worker
-    writeAndRead(worker1, worker1, DataCommunicationPatternProperty.Value.ScatterGather, SER_MEMORY_STORE);
+    writeAndRead(worker1, worker1, DataCommunicationPatternProperty.Value.Shuffle, SER_MEMORY_STORE);
 
     // test ManyToMany different worker
-    writeAndRead(worker1, worker2, DataCommunicationPatternProperty.Value.ScatterGather, SER_MEMORY_STORE);
+    writeAndRead(worker1, worker2, DataCommunicationPatternProperty.Value.Shuffle, SER_MEMORY_STORE);
 
     // test ManyToMany same worker (local file)
-    writeAndRead(worker1, worker1, DataCommunicationPatternProperty.Value.ScatterGather, LOCAL_FILE_STORE);
+    writeAndRead(worker1, worker1, DataCommunicationPatternProperty.Value.Shuffle, LOCAL_FILE_STORE);
 
     // test ManyToMany different worker (local file)
-    writeAndRead(worker1, worker2, DataCommunicationPatternProperty.Value.ScatterGather, LOCAL_FILE_STORE);
+    writeAndRead(worker1, worker2, DataCommunicationPatternProperty.Value.Shuffle, LOCAL_FILE_STORE);
 
     // test ManyToMany same worker (remote file)
-    writeAndRead(worker1, worker1, DataCommunicationPatternProperty.Value.ScatterGather, REMOTE_FILE_STORE);
+    writeAndRead(worker1, worker1, DataCommunicationPatternProperty.Value.Shuffle, REMOTE_FILE_STORE);
 
     // test ManyToMany different worker (remote file)
-    writeAndRead(worker1, worker2, DataCommunicationPatternProperty.Value.ScatterGather, REMOTE_FILE_STORE);
+    writeAndRead(worker1, worker2, DataCommunicationPatternProperty.Value.Shuffle, REMOTE_FILE_STORE);
   }
 
   private void writeAndRead(final PartitionManagerWorker sender,
@@ -273,9 +270,10 @@ public final class DataTransferTest {
     edgeProperties.put(PartitionerProperty.of(PartitionerProperty.Value.HashPartitioner));
 
     edgeProperties.put(DataStoreProperty.of(store));
+    edgeProperties.put(UsedDataHandlingProperty.of(UsedDataHandlingProperty.Value.Keep));
     final RuntimeEdge dummyEdge;
 
-    if (commPattern.equals(DataCommunicationPatternProperty.Value.ScatterGather)) {
+    if (DataCommunicationPatternProperty.Value.Shuffle.equals(commPattern)) {
       final IRVertex srcMockVertex = mock(IRVertex.class);
       final IRVertex dstMockVertex = mock(IRVertex.class);
       final PhysicalStage srcStage = setupStages("srcStage", taskGroupPrefix);
@@ -310,7 +308,7 @@ public final class DataTransferTest {
       final InputReader reader =
           new InputReader(dstTaskIndex, taskGroupPrefix + dstTaskIndex, srcVertex, dummyEdge, receiver);
 
-      if (commPattern.equals(DataCommunicationPatternProperty.Value.OneToOne)) {
+      if (DataCommunicationPatternProperty.Value.OneToOne.equals(commPattern)) {
         assertEquals(1, reader.getSourceParallelism());
       } else {
         assertEquals(PARALLELISM_TEN, reader.getSourceParallelism());
@@ -328,7 +326,7 @@ public final class DataTransferTest {
     // Compare (should be the same)
     final List flattenedWrittenData = flatten(dataWrittenList);
     final List flattenedReadData = flatten(dataReadList);
-    if (commPattern.equals(DataCommunicationPatternProperty.Value.BroadCast)) {
+    if (DataCommunicationPatternProperty.Value.BroadCast.equals(commPattern)) {
       final List broadcastedWrittenData = new ArrayList<>();
       IntStream.range(0, PARALLELISM_TEN).forEach(i -> broadcastedWrittenData.addAll(flattenedWrittenData));
       assertEquals(broadcastedWrittenData.size(), flattenedReadData.size());

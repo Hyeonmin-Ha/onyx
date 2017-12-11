@@ -31,8 +31,6 @@ import java.util.stream.Stream;
  * Pado pass for tagging edges with DataStore ExecutionProperty.
  */
 public final class PadoEdgeDataStorePass extends AnnotatingPass {
-  public static final String SIMPLE_NAME = "PadoEdgeDataStorePass";
-
   public PadoEdgeDataStorePass() {
     super(ExecutionProperty.Key.DataStore, Stream.of(
         ExecutionProperty.Key.ExecutorPlacement
@@ -45,17 +43,13 @@ public final class PadoEdgeDataStorePass extends AnnotatingPass {
       final List<IREdge> inEdges = dag.getIncomingEdgesOf(vertex);
       if (!inEdges.isEmpty()) {
         inEdges.forEach(edge -> {
-          if (fromTransientToReserved(edge)) {
+          if (fromTransientToReserved(edge) || fromReservedToTransient(edge)) {
             edge.setProperty(DataStoreProperty.of(DataStoreProperty.Value.LocalFileStore));
-          } else if (fromReservedToTransient(edge)) {
-            edge.setProperty(DataStoreProperty.of(DataStoreProperty.Value.LocalFileStore));
+          } else if (DataCommunicationPatternProperty.Value.OneToOne
+              .equals(edge.getProperty(ExecutionProperty.Key.DataCommunicationPattern))) {
+            edge.setProperty(DataStoreProperty.of(DataStoreProperty.Value.MemoryStore));
           } else {
-            if (edge.getProperty(ExecutionProperty.Key.DataCommunicationPattern)
-                .equals(DataCommunicationPatternProperty.Value.OneToOne)) {
-              edge.setProperty(DataStoreProperty.of(DataStoreProperty.Value.MemoryStore));
-            } else {
-              edge.setProperty(DataStoreProperty.of(DataStoreProperty.Value.LocalFileStore));
-            }
+            edge.setProperty(DataStoreProperty.of(DataStoreProperty.Value.LocalFileStore));
           }
         });
       }
@@ -69,10 +63,10 @@ public final class PadoEdgeDataStorePass extends AnnotatingPass {
    * @return whether or not the edge satisfies the condition.
    */
   static boolean fromTransientToReserved(final IREdge irEdge) {
-    return irEdge.getSrc().getProperty(ExecutionProperty.Key.ExecutorPlacement)
-        .equals(ExecutorPlacementProperty.TRANSIENT)
-        && irEdge.getDst().getProperty(ExecutionProperty.Key.ExecutorPlacement)
-        .equals(ExecutorPlacementProperty.RESERVED);
+    return ExecutorPlacementProperty.TRANSIENT
+        .equals(irEdge.getSrc().getProperty(ExecutionProperty.Key.ExecutorPlacement))
+        && ExecutorPlacementProperty.RESERVED
+        .equals(irEdge.getDst().getProperty(ExecutionProperty.Key.ExecutorPlacement));
   }
 
   /**
@@ -81,9 +75,9 @@ public final class PadoEdgeDataStorePass extends AnnotatingPass {
    * @return whether or not the edge satisfies the condition.
    */
   static boolean fromReservedToTransient(final IREdge irEdge) {
-    return irEdge.getSrc().getProperty(ExecutionProperty.Key.ExecutorPlacement)
-        .equals(ExecutorPlacementProperty.RESERVED)
-        && irEdge.getDst().getProperty(ExecutionProperty.Key.ExecutorPlacement)
-        .equals(ExecutorPlacementProperty.TRANSIENT);
+    return ExecutorPlacementProperty.RESERVED
+        .equals(irEdge.getSrc().getProperty(ExecutionProperty.Key.ExecutorPlacement))
+        && ExecutorPlacementProperty.TRANSIENT
+        .equals(irEdge.getDst().getProperty(ExecutionProperty.Key.ExecutorPlacement));
   }
 }

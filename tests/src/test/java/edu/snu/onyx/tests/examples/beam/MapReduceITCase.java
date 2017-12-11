@@ -33,20 +33,17 @@ public final class MapReduceITCase {
   private static final int TIMEOUT = 60000;
   private static final String input = CompilerTestUtil.rootDir + "/../examples/src/main/resources/sample_input_mr";
   private static final String output = CompilerTestUtil.rootDir + "/../examples/src/main/resources/sample_output";
-  private static final String dagDirectory = "./dag";
 
   public static ArgBuilder builder = new ArgBuilder()
       .addJobId(MapReduceITCase.class.getSimpleName())
       .addUserMain(MapReduce.class.getCanonicalName())
-      .addUserArgs(input, output)
-      .addDAGDirectory(dagDirectory);
+      .addUserArgs(input, output);
 
   @Before
   public void setUp() throws Exception {
     builder = new ArgBuilder()
         .addUserMain(MapReduce.class.getCanonicalName())
-        .addUserArgs(input, output)
-        .addDAGDirectory(dagDirectory);
+        .addUserArgs(input, output);
   }
 
   @Test (timeout = TIMEOUT)
@@ -58,10 +55,18 @@ public final class MapReduceITCase {
   }
 
   @Test (timeout = TIMEOUT)
-  public void testSailfishDisagg() throws Exception {
+  public void testSailfish() throws Exception {
     JobLauncher.main(builder
-        .addJobId(MapReduceITCase.class.getSimpleName() + "_sailfish_disagg")
-        .addOptimizationPolicy(CompilerTestUtil.sailfishDisaggPolicy)
+        .addJobId(MapReduceITCase.class.getSimpleName() + "_sailfish")
+        .addOptimizationPolicy(CompilerTestUtil.sailfishPolicy)
+        .build());
+  }
+
+  @Test (timeout = TIMEOUT)
+  public void testDisagg() throws Exception {
+    JobLauncher.main(builder
+        .addJobId(MapReduceITCase.class.getSimpleName() + "_disagg")
+        .addOptimizationPolicy(CompilerTestUtil.disaggPolicy)
         .build());
   }
 

@@ -17,20 +17,16 @@ package edu.snu.onyx.runtime.executor.datatransfer;
 
 import edu.snu.onyx.common.KeyExtractor;
 import edu.snu.onyx.common.exception.*;
-import edu.snu.onyx.common.ir.edge.executionproperty.DataCommunicationPatternProperty;
-import edu.snu.onyx.common.ir.edge.executionproperty.DataStoreProperty;
-import edu.snu.onyx.common.ir.edge.executionproperty.MetricCollectionProperty;
-import edu.snu.onyx.common.ir.edge.executionproperty.PartitionerProperty;
+import edu.snu.onyx.common.ir.edge.executionproperty.*;
 import edu.snu.onyx.common.ir.vertex.IRVertex;
 import edu.snu.onyx.common.ir.executionproperty.ExecutionProperty;
 import edu.snu.onyx.runtime.common.RuntimeIdGenerator;
 import edu.snu.onyx.runtime.common.plan.RuntimeEdge;
-import edu.snu.onyx.runtime.common.partitioner.*;
-import edu.snu.onyx.runtime.common.data.Block;
+import edu.snu.onyx.runtime.executor.data.Block;
+import edu.snu.onyx.runtime.executor.data.partitioner.*;
 import edu.snu.onyx.runtime.executor.data.PartitionManagerWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.annotation.Nullable;
 import java.util.*;
 
@@ -110,16 +106,16 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
     DataCommunicationPatternProperty.Value comValue =
         runtimeEdge.getProperty(ExecutionProperty.Key.DataCommunicationPattern);
 
-    if (comValue.equals(DataCommunicationPatternProperty.Value.OneToOne)) {
+    if (DataCommunicationPatternProperty.Value.OneToOne.equals(comValue)) {
       writeOneToOne(blocksToWrite);
-    } else if (comValue.equals(DataCommunicationPatternProperty.Value.BroadCast)) {
+    } else if (DataCommunicationPatternProperty.Value.BroadCast.equals(comValue)) {
       writeBroadcast(blocksToWrite);
-    } else if (comValue.equals(DataCommunicationPatternProperty.Value.ScatterGather)) {
+    } else if (DataCommunicationPatternProperty.Value.Shuffle.equals(comValue)) {
       // If the dynamic optimization which detects data skew is enabled, sort the data and write it.
       if (isDataSizeMetricCollectionEdge) {
         dataSkewWrite(blocksToWrite);
       } else {
-        writeScatterGather(blocksToWrite);
+        writeShuffleGather(blocksToWrite);
       }
     } else {
       throw new UnsupportedCommPatternException(new Exception("Communication pattern not supported"));
@@ -134,7 +130,10 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
   @Override
   public void close() {
     // Commit partition.
-    partitionManagerWorker.commitPartition(partitionId, channelDataPlacement, accumulatedBlockSizeInfo, srcVertexId);
+    final UsedDataHandlingProperty.Value usedDataHandling =
+        runtimeEdge.getProperty(ExecutionProperty.Key.UsedDataHandling);
+    partitionManagerWorker.commitPartition(partitionId, channelDataPlacement,
+        accumulatedBlockSizeInfo, srcVertexId, getDstParallelism(), usedDataHandling);
   }
 
   private void writeOneToOne(final List<Block> blocksToWrite) {
@@ -147,7 +146,7 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
     writeOneToOne(blocksToWrite);
   }
 
-  private void writeScatterGather(final List<Block> blocksToWrite) {
+  private void writeShuffleGather(final List<Block> blocksToWrite) {
     final int dstParallelism = getDstParallelism();
     if (blocksToWrite.size() != dstParallelism) {
       throw new PartitionWriteException(

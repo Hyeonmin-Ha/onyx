@@ -15,13 +15,10 @@
  */
 package edu.snu.onyx.tests.compiler;
 
+import edu.snu.onyx.compiler.optimizer.policy.*;
 import edu.snu.onyx.conf.JobConf;
 import edu.snu.onyx.common.ir.edge.IREdge;
 import edu.snu.onyx.common.ir.vertex.IRVertex;
-import edu.snu.onyx.compiler.optimizer.policy.DataSkewPolicy;
-import edu.snu.onyx.compiler.optimizer.policy.DefaultPolicy;
-import edu.snu.onyx.compiler.optimizer.policy.PadoPolicy;
-import edu.snu.onyx.compiler.optimizer.policy.SailfishDisaggPolicy;
 import edu.snu.onyx.client.JobLauncher;
 import edu.snu.onyx.examples.beam.*;
 import edu.snu.onyx.common.dag.DAG;
@@ -43,7 +40,8 @@ import java.lang.reflect.Method;
 public final class CompilerTestUtil {
   public static final String rootDir = System.getProperty("user.dir");
   public static final String padoPolicy = PadoPolicy.class.getCanonicalName();
-  public static final String sailfishDisaggPolicy = SailfishDisaggPolicy.class.getCanonicalName();
+  public static final String sailfishPolicy = SailfishPolicy.class.getCanonicalName();
+  public static final String disaggPolicy = DisaggregationPolicy.class.getCanonicalName();
   public static final String defaultPolicy = DefaultPolicy.class.getCanonicalName();
   public static final String dataSkewPolicy = DataSkewPolicy.class.getCanonicalName();
 
@@ -86,13 +84,11 @@ public final class CompilerTestUtil {
     final String input = rootDir + "/../examples/src/main/resources/sample_input_als";
     final String numFeatures = "10";
     final String numIteration = "3";
-    final String dagDirectory = "./dag";
 
     final ArgBuilder alsArgBuilder = new ArgBuilder()
         .addJobId(AlternatingLeastSquareInefficient.class.getSimpleName())
         .addUserMain(alsInefficient)
-        .addUserArgs(input, numFeatures, numIteration)
-        .addDAGDirectory(dagDirectory);
+        .addUserArgs(input, numFeatures, numIteration);
     return compileDAG(alsArgBuilder.build());
   }
 

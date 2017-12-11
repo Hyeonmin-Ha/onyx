@@ -15,10 +15,11 @@
  */
 package edu.snu.onyx.runtime.executor.data;
 
+import edu.snu.onyx.common.exception.UnsupportedExecutionPropertyException;
 import edu.snu.onyx.common.ir.edge.executionproperty.DataStoreProperty;
+import edu.snu.onyx.common.ir.edge.executionproperty.UsedDataHandlingProperty;
 import edu.snu.onyx.conf.JobConf;
 import edu.snu.onyx.common.coder.Coder;
-import edu.snu.onyx.runtime.common.data.Block;
 import edu.snu.onyx.runtime.common.data.HashRange;
 import edu.snu.onyx.runtime.executor.data.stores.PartitionStore;
 import edu.snu.onyx.runtime.common.RuntimeIdGenerator;
@@ -39,6 +40,8 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +61,9 @@ public final class PartitionManagerWorker {
   private final PersistentConnectionToMasterMap persistentConnectionToMasterMap;
   private final ConcurrentMap<String, Coder> runtimeEdgeIdToCoder;
   private final PartitionTransfer partitionTransfer;
-  private final ExecutorService ioThreadExecutorService;
+  // Executor service to schedule I/O Runnable which can be done in background.
+  private final ExecutorService backgroundExecutorService;
+  private final Map<String, AtomicInteger> partitionToRemainingRead;
 
   @Inject
   private PartitionManagerWorker(@Parameter(JobConf.ExecutorId.class) final String executorId,
@@ -77,7 +82,8 @@ public final class PartitionManagerWorker {
     this.persistentConnectionToMasterMap = persistentConnectionToMasterMap;
     this.runtimeEdgeIdToCoder = new ConcurrentHashMap<>();
     this.partitionTransfer = partitionTransfer;
-    this.ioThreadExecutorService = Executors.newFixedThreadPool(numThreads);
+    this.backgroundExecutorService = Executors.newFixedThreadPool(numThreads);
+    this.partitionToRemainingRead = new ConcurrentHashMap<>();
   }
 
   /**
@@ -126,11 +132,12 @@ public final class PartitionManagerWorker {
    * Retrieves data from the stored partition. A specific hash value range can be designated.
    * This can be invoked multiple times per partitionId (maybe due to failures).
    * Here, we first check if we have the partition here, and then try to fetch the partition from a remote worker.
+   // TODO #626: Enable Serialized Read From PartitionTransfer - implement getBlocks
    *
    * @param partitionId    of the partition.
    * @param runtimeEdgeId  id of the runtime edge that corresponds to the partition.
    * @param partitionStore for the data storage.
-   * @param hashRange      the hash range descriptor
+   * @param hashRange      the hash range descriptor.
    * @return the result data in the partition.
    */
   public CompletableFuture<Iterable> retrieveDataFromPartition(
@@ -142,12 +149,18 @@ public final class PartitionManagerWorker {
     final PartitionStore store = getPartitionStore(partitionStore);
 
     // First, try to fetch the partition from local PartitionStore.
-    final Optional<Iterable> optionalResultData = store.getElements(partitionId, hashRange);
+    final Optional<Iterable<NonSerializedBlock>> optionalResultBlocks = store.getBlocks(partitionId, hashRange);
 
-    if (optionalResultData.isPresent()) {
+    if (optionalResultBlocks.isPresent()) {
+      handleUsedData(partitionStore, partitionId);
+
       // Partition resides in this evaluator!
-      return CompletableFuture.completedFuture(optionalResultData.get());
-    } else if (partitionStore.equals(DataStoreProperty.Value.GlusterFileStore)) {
+      try {
+        return CompletableFuture.completedFuture(DataUtil.concatNonSerBlocks(optionalResultBlocks.get()));
+      } catch (final IOException e) {
+        throw new PartitionFetchException(e);
+      }
+    } else if (DataStoreProperty.Value.GlusterFileStore.equals(partitionStore)) {
       throw new PartitionFetchException(new Throwable("Cannot find a partition in remote store."));
     } else {
       // We don't have the partition here...
@@ -206,6 +219,7 @@ public final class PartitionManagerWorker {
    * Invariant: This should not be invoked after a partition is committed.
    * Invariant: This method may not support concurrent write for a single partition.
    *            Only one thread have to write at once.
+   * TODO #626: Enable Serialized Read From PartitionTransfer - implement putSerializedBlocks
    *
    * @param partitionId    of the partition.
    * @param blocks         to save to a partition.
@@ -221,7 +235,7 @@ public final class PartitionManagerWorker {
     LOG.info("PutBlocks: {}, PartitionStore {}", partitionId, store.getClass().getSimpleName());
 
     try {
-      return store.putBlocks(partitionId, blocks, commitPerBlock);
+      return store.putBlocks(partitionId, (Iterable) blocks, commitPerBlock);
     } catch (final Exception e) {
       throw new PartitionWriteException(e);
     }
@@ -232,16 +246,31 @@ public final class PartitionManagerWorker {
    * Subscribers waiting for the data of the target partition are notified when the partition is committed.
    * Also, further subscription about a committed partition will not blocked but get the data in it and finished.
    *
-   * @param partitionId    of the partition.
-   * @param partitionStore to store the partition.
-   * @param blockSizeInfo  the size metric of blocks.
-   * @param srcIRVertexId  of the source task.
+   * @param partitionId       the ID of the partition.
+   * @param partitionStore    the store to save the partition.
+   * @param blockSizeInfo     the size metric of blocks.
+   * @param srcIRVertexId     the IR vertex ID of the source task.
+   * @param expectedReadTotal the expected number of read for this partition.
+   * @param usedDataHandling  how to handle the used partition.
    */
   public void commitPartition(final String partitionId,
                               final DataStoreProperty.Value partitionStore,
                               final List<Long> blockSizeInfo,
-                              final String srcIRVertexId) {
+                              final String srcIRVertexId,
+                              final int expectedReadTotal,
+                              final UsedDataHandlingProperty.Value usedDataHandling) {
     LOG.info("CommitPartition: {}", partitionId);
+    switch (usedDataHandling) {
+      case Discard:
+        partitionToRemainingRead.put(partitionId, new AtomicInteger(expectedReadTotal));
+        break;
+      case Keep:
+        // Do nothing but just keep the data.
+        break;
+      default:
+        throw new UnsupportedExecutionPropertyException("This used data handling property is not supported.");
+    }
+
     final PartitionStore store = getPartitionStore(partitionStore);
     store.commitPartition(partitionId);
     final ControlMessage.PartitionStateChangedMsg.Builder partitionStateChangedMsgBuilder =
@@ -250,7 +279,7 @@ public final class PartitionManagerWorker {
             .setPartitionId(partitionId)
             .setState(ControlMessage.PartitionStateFromExecutor.COMMITTED);
 
-    if (partitionStore.equals(DataStoreProperty.Value.GlusterFileStore)) {
+    if (DataStoreProperty.Value.GlusterFileStore.equals(partitionStore)) {
       partitionStateChangedMsgBuilder.setLocation(REMOTE_FILE_STORE);
     } else {
       partitionStateChangedMsgBuilder.setLocation(executorId);
@@ -283,8 +312,8 @@ public final class PartitionManagerWorker {
   /**
    * Remove the partition from store.
    *
-   * @param partitionId    of the partition to remove.
-   * @param partitionStore tha the partition is stored.
+   * @param partitionId    the ID of the partition to remove.
+   * @param partitionStore the store which contains the partition.
    */
   public void removePartition(final String partitionId,
                               final DataStoreProperty.Value partitionStore) {
@@ -318,6 +347,29 @@ public final class PartitionManagerWorker {
     }
   }
 
+  /**
+   * Handles used {@link edu.snu.onyx.runtime.executor.data.partition.Partition}.
+   *
+   * @param partitionStore the store which contains the partition.
+   * @param partitionId    the ID of the {@link edu.snu.onyx.runtime.executor.data.partition.Partition}.
+   */
+  private void handleUsedData(final DataStoreProperty.Value partitionStore,
+                              final String partitionId) {
+    final AtomicInteger remainingExpectedRead = partitionToRemainingRead.get(partitionId);
+    if (remainingExpectedRead != null) {
+      if (remainingExpectedRead.decrementAndGet() == 0) {
+        // This partition should be discarded.
+        partitionToRemainingRead.remove(partitionId);
+        backgroundExecutorService.submit(new Runnable() {
+          @Override
+          public void run() {
+            removePartition(partitionId, partitionStore);
+          }
+        });
+      }
+    } // If null, just keep the data in the store.
+  }
+
   private PartitionStore getPartitionStore(final DataStoreProperty.Value partitionStore) {
     switch (partitionStore) {
       case MemoryStore:
@@ -346,21 +398,21 @@ public final class PartitionManagerWorker {
     final Optional<DataStoreProperty.Value> partitionStoreOptional = outputStream.getPartitionStore();
     final DataStoreProperty.Value partitionStore = partitionStoreOptional.get();
 
-    ioThreadExecutorService.submit(new Runnable() {
+    backgroundExecutorService.submit(new Runnable() {
       @Override
       public void run() {
         try {
-          if (partitionStore.equals(DataStoreProperty.Value.LocalFileStore)
-              || partitionStore.equals(DataStoreProperty.Value.GlusterFileStore)) {
+          if (DataStoreProperty.Value.LocalFileStore.equals(partitionStore)
+              || DataStoreProperty.Value.GlusterFileStore.equals(partitionStore)) {
             // TODO #492: Modularize the data communication pattern. Remove execution property value dependant code.
             final FileStore fileStore = (FileStore) getPartitionStore(partitionStore);
             outputStream.writeFileAreas(fileStore.getFileAreas(outputStream.getPartitionId(),
                 outputStream.getHashRange())).close();
           } else if (DataStoreProperty.Value.SerializedMemoryStore.equals(partitionStore)) {
             final SerializedMemoryStore serMemoryStore = (SerializedMemoryStore) getPartitionStore(partitionStore);
-            final Optional<Iterable<byte[]>> optionalResult = serMemoryStore.getSerializedBlocksFromPartition(
+            final Optional<Iterable<SerializedBlock>> optionalResult = serMemoryStore.getSerializedBlocks(
                 outputStream.getPartitionId(), outputStream.getHashRange());
-            outputStream.writeByteArrays(optionalResult.get()).close();
+            outputStream.writeSerializedBlocks(optionalResult.get()).close();
           } else {
             final Iterable partition =
                 retrieveDataFromPartition(outputStream.getPartitionId(), outputStream.getRuntimeEdgeId(),

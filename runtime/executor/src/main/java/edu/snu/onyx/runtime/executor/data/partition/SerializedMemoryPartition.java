@@ -16,13 +16,12 @@
 package edu.snu.onyx.runtime.executor.data.partition;
 
 import edu.snu.onyx.common.coder.Coder;
-import edu.snu.onyx.runtime.common.data.Block;
 import edu.snu.onyx.runtime.executor.data.DataUtil;
 import edu.snu.onyx.runtime.common.data.HashRange;
+import edu.snu.onyx.runtime.executor.data.NonSerializedBlock;
+import edu.snu.onyx.runtime.executor.data.SerializedBlock;
 
 import javax.annotation.concurrent.ThreadSafe;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,98 +33,94 @@ import java.util.Optional;
 @ThreadSafe
 public final class SerializedMemoryPartition implements Partition {
 
-  private final List<SerializedBlock> blocks;
+  private final List<SerializedBlock> serializedBlocks;
   private final Coder coder;
   private volatile boolean committed;
 
   public SerializedMemoryPartition(final Coder coder) {
     this.coder = coder;
-    blocks = new ArrayList<>();
+    serializedBlocks = new ArrayList<>();
     committed = false;
   }
 
   /**
-   * Writes {@link Block}s to this partition.
+   * Serialized and stores {@link NonSerializedBlock}s to this partition.
    * Invariant: This should not be invoked after this partition is committed.
    *
-   * @param blocksToWrite the {@link Block}s to write.
-   * @throws IOException if fail to write.
+   * @param blocksToStore the {@link NonSerializedBlock}s to store.
+   * @return the size of the data per block.
+   * @throws IOException if fail to store.
    */
   @Override
-  public synchronized Optional<List<Long>> putBlocks(final Iterable<Block> blocksToWrite) throws IOException {
+  public synchronized Optional<List<Long>> putBlocks(final Iterable<NonSerializedBlock> blocksToStore)
+      throws IOException {
     if (!committed) {
-      final List<Long> blockSizeList = new ArrayList<>();
-      // Serialize the given blocks
-      try (final ByteArrayOutputStream bytesOutputStream = new ByteArrayOutputStream()) {
-        for (final Block block : blocksToWrite) {
-          final long elementsTotal = DataUtil.serializeBlock(coder, block, bytesOutputStream);
+      final Iterable<SerializedBlock> convertedBlocks = DataUtil.convertToSerBlocks(coder, blocksToStore);
 
-          // Write the serialized block.
-          final byte[] serialized = bytesOutputStream.toByteArray();
-          blocks.add(new SerializedBlock(block.getKey(), elementsTotal, serialized));
-          blockSizeList.add((long) serialized.length);
-          bytesOutputStream.reset();
-        }
-      }
-
-      return Optional.of(blockSizeList);
+      return Optional.of(putSerializedBlocks(convertedBlocks));
     } else {
       throw new IOException("Cannot append blocks to the committed partition");
     }
   }
 
   /**
-   * Retrieves the blocks in a specific hash range and deserializes it from this partition.
-   * Invariant: This should not be invoked before this partition is committed.
+   * Stores {@link SerializedBlock}s to this partition.
+   * Invariant: This should not be invoked after this partition is committed.
    *
-   * @param hashRange the hash range to retrieve.
-   * @return an iterable of deserialized blocks.
-   * @throws IOException if failed to deserialize.
+   * @param blocksToWrite the {@link SerializedBlock}s to store.
+   * @throws IOException if fail to store.
    */
   @Override
-  public Iterable<Block> getBlocks(final HashRange hashRange) throws IOException {
-    if (committed) {
-      final List<Block> deserializedBlock = new ArrayList<>();
-      for (final SerializedBlock serializedBlock : blocks) {
-        final int hashVal = serializedBlock.getKey();
-        if (hashRange.includes(hashVal)) {
-          final List deserializedData = new ArrayList<>();
-          // The hash value of this block is in the range.
-          try (final ByteArrayInputStream byteArrayInputStream =
-                   new ByteArrayInputStream(serializedBlock.getSerializedData())) {
-            DataUtil.deserializeBlock(
-                serializedBlock.getElementsInBlock(), coder, byteArrayInputStream, deserializedData);
-          }
-          deserializedBlock.add(new Block(hashVal, deserializedData));
-        }
-      }
+  public synchronized List<Long> putSerializedBlocks(final Iterable<SerializedBlock> blocksToWrite)
+      throws IOException {
+    if (!committed) {
+      final List<Long> blockSizeList = new ArrayList<>();
+      blocksToWrite.forEach(serializedBlock -> {
+        blockSizeList.add((long) serializedBlock.getLength());
+        serializedBlocks.add(serializedBlock);
+      });
 
-      return deserializedBlock;
+      return blockSizeList;
     } else {
-      throw new IOException("Cannot retrieve elements before a partition is committed");
+      throw new IOException("Cannot append blocks to the committed partition");
     }
   }
 
   /**
-   * Retrieves the elements in a specific hash range as serialized bytes from this partition.
-   * Constraint: This should be invoked after this partition is committed.
+   * Retrieves the {@link NonSerializedBlock}s in a specific hash range from this partition.
+   * Because the data is stored in a serialized form, it have to be deserialized.
+   * Invariant: This should not be invoked before this partition is committed.
    *
    * @param hashRange the hash range to retrieve.
-   * @return an iterable of serialized elements.
-   * @throws IOException if the partition is not committed yet.
+   * @return an iterable of {@link NonSerializedBlock}s.
+   * @throws IOException if failed to retrieve.
    */
-  public Iterable<byte[]> retrieveSerializedElements(final HashRange hashRange) throws IOException {
+  @Override
+  public Iterable<NonSerializedBlock> getBlocks(final HashRange hashRange) throws IOException {
+    return DataUtil.convertToNonSerBlocks(coder, getSerializedBlocks(hashRange));
+  }
+
+  /**
+   * Retrieves the {@link SerializedBlock}s in a specific hash range.
+   * Invariant: This should not be invoked before this partition is committed.
+   *
+   * @param hashRange the hash range to retrieve.
+   * @return an iterable of {@link SerializedBlock}s.
+   * @throws IOException if failed to retrieve.
+   */
+  @Override
+  public Iterable<SerializedBlock> getSerializedBlocks(final HashRange hashRange) throws IOException {
     if (committed) {
-      final List<byte[]> serializedData = new ArrayList<>();
-      blocks.forEach(serializedBlock -> {
+      final List<SerializedBlock> blocksInRange = new ArrayList<>();
+      serializedBlocks.forEach(serializedBlock -> {
         final int hashVal = serializedBlock.getKey();
         if (hashRange.includes(hashVal)) {
           // The hash value of this block is in the range.
-          serializedData.add(serializedBlock.getSerializedData());
+          blocksInRange.add(serializedBlock);
         }
       });
 
-      return serializedData;
+      return blocksInRange;
     } else {
       throw new IOException("Cannot retrieve elements before a partition is committed");
     }
@@ -137,34 +132,5 @@ public final class SerializedMemoryPartition implements Partition {
   @Override
   public synchronized void commit() {
     committed = true;
-  }
-
-  /**
-   * A collection of serialized data.
-   */
-  private final class SerializedBlock {
-    private final int key;
-    private final long elementsInBlock;
-    private final byte[] serializedData;
-
-    private SerializedBlock(final int key,
-                            final long elementsInBlock,
-                            final byte[] serializedData) {
-      this.key = key;
-      this.elementsInBlock = elementsInBlock;
-      this.serializedData = serializedData;
-    }
-
-    private int getKey() {
-      return key;
-    }
-
-    private long getElementsInBlock() {
-      return elementsInBlock;
-    }
-
-    private byte[] getSerializedData() {
-      return serializedData;
-    }
   }
 }

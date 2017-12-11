@@ -28,6 +28,7 @@ import edu.snu.onyx.common.ir.vertex.executionproperty.ExecutorPlacementProperty
 import edu.snu.onyx.common.ir.vertex.executionproperty.ParallelismProperty;
 import edu.snu.onyx.compiler.frontend.beam.transform.DoTransform;
 import edu.snu.onyx.compiler.optimizer.CompiletimeOptimizer;
+import edu.snu.onyx.conf.JobConf;
 import edu.snu.onyx.runtime.common.plan.stage.Stage;
 import edu.snu.onyx.runtime.common.plan.stage.StageEdge;
 import edu.snu.onyx.runtime.common.plan.physical.*;
@@ -35,6 +36,7 @@ import edu.snu.onyx.common.dag.DAG;
 import edu.snu.onyx.common.dag.DAGBuilder;
 import edu.snu.onyx.tests.compiler.optimizer.TestPolicy;
 import org.apache.beam.sdk.io.BoundedSource;
+import org.apache.reef.tang.Injector;
 import org.apache.reef.tang.Tang;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,10 +53,14 @@ import static org.mockito.Mockito.when;
  */
 public final class DAGConverterTest {
   private DAGBuilder<IRVertex, IREdge> irDAGBuilder;
+  private PhysicalPlanGenerator physicalPlanGenerator;
 
   @Before
-  public void setUp() {
+  public void setUp() throws Exception {
     irDAGBuilder = new DAGBuilder<>();
+    final Injector injector = Tang.Factory.getTang().newInjector();
+    injector.bindVolatileParameter(JobConf.DAGDirectory.class, "");
+    physicalPlanGenerator = injector.getInstance(PhysicalPlanGenerator.class);
   }
 
   @Test
@@ -68,13 +74,11 @@ public final class DAGConverterTest {
     v2.setProperty(ParallelismProperty.of(2));
     irDAGBuilder.addVertex(v2);
 
-    final IREdge e = new IREdge(DataCommunicationPatternProperty.Value.ScatterGather, v1, v2, Coder.DUMMY_CODER);
+    final IREdge e = new IREdge(DataCommunicationPatternProperty.Value.Shuffle, v1, v2, Coder.DUMMY_CODER);
     irDAGBuilder.connectVertices(e);
 
     final DAG<IRVertex, IREdge> irDAG = CompiletimeOptimizer.optimize(irDAGBuilder.buildWithoutSourceSinkCheck(),
         new TestPolicy(), "");
-    final PhysicalPlanGenerator physicalPlanGenerator =
-        Tang.Factory.getTang().newInjector().getInstance(PhysicalPlanGenerator.class);
     final DAG<Stage, StageEdge> DAGOfStages = physicalPlanGenerator.stagePartitionIrDAG(irDAG);
     final DAG<PhysicalStage, PhysicalStageEdge> physicalDAG = irDAG.convert(physicalPlanGenerator);
 
@@ -172,11 +176,11 @@ public final class DAGConverterTest {
     e2.setProperty(DataStoreProperty.of(DataStoreProperty.Value.MemoryStore));
     e2.setProperty(DataFlowModelProperty.of(DataFlowModelProperty.Value.Pull));
 
-    final IREdge e3 = new IREdge(DataCommunicationPatternProperty.Value.ScatterGather, v2, v4, Coder.DUMMY_CODER);
+    final IREdge e3 = new IREdge(DataCommunicationPatternProperty.Value.Shuffle, v2, v4, Coder.DUMMY_CODER);
     e3.setProperty(DataStoreProperty.of(DataStoreProperty.Value.MemoryStore));
     e3.setProperty(DataFlowModelProperty.of(DataFlowModelProperty.Value.Push));
 
-    final IREdge e4 = new IREdge(DataCommunicationPatternProperty.Value.ScatterGather, v3, v5, Coder.DUMMY_CODER);
+    final IREdge e4 = new IREdge(DataCommunicationPatternProperty.Value.Shuffle, v3, v5, Coder.DUMMY_CODER);
     e4.setProperty(DataStoreProperty.of(DataStoreProperty.Value.MemoryStore));
     e4.setProperty(DataFlowModelProperty.of(DataFlowModelProperty.Value.Push));
 
@@ -224,8 +228,6 @@ public final class DAGConverterTest {
 
     final DAG<IRVertex, IREdge> irDAG = CompiletimeOptimizer.optimize(irDAGBuilder.build(),
         new TestPolicy(), "");
-    final PhysicalPlanGenerator physicalPlanGenerator =
-        Tang.Factory.getTang().newInjector().getInstance(PhysicalPlanGenerator.class);
     final DAG<Stage, StageEdge> logicalDAG = physicalPlanGenerator.stagePartitionIrDAG(irDAG);
 
     // Test Logical DAG
