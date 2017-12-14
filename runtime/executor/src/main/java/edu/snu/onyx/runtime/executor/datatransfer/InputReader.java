@@ -27,7 +27,10 @@ import edu.snu.onyx.runtime.common.plan.physical.Task;
 import edu.snu.onyx.common.exception.PartitionFetchException;
 import edu.snu.onyx.common.exception.UnsupportedCommPatternException;
 import edu.snu.onyx.runtime.common.data.HashRange;
+import edu.snu.onyx.runtime.executor.data.NonSerializedElement;
 import edu.snu.onyx.runtime.executor.data.PartitionManagerWorker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -48,6 +51,7 @@ public final class InputReader extends DataTransfer {
   private final String taskGroupId;
 
   private final PartitionManagerWorker partitionManagerWorker;
+  private static final Logger LOG = LoggerFactory.getLogger(InputReader.class.getName());
 
   /**
    * Attributes that specify how we should read the input.
@@ -116,11 +120,15 @@ public final class InputReader extends DataTransfer {
   /**
    * Read data in the assigned range of hash value.
    * Constraint: If a partition is written by {@link OutputWriter#dataSkewWrite(List)}
-   * or {@link OutputWriter#writeScatterGather(List)}, it must be read using this method.
+   * or {@link OutputWriter#writeShuffleGather(List)}, it must be read using this method.
    *
    * @return the list of the completable future of the data.
    */
   private List<CompletableFuture<Iterable>> readDataInRange() {
+
+    LOG.info("log: readDataInRange: {} {} sourceparallelism: {}", taskGroupId, runtimeEdge,
+        this.getSourceParallelism());
+
     assert (runtimeEdge instanceof PhysicalStageEdge);
     final HashRange hashRangeToRead =
         ((PhysicalStageEdge) runtimeEdge).getTaskGroupIdToHashRangeMap().get(taskGroupId);
@@ -131,11 +139,23 @@ public final class InputReader extends DataTransfer {
     final int numSrcTasks = this.getSourceParallelism();
     final List<CompletableFuture<Iterable>> futures = new ArrayList<>();
     for (int srcTaskIdx = 0; srcTaskIdx < numSrcTasks; srcTaskIdx++) {
+      LOG.info("log: readDataInRange: {} srcTaskId {}", taskGroupId, srcTaskIdx);
       final String partitionId = RuntimeIdGenerator.generatePartitionId(getId(), srcTaskIdx);
       futures.add(
           partitionManagerWorker.retrieveDataFromPartition(partitionId, getId(),
               (DataStoreProperty.Value) runtimeEdge.getProperty(ExecutionProperty.Key.DataStore),
               hashRangeToRead));
+    }
+    return futures;
+  }
+
+  public List<CompletableFuture<NonSerializedElement>> readElement() {
+    final int numSrcTasks = this.getSourceParallelism();
+
+    final List<CompletableFuture<NonSerializedElement>> futures = new ArrayList<>();
+    for (int srcTaskIdx = 0; srcTaskIdx < numSrcTasks; srcTaskIdx++) {
+      final String pipeId = RuntimeIdGenerator.generatePipeId(getId(), srcTaskIdx);
+      futures.add(partitionManagerWorker.retrieveDataFromPipe(pipeId));
     }
 
     return futures;

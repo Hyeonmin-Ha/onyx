@@ -18,6 +18,7 @@ package edu.snu.onyx.runtime.executor.data.stores;
 import edu.snu.onyx.common.coder.Coder;
 import edu.snu.onyx.runtime.executor.data.PartitionManagerWorker;
 import edu.snu.onyx.runtime.executor.data.partition.NonSerializedMemoryPartition;
+import edu.snu.onyx.runtime.executor.data.pipe.Pipe;
 import org.apache.reef.tang.InjectionFuture;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -38,6 +39,11 @@ public final class MemoryStore extends LocalPartitionStore {
   public void createPartition(final String partitionId) {
     final Coder coder = getCoderFromWorker(partitionId);
     getPartitionMap().put(partitionId, new NonSerializedMemoryPartition(coder));
+  }
+
+  public void createPipe(final String pipeId) {
+    LOG.info
+    getPipeMap().put(pipeId, new Pipe());
   }
 
   /**

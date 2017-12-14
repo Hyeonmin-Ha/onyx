@@ -131,9 +131,12 @@ public final class PartitionManagerMaster {
     try {
       final PartitionState.State state =
           (PartitionState.State) getPartitionState(partitionId).getStateMachine().getCurrentState();
+      LOG.info("master log: getPartitionLocationInfo: {} {}", partitionId, state);
       switch (state) {
         case SCHEDULED:
+          LOG.info("master log: getPartitionLocationInfo: SCHEDULED");
         case COMMITTED:
+          LOG.info("master log: getPartitionLocationInfo: COMMITTED");
           return partitionIdToMetadata.get(partitionId).getLocationFuture();
         case READY:
         case LOST_BEFORE_COMMIT:
@@ -301,9 +304,13 @@ public final class PartitionManagerMaster {
         message.getRequestPartitionLocationMsg();
     final Lock readLock = lock.readLock();
     readLock.lock();
+
+    LOG.info("master log: onRequestPartitionLocation called");
+
     try {
       final CompletableFuture<String> locationFuture
           = getPartitionLocationFuture(requestPartitionLocationMsg.getPartitionId());
+      LOG.info("master log: onRequestPartitionLocation: got partition location");
       locationFuture.whenComplete((location, throwable) -> {
         final ControlMessage.PartitionLocationInfoMsg.Builder infoMsgBuilder =
             ControlMessage.PartitionLocationInfoMsg.newBuilder()
@@ -322,6 +329,7 @@ public final class PartitionManagerMaster {
                 .setType(ControlMessage.MessageType.PartitionLocationInfo)
                 .setPartitionLocationInfoMsg(infoMsgBuilder.build())
                 .build());
+        LOG.info("master log: onRequestPartitionLocation: sent PartitionLocationInfo msg");
       });
     } finally {
       readLock.unlock();

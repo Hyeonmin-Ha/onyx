@@ -23,26 +23,32 @@ import edu.snu.onyx.common.ir.executionproperty.ExecutionProperty;
 import edu.snu.onyx.runtime.common.RuntimeIdGenerator;
 import edu.snu.onyx.runtime.common.plan.RuntimeEdge;
 import edu.snu.onyx.runtime.executor.data.Block;
+import edu.snu.onyx.runtime.executor.data.NonSerializedElement;
 import edu.snu.onyx.runtime.executor.data.partitioner.*;
 import edu.snu.onyx.runtime.executor.data.PartitionManagerWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Represents the output data transfer from a task.
+ *
+ * @param <T> element type.
  */
-public final class OutputWriter extends DataTransfer implements AutoCloseable {
+public final class OutputWriter<T> extends DataTransfer implements AutoCloseable {
   private static final Logger LOG = LoggerFactory.getLogger(OutputWriter.class.getName());
 
   private final String partitionId;
+  private final String pipeId;
   private final RuntimeEdge<?> runtimeEdge;
   private final String srcVertexId;
   private final IRVertex dstVertex;
   private final DataStoreProperty.Value channelDataPlacement;
   private final Map<PartitionerProperty.Value, Partitioner> partitionerMap;
   private final List<Long> accumulatedBlockSizeInfo;
+  private final AtomicInteger elementKey;
 
   /**
    * The Block Manager Worker.
@@ -57,6 +63,7 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
                       final PartitionManagerWorker partitionManagerWorker) {
     super(runtimeEdge.getId());
     this.partitionId = RuntimeIdGenerator.generatePartitionId(getId(), srcTaskIdx);
+    this.pipeId = RuntimeIdGenerator.generatePipeId(getId(), srcTaskIdx);
     this.runtimeEdge = runtimeEdge;
     this.srcVertexId = srcRuntimeVertexId;
     this.dstVertex = dstRuntimeVertex;
@@ -65,12 +72,14 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
     this.partitionerMap = new HashMap<>();
     // TODO #511: Refactor metric aggregation for (general) run-rime optimization.
     this.accumulatedBlockSizeInfo = new ArrayList<>();
+    this.elementKey = new AtomicInteger(0);
     // TODO #535: Enable user to create new implementation of each execution property.
     partitionerMap.put(PartitionerProperty.Value.IntactPartitioner, new IntactPartitioner());
     partitionerMap.put(PartitionerProperty.Value.HashPartitioner, new HashPartitioner());
     partitionerMap.put(PartitionerProperty.Value.DataSkewHashPartitioner,
         new DataSkewHashPartitioner(hashRangeMultiplier));
     partitionManagerWorker.createPartition(partitionId, channelDataPlacement);
+    partitionManagerWorker.createPipe(pipeId);
   }
 
   /**
@@ -97,7 +106,7 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
     final KeyExtractor keyExtractor = runtimeEdge.getProperty(ExecutionProperty.Key.KeyExtractor);
     final List<Block> blocksToWrite = partitioner.partition(dataToWrite, dstParallelism, keyExtractor);
 
-    LOG.info("log: OutputWriter.write({}): Partitioner {} blocksToWrite {}", dataToWrite.toString(),
+    LOG.info("log: Partitioner {} blocksToWrite {}", dataToWrite.toString(),
         partitioner.getClass().getSimpleName(),
         blocksToWrite.toArray().toString());
 
@@ -129,6 +138,9 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
    */
   @Override
   public void close() {
+
+    LOG.info("log: pmw.commitPartition({} from src {} whose dstparallelism is {})", partitionId, srcVertexId,
+        getDstParallelism());
     // Commit partition.
     final UsedDataHandlingProperty.Value usedDataHandling =
         runtimeEdge.getProperty(ExecutionProperty.Key.UsedDataHandling);
@@ -137,12 +149,14 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
   }
 
   private void writeOneToOne(final List<Block> blocksToWrite) {
+    LOG.info("log: ");
     // Write data.
     partitionManagerWorker.putBlocks(
         partitionId, blocksToWrite, channelDataPlacement, false);
   }
 
   private void writeBroadcast(final List<Block> blocksToWrite) {
+    LOG.info("log: ");
     writeOneToOne(blocksToWrite);
   }
 
@@ -153,9 +167,32 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
           new Throwable("The number of given blocks are not matched with the destination parallelism."));
     }
 
+    LOG.info("log: dstParallelism: {}", dstParallelism);
+
     // Write data.
     partitionManagerWorker.putBlocks(
         partitionId, blocksToWrite, channelDataPlacement, false);
+  }
+
+  /**
+   * Writes output data element-wise depending on the communication pattern of the edge.
+   *
+   * @param dataToWrite An element to be written.
+   */
+  public void writeElement(final T dataToWrite) {
+    final Boolean isDataSizeMetricCollectionEdge = MetricCollectionProperty.Value.DataSkewRuntimePass
+        .equals(runtimeEdge.getProperty(ExecutionProperty.Key.MetricCollection));
+
+    int key = elementKey.getAndIncrement();
+    final NonSerializedElement elementToWrite = new NonSerializedElement<>(key, dataToWrite);
+
+    if (isDataSizeMetricCollectionEdge) {
+      dataSkewElementWrite(elementToWrite);
+    } else {
+      LOG.info("log: element {} with key {}", elementToWrite.getData(), key);
+      // Write data.
+      partitionManagerWorker.putElement(pipeId, elementToWrite);
+    }
   }
 
   /**
@@ -173,13 +210,17 @@ public final class OutputWriter extends DataTransfer implements AutoCloseable {
    * @param blocksToWrite a list of the blocks to be written.
    */
   private void dataSkewWrite(final List<Block> blocksToWrite) {
-
     // Write data.
     final Optional<List<Long>> blockSizeInfo =
         partitionManagerWorker.putBlocks(partitionId, blocksToWrite, channelDataPlacement, false);
     if (blockSizeInfo.isPresent()) {
       this.accumulatedBlockSizeInfo.addAll(blockSizeInfo.get());
     }
+  }
+
+  private void dataSkewElementWrite(final NonSerializedElement elementToWrite) {
+    // Write data.
+    partitionManagerWorker.putElement(pipeId, elementToWrite);
   }
 
   /**

@@ -18,6 +18,7 @@ package edu.snu.onyx.runtime.executor.data.partitioner;
 import edu.snu.onyx.common.KeyExtractor;
 import edu.snu.onyx.runtime.executor.data.Block;
 import edu.snu.onyx.runtime.executor.data.NonSerializedBlock;
+import edu.snu.onyx.runtime.executor.data.NonSerializedElement;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,13 +26,21 @@ import java.util.List;
 /**
  * An implementation of {@link Partitioner} which makes an output data
  * from a source task to a single {@link Block}.
+ *
+ * @param <T> element type.
  */
-public final class IntactPartitioner implements Partitioner {
+public final class IntactPartitioner<T> implements Partitioner {
 
   @Override
   public List<Block> partition(final Iterable elements,
                                final int dstParallelism,
                                final KeyExtractor keyExtractor) {
     return Collections.singletonList(new NonSerializedBlock(0, elements));
+  }
+
+  public NonSerializedElement<T> element(final T element,
+                               final int dstParallelism,
+                               final KeyExtractor keyExtractor) {
+    return new NonSerializedElement<>(0, element);
   }
 }

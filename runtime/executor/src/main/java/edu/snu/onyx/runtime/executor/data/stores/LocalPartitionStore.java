@@ -19,10 +19,14 @@ import edu.snu.onyx.common.exception.PartitionFetchException;
 import edu.snu.onyx.common.exception.PartitionWriteException;
 import edu.snu.onyx.runtime.common.data.HashRange;
 import edu.snu.onyx.runtime.executor.data.NonSerializedBlock;
+import edu.snu.onyx.runtime.executor.data.NonSerializedElement;
 import edu.snu.onyx.runtime.executor.data.PartitionManagerWorker;
 import edu.snu.onyx.runtime.executor.data.SerializedBlock;
 import edu.snu.onyx.runtime.executor.data.partition.Partition;
+import edu.snu.onyx.runtime.executor.data.pipe.Pipe;
 import org.apache.reef.tang.InjectionFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,12 +39,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * Because of this, store can maintain all partitions in a single map (mapped with their IDs).
  */
 public abstract class LocalPartitionStore extends AbstractPartitionStore {
+  private static final Logger LOG = LoggerFactory.getLogger(LocalPartitionStore.class.getName());
+
   // A map between partition id and data blocks.
   private final ConcurrentHashMap<String, Partition> partitionMap;
+  private final ConcurrentHashMap<String, Pipe> pipeMap;
 
   protected LocalPartitionStore(final InjectionFuture<PartitionManagerWorker> partitionManagerWorker) {
     super(partitionManagerWorker);
     this.partitionMap = new ConcurrentHashMap<>();
+    this.pipeMap = new ConcurrentHashMap<>();
   }
 
   /**
@@ -78,6 +86,24 @@ public abstract class LocalPartitionStore extends AbstractPartitionStore {
     } catch (final IOException e) {
       // The partition is committed already.
       throw new PartitionWriteException(new Throwable("This partition is already committed."));
+    }
+  }
+
+  public final void putElement(final String pipeId, final NonSerializedElement element)
+      throws RuntimeException {
+      final Pipe pipe = pipeMap.get(pipeId);
+      if (pipe == null) {
+        throw new RuntimeException(new Throwable("The pipe " + pipeId + "is not created yet."));
+      }
+      pipe.putElement(element);
+  }
+
+  public final NonSerializedElement getElement(final String pipeId) throws RuntimeException {
+    final Pipe pipe = pipeMap.get(pipeId);
+    if (pipe != null) {
+        return pipe.getElement();
+    } else {
+      throw new RuntimeException("Pipe " +  pipeId + " isn't present!");
     }
   }
 
@@ -139,5 +165,12 @@ public abstract class LocalPartitionStore extends AbstractPartitionStore {
    */
   public final ConcurrentHashMap<String, Partition> getPartitionMap() {
     return partitionMap;
+  }
+
+  /**
+   * @return the map between the IDs and {@link Pipe}.
+   */
+  public final ConcurrentHashMap<String, Pipe> getPipeMap() {
+    return pipeMap;
   }
 }

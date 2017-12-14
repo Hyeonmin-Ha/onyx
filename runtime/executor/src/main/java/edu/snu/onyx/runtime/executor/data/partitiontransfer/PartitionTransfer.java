@@ -178,12 +178,10 @@ public final class PartitionTransfer extends SimpleChannelInboundHandler<Partiti
             .addListener(new ControlMessageWriteFutureListener(channelFuture, remoteExecutorId, onError));
         return;
       }
-      // This channelFuture's job is ended here.
+
       // Check whether the following PartitionInputStream is closed as well.
       isInputStreamClosed = ((PartitionInputStream) stream).isInputStreamClosed();
       LOG.info("log: PartitionTransfer: inputstream.isClosed(): {} ", isInputStreamClosed);
-
-      //inputStreamToStatusMap.replace((PartitionInputStream)stream, );
 
       executorIdToChannelFutureMap.remove(remoteExecutorId, channelFuture);
       if (future.cause() != null) {

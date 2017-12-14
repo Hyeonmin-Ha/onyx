@@ -25,6 +25,7 @@ import edu.snu.onyx.common.ir.executionproperty.ExecutionProperty;
 import edu.snu.onyx.runtime.common.plan.RuntimeEdge;
 import edu.snu.onyx.runtime.common.plan.physical.*;
 import edu.snu.onyx.runtime.common.state.TaskGroupState;
+import edu.snu.onyx.runtime.executor.data.NonSerializedElement;
 import edu.snu.onyx.runtime.executor.data.PartitionManagerWorker;
 import edu.snu.onyx.runtime.executor.datatransfer.DataTransferFactory;
 import edu.snu.onyx.runtime.executor.datatransfer.InputReader;
@@ -283,7 +284,7 @@ public final class TaskGroupExecutor {
     return sourceParallelism.get() == numOfInputStream.get();
   }
 
-  public void checkTaskCompletion(final Task task) {
+  public boolean checkTaskCompletion(final Task task) {
     boolean isComplete;
 
     if (task instanceof BoundedSourceTask) {
@@ -306,6 +307,8 @@ public final class TaskGroupExecutor {
           task.getId(), task.getRuntimeVertexId(), task.getClass().getSimpleName());
       taskTypeToTaskIdMap.remove(task.getId());
     }
+
+    return isComplete;
   }
 
   public boolean isTaskGroupComplete() {
@@ -332,7 +335,7 @@ public final class TaskGroupExecutor {
       // For intra-stage data, we need to emit data to OutputCollectorImpl.
       if (hasOutputWriter(boundedSourceTask)) {
         taskIdToOutputWriterMap.get(boundedSourceTask.getId()).forEach(outputWriter -> {
-          outputWriter.write(readData);
+          readData.forEach(outputWriter::writeElement);
           outputWriter.close();
         });
       } else {
@@ -399,17 +402,16 @@ public final class TaskGroupExecutor {
       // Inter-stage data is assumed to be sent element-wise.
       taskIdToInputReaderMap.get(operatorTask.getId()).stream().filter(inputReader -> !inputReader.isSideInputReader())
           .forEach(inputReader -> {
-            // For inter-stage data, read them as Iterable.
-            final List<CompletableFuture<Iterable>> futures = inputReader.read();
+            // For inter-stage data, read them as element.
+            final List<CompletableFuture<NonSerializedElement>> futures = inputReader.readElement();
             // Add consumers which will push the data to the data queue when it ready to the futures.
             futures.forEach(compFuture -> compFuture.whenComplete((data, exception) -> {
               if (exception != null) {
-                throw new PartitionFetchException(exception);
+                throw new RuntimeException(exception);
               }
               LOG.info("log: Reading from InputReader {} {} {}, data {}",
                   taskGroup.getTaskGroupId(), operatorTask.getId(), operatorTask.getRuntimeVertexId(),
                   data);
-
               dataQueue.add(data);
             }));
           });
@@ -417,12 +419,11 @@ public final class TaskGroupExecutor {
       // Count the number of closed PartitionInputStream.
       // If this count is the same with source parallelism,
       // we can conclude that we received all of current TaskGroup's input.
-
-      // Will first test for the MR, whose src parallelism is 1
       if (partitionManagerWorker.isInputStreamClosed()) {
         numOfInputStream.getAndIncrement();
-        LOG.info("log: pmw inputstream closed {} {} {}", taskGroup.getTaskGroupId(), operatorTask.getId(),
-            operatorTask.getRuntimeVertexId());
+        LOG.info("log: PMW InputStream closed {} {} {}, numOfInputStream {}",
+            taskGroup.getTaskGroupId(), operatorTask.getId(), operatorTask.getRuntimeVertexId(),
+            numOfInputStream.get());
       }
     } else {
       // If else, this task accepts intra-stage data.
@@ -438,6 +439,7 @@ public final class TaskGroupExecutor {
             }
           });
     }
+
     // Consumes the received element from incoming edges.
     IntStream.range(0, sourceParallelism.get()).forEach(srcTaskNum -> {
       try {
@@ -450,36 +452,25 @@ public final class TaskGroupExecutor {
       } catch (final InterruptedException e) {
         throw new RuntimeException(e);
       }
-
-      // For inter-stage data, we need to write them to OutputWriters, elements are bundled as a List.
-      // For intra-stage data, child Tasks will read them from OutputCollectorImpls; no write operation is needed.
-      final List output = outputCollector.collectOutputList();
-      LOG.info("log: {} {}: output to OutputWriter {}", taskGroup.getTaskGroupId(),
-          operatorTask.getId(), output.toString());
-      if (!output.isEmpty()) {
-        if (hasOutputWriter(operatorTask)) {
-          taskIdToOutputWriterMap.get(operatorTask.getId()).forEach(outputWriter -> outputWriter.write(output));
-        }
-      }
     });
     transform.close();
 
-    // Check whether there is any output data from the transform and write the output of this task to the writer.
-    // Here, too, we need to consider only inter-stage data and write them to OutputWriters.
-    final List output = outputCollector.collectOutputList();
-    LOG.info("log: {} {}: output to OutputWriter {}", taskGroup.getTaskGroupId(),
-        operatorTask.getId(), output.toString());
+    if (checkTaskCompletion(operatorTask)) {
+      // Check whether there is any output data from the transform and write the output of this task to the writer.
+      // Here, too, we need to consider only inter-stage data and write them to OutputWriters.
+      final List output = outputCollector.collectOutputList();
 
-    if (!output.isEmpty()) {
-      if (hasOutputWriter(operatorTask)) {
-        taskIdToOutputWriterMap.get(operatorTask.getId()).forEach(outputWriter -> {
-          outputWriter.write(output);
-          outputWriter.close();
-        });
+      if (!output.isEmpty()) {
+        LOG.info("log: {} {}: output to OutputWriter {}", taskGroup.getTaskGroupId(),
+            operatorTask.getId(), output.toString());
+        if (hasOutputWriter(operatorTask)) {
+          taskIdToOutputWriterMap.get(operatorTask.getId()).forEach(outputWriter -> {
+            output.forEach(outputWriter::writeElement);
+            outputWriter.close();
+          });
+        }
       }
     }
-
-    checkTaskCompletion(operatorTask);
   }
 
   /**

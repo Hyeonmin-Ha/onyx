@@ -123,6 +123,14 @@ public final class PartitionManagerWorker {
     store.createPartition(partitionId);
   }
 
+  /**
+   * Creates a new pipe.
+   *
+   * @param pipeId    the ID of the partition to create.
+   */
+  public void createPipe(final String pipeId) {
+    memoryStore.createPipe(pipeId);
+  }
 
   public boolean isInputStreamClosed() {
     return partitionTransfer.isInputStreamClosed();
@@ -145,7 +153,7 @@ public final class PartitionManagerWorker {
       final String runtimeEdgeId,
       final DataStoreProperty.Value partitionStore,
       final HashRange hashRange) {
-    LOG.info("RetrieveDataFromPartition: {}", partitionId);
+    LOG.info("log: {} {} {}", partitionId, partitionStore, hashRange);
     final PartitionStore store = getPartitionStore(partitionStore);
 
     // First, try to fetch the partition from local PartitionStore.
@@ -166,6 +174,14 @@ public final class PartitionManagerWorker {
       // We don't have the partition here...
       return requestPartitionInRemoteWorker(partitionId, runtimeEdgeId, partitionStore, hashRange);
     }
+  }
+
+  public CompletableFuture<NonSerializedElement> retrieveDataFromPipe(final String pipeId) {
+    LOG.info("log: Pipe {}", pipeId);
+    // Try to fetch the partition from LocalPartitionStore
+    final NonSerializedElement resultElement = memoryStore.getElement(pipeId);
+    // Pipe * should * be in this evaluator
+    return CompletableFuture.completedFuture(resultElement);
   }
 
   /**
@@ -239,6 +255,11 @@ public final class PartitionManagerWorker {
     } catch (final Exception e) {
       throw new PartitionWriteException(e);
     }
+  }
+
+  public void putElement(final String pipeId, final NonSerializedElement element) {
+    LOG.info("log: Pipe {}", pipeId);
+    memoryStore.putElement(pipeId, element);
   }
 
   /**

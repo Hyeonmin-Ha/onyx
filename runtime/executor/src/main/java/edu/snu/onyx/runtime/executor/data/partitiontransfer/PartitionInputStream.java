@@ -126,9 +126,15 @@ public final class PartitionInputStream<T> implements Iterable<T>, PartitionStre
   }
 
   boolean isInputStreamClosed() {
-    return byteBufInputStream.byteBufQueue.isClosed();
+    boolean isEnded;
+    try {
+      isEnded = byteBufInputStream.isEnded();
+    } catch (InterruptedException e) {
+      LOG.error("Interrupted while checking PartitionInputStream is ended", e);
+      throw new RuntimeException(e);
+    }
+    return isEnded;
   }
-
 
   /**
    * Start decoding {@link ByteBuf}s into elements, if it has not been started.

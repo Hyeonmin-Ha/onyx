@@ -30,6 +30,7 @@ public final class RuntimeIdGenerator {
   private static AtomicLong resourceSpecIdGenerator = new AtomicLong(1);
   private static String partitionPrefix = "Partition-";
   private static String partitionIdSplitter = "_";
+  private static String pipePrefix = "Pipe-";
 
   private RuntimeIdGenerator() {
   }
@@ -109,6 +110,18 @@ public final class RuntimeIdGenerator {
   public static String generatePartitionId(final String runtimeEdgeId,
                                            final int taskIndex) {
     return partitionPrefix + runtimeEdgeId + partitionIdSplitter + taskIndex;
+  }
+
+  /**
+   * Generates the ID for a pipe, whose data is the output of a stream task.
+   *
+   * @param runtimeEdgeId of the pipe
+   * @param taskIndex     of the pipe
+   * @return the generated ID
+   */
+  public static String generatePipeId(final String runtimeEdgeId,
+                                           final int taskIndex) {
+    return pipePrefix + runtimeEdgeId + partitionIdSplitter + taskIndex;
   }
 
   /**
