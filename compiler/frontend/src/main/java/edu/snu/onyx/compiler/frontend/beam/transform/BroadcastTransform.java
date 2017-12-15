@@ -26,9 +26,9 @@ import org.apache.beam.sdk.values.PCollectionView;
  * @param <I> input type.
  * @param <O> output type.
  */
-public final class BroadcastTransform<I, O> implements Transform<I, O> {
+public final class BroadcastTransform<I, O> implements Transform<WindowedValue<I>, WindowedValue<O>> {
   private final PCollectionView pCollectionView;
-  private OutputCollector<O> outputCollector;
+  private OutputCollector<WindowedValue<O>> outputCollector;
 
   /**
    * Constructor of BroadcastTransform.
@@ -39,15 +39,14 @@ public final class BroadcastTransform<I, O> implements Transform<I, O> {
   }
 
   @Override
-  public void prepare(final Context context, final OutputCollector<O> oc) {
+  public void prepare(final Context context, final OutputCollector<WindowedValue<O>> oc) {
     this.outputCollector = oc;
   }
 
   @Override
-  public void onData(final I data) {
-    final WindowedValue<I> windowed = WindowedValue.valueInGlobalWindow(data);
-    final ViewFn<WindowedValue<I>, O> viewFn = this.pCollectionView.getViewFn();
-    outputCollector.emit(viewFn.apply(windowed));
+  public void onData(final WindowedValue<I> data) {
+    final ViewFn<WindowedValue<I>, WindowedValue<O>> viewFn = this.pCollectionView.getViewFn();
+    outputCollector.emit(viewFn.apply(data));
   }
 
   /**

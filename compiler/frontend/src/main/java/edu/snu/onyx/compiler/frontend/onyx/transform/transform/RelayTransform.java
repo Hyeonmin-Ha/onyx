@@ -17,27 +17,28 @@ package edu.snu.onyx.compiler.frontend.onyx.transform.transform;
 
 import edu.snu.onyx.common.ir.OutputCollector;
 import edu.snu.onyx.common.ir.Transform;
+import org.apache.beam.sdk.util.WindowedValue;
 
 /**
  * A {@link Transform} relays input data from upstream vertex to downstream vertex promptly.
  * This transform can be used for merging input data into the {@link OutputCollector}.
  * @param <T> input/output type.
  */
-public final class RelayTransform<T> implements Transform<T, T> {
-  private OutputCollector<T> outputCollector;
+public final class RelayTransform<T> implements Transform<WindowedValue<T>, WindowedValue<T>> {
+  private OutputCollector<WindowedValue<T>> outputCollector;
 
   public RelayTransform() {
     // Do nothing.
   }
 
   @Override
-  public void prepare(final Context context, final OutputCollector<T> oc) {
+  public void prepare(final Context context, final OutputCollector<WindowedValue<T>> oc) {
     this.outputCollector = oc;
   }
 
   @Override
-  public void onData(final T data) {
-    outputCollector.emit(data);
+  public void onData(final WindowedValue<T> element) {
+    outputCollector.emit(element);
   }
 
   @Override

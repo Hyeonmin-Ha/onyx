@@ -16,6 +16,7 @@
 package edu.snu.onyx.runtime.executor.datatransfer;
 
 import edu.snu.onyx.common.ir.OutputCollector;
+import org.apache.beam.sdk.util.WindowedValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +27,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * Output Collector Implementation.
  * @param <O> output type.
  */
-public final class OutputCollectorImpl<O> implements OutputCollector<O> {
-  private AtomicReference<LinkedBlockingQueue<O>> outputQueue;
+public final class OutputCollectorImpl<O> implements OutputCollector<WindowedValue<O>> {
+  private AtomicReference<LinkedBlockingQueue<WindowedValue<O>>> outputQueue;
 
   /**
    * Constructor of a new OutputCollector.
@@ -37,7 +38,7 @@ public final class OutputCollectorImpl<O> implements OutputCollector<O> {
   }
 
   @Override
-  public void emit(final O output) {
+  public void emit(final WindowedValue<O> output) {
     try {
       outputQueue.get().put(output);
     } catch (InterruptedException e) {
@@ -54,7 +55,7 @@ public final class OutputCollectorImpl<O> implements OutputCollector<O> {
    * Inter-Task data is transferred from sender-side Task's OutputCollectorImpl to receiver-side Task.
    * @return the output element that is transferred to the next Task of TaskGroup.
    */
-  public O remove() {
+  public WindowedValue<O> remove() {
     return outputQueue.get().remove();
   }
 
@@ -71,9 +72,9 @@ public final class OutputCollectorImpl<O> implements OutputCollector<O> {
    *
    * @return the list of output elements.
   */
-  public List<O> collectOutputList() {
-    LinkedBlockingQueue<O> currentOutputQueue = outputQueue.getAndSet(new LinkedBlockingQueue<>());
-    List<O> outputList = new ArrayList<>();
+  public List<WindowedValue<O>> collectOutputList() {
+    LinkedBlockingQueue<WindowedValue<O>> currentOutputQueue = outputQueue.getAndSet(new LinkedBlockingQueue<>());
+    List<WindowedValue<O>> outputList = new ArrayList<>();
     while (currentOutputQueue.size() > 0) {
       outputList.add(currentOutputQueue.remove());
     }
