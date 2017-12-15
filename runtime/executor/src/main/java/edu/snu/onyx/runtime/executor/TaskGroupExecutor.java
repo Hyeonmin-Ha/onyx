@@ -241,13 +241,13 @@ public final class TaskGroupExecutor {
           taskGroupStateManager.onTaskGroupStateChanged(TaskGroupState.State.FAILED_RECOVERABLE,
               Optional.empty(),
               Optional.of(TaskGroupState.RecoverableFailureCause.INPUT_READ_FAILURE));
-          LOG.warn("{} Execution Failed (Recoverable)! Exception: {}",
+          LOG.warn("{} Execution Failed (Recoverable)! Input Read Failure. Exception: {}",
               new Object[]{taskGroup.getTaskGroupId(), ex.toString()});
         } catch (final PartitionWriteException ex2) {
           taskGroupStateManager.onTaskGroupStateChanged(TaskGroupState.State.FAILED_RECOVERABLE,
               Optional.empty(),
               Optional.of(TaskGroupState.RecoverableFailureCause.OUTPUT_WRITE_FAILURE));
-          LOG.warn("{} Execution Failed (Recoverable)! Exception: {}",
+          LOG.warn("{} Execution Failed (Recoverable)! Output Write Failure. Exception: {}",
               new Object[]{taskGroup.getTaskGroupId(), ex2.toString()});
         } catch (final Exception e) {
           taskGroupStateManager.onTaskGroupStateChanged(TaskGroupState.State.FAILED_UNRECOVERABLE,

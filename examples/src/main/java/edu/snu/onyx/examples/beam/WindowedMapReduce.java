@@ -81,7 +81,7 @@ public final class WindowedMapReduce {
     final Instant maxTimestamp = new Instant(minTimestamp.getMillis() + Duration.standardHours(1).getMillis());
 
     options.setRunner(OnyxPipelineRunner.class);
-    options.setJobName("MapReduce");
+    options.setJobName("WindowedMapReduce");
 
     final Pipeline p = Pipeline.create(options);
     final PCollection<String> input = GenericSourceSink.read(p, inputFilePath)
