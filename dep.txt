@@ -1,0 +1,2033 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Detecting the operating system and CPU architecture
+[INFO] ------------------------------------------------------------------------
+[INFO] os.detected.name: osx
+[INFO] os.detected.arch: x86_64
+[INFO] os.detected.version: 10.12
+[INFO] os.detected.version.major: 10
+[INFO] os.detected.version.minor: 12
+[INFO] os.detected.classifier: osx-x86_64
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Onyx Project
+[INFO] Onyx Job Configuration
+[INFO] Onyx Common
+[INFO] Onyx Compiler Frontend
+[INFO] Onyx Runtime Common
+[INFO] Onyx Compiler Backend
+[INFO] Onyx Compiler Optimizer
+[INFO] Onyx Runtime Executor
+[INFO] Onyx Runtime Master
+[INFO] Onyx Driver
+[INFO] Onyx Client
+[INFO] Onyx Examples
+[INFO] Onyx Unit Tests and Integration Tests
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Onyx Project 0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ onyx-project ---
+[INFO] edu.snu.onyx:onyx-project:pom:0.1-SNAPSHOT
+[INFO] +- com.google.protobuf:protobuf-java:jar:2.5.0:compile
+[INFO] +- org.xerial.snappy:snappy-java:jar:1.1.1.3:compile
+[INFO] \- org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile
+[INFO]    +- com.google.code.findbugs:jsr305:jar:3.0.1:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-databind:jar:2.8.8:compile
+[INFO]    |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.0:compile - omitted for conflict with 2.8.8)
+[INFO]    |  \- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- org.slf4j:slf4j-api:jar:1.7.14:compile
+[INFO]    +- org.apache.avro:avro:jar:1.8.1:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+[INFO]    |  |  \- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO]    |  +- com.thoughtworks.paranamer:paranamer:jar:2.7:compile
+[INFO]    |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO]    |  +- org.apache.commons:commons-compress:jar:1.8.1:compile
+[INFO]    |  +- org.tukaani:xz:jar:1.5:compile
+[INFO]    |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.7.14)
+[INFO]    +- (org.xerial.snappy:snappy-java:jar:1.1.4-M3:compile - omitted for conflict with 1.1.1.3)
+[INFO]    \- joda-time:joda-time:jar:2.4:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Onyx Job Configuration 0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ onyx-conf ---
+[INFO] edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT
+[INFO] +- org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  +- org.apache.reef:reef-annotations:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  +- org.apache.reef:reef-utils:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  |  \- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- cglib:cglib:jar:3.1:compile
+[INFO] |  |  |  \- org.ow2.asm:asm:jar:4.2:compile
+[INFO] |  |  +- io.netty:netty-all:jar:4.1.16.Final:compile (version managed from 4.0.23.Final)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  \- io.github.lukehutch:fast-classpath-scanner:jar:2.4.5:compile
+[INFO] |  +- org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- commons-configuration:commons-configuration:jar:1.10:compile
+[INFO] |  |  |  +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] |  |  |  \- commons-logging:commons-logging:jar:1.1.1:compile
+[INFO] |  |  +- commons-cli:commons-cli:jar:1.2:compile
+[INFO] |  |  +- (javax.inject:javax.inject:jar:1:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  +- net.jcip:jcip-annotations:jar:1.0:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.3.2:compile
+[INFO] |  \- com.google.code.findbugs:jsr305:jar:3.0.1:compile
+[INFO] +- com.google.protobuf:protobuf-java:jar:2.5.0:compile
+[INFO] +- org.xerial.snappy:snappy-java:jar:1.1.1.3:compile
+[INFO] \- org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile
+[INFO]    +- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO]    +- com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-databind:jar:2.8.8:compile
+[INFO]    |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.0:compile - omitted for conflict with 2.8.8)
+[INFO]    |  \- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- org.slf4j:slf4j-api:jar:1.7.14:compile
+[INFO]    +- org.apache.avro:avro:jar:1.8.1:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+[INFO]    |  |  \- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO]    |  +- com.thoughtworks.paranamer:paranamer:jar:2.7:compile
+[INFO]    |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO]    |  +- org.apache.commons:commons-compress:jar:1.8.1:compile
+[INFO]    |  +- org.tukaani:xz:jar:1.5:compile
+[INFO]    |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.7.14)
+[INFO]    +- (org.xerial.snappy:snappy-java:jar:1.1.4-M3:compile - omitted for conflict with 1.1.1.3)
+[INFO]    \- joda-time:joda-time:jar:2.4:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Onyx Common 0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ onyx-common ---
+[INFO] edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT
+[INFO] +- org.apache.reef:reef-io:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:reef-webserver:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.mortbay.jetty:jetty:jar:6.1.26:compile
+[INFO] |  |  |  +- (org.mortbay.jetty:jetty-util:jar:6.1.26:compile - omitted for duplicate)
+[INFO] |  |  |  \- org.mortbay.jetty:servlet-api:jar:2.5-20081211:compile
+[INFO] |  |  +- org.mortbay.jetty:jetty-util:jar:6.1.26:compile
+[INFO] |  |  +- (org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  \- org.apache.avro:avro:jar:1.8.1:compile
+[INFO] |     +- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+[INFO] |     +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+[INFO] |     |  \- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO] |     +- com.thoughtworks.paranamer:paranamer:jar:2.7:compile
+[INFO] |     +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |     +- org.apache.commons:commons-compress:jar:1.8.1:compile
+[INFO] |     +- org.tukaani:xz:jar:1.5:compile
+[INFO] |     \- (org.slf4j:slf4j-api:jar:1.7.10:compile - omitted for conflict with 1.7.14)
+[INFO] +- org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  +- org.apache.reef:reef-annotations:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  +- org.apache.reef:reef-utils:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  |  \- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- cglib:cglib:jar:3.1:compile
+[INFO] |  |  |  \- org.ow2.asm:asm:jar:4.2:compile
+[INFO] |  |  +- io.netty:netty-all:jar:4.1.16.Final:compile (version managed from 4.0.23.Final)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  \- io.github.lukehutch:fast-classpath-scanner:jar:2.4.5:compile
+[INFO] |  +- org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- commons-configuration:commons-configuration:jar:1.10:compile
+[INFO] |  |  |  +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] |  |  |  \- commons-logging:commons-logging:jar:1.1.3:compile
+[INFO] |  |  +- commons-cli:commons-cli:jar:1.2:compile
+[INFO] |  |  +- (javax.inject:javax.inject:jar:1:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  +- net.jcip:jcip-annotations:jar:1.0:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.3.2:compile
+[INFO] |  \- com.google.code.findbugs:jsr305:jar:3.0.1:compile
+[INFO] +- org.apache.hadoop:hadoop-mapreduce-client-core:jar:2.7.2:provided
+[INFO] |  +- org.apache.hadoop:hadoop-yarn-common:jar:2.7.2:provided
+[INFO] |  |  +- org.apache.hadoop:hadoop-yarn-api:jar:2.7.2:provided
+[INFO] |  |  |  +- (commons-lang:commons-lang:jar:2.6:provided - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.guava:guava:jar:19.0:provided - version managed from 11.0.2; omitted for duplicate)
+[INFO] |  |  |  +- (commons-logging:commons-logging:jar:1.1.3:provided - omitted for conflict with 1.1.3)
+[INFO] |  |  |  +- (org.apache.hadoop:hadoop-annotations:jar:2.7.2:provided - omitted for duplicate)
+[INFO] |  |  |  \- (com.google.protobuf:protobuf-java:jar:2.5.0:provided - omitted for duplicate)
+[INFO] |  |  +- javax.xml.bind:jaxb-api:jar:2.2.2:provided
+[INFO] |  |  |  +- javax.xml.stream:stax-api:jar:1.0-2:provided
+[INFO] |  |  |  \- javax.activation:activation:jar:1.1:provided
+[INFO] |  |  +- (org.apache.commons:commons-compress:jar:1.4.1:provided - omitted for conflict with 1.8.1)
+[INFO] |  |  +- (commons-lang:commons-lang:jar:2.6:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- javax.servlet:servlet-api:jar:2.5:provided
+[INFO] |  |  +- commons-codec:commons-codec:jar:1.4:provided
+[INFO] |  |  +- (org.mortbay.jetty:jetty-util:jar:6.1.26:provided - omitted for duplicate)
+[INFO] |  |  +- com.sun.jersey:jersey-core:jar:1.9:provided
+[INFO] |  |  +- com.sun.jersey:jersey-client:jar:1.9:provided
+[INFO] |  |  |  \- (com.sun.jersey:jersey-core:jar:1.9:provided - omitted for duplicate)
+[INFO] |  |  +- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:provided - omitted for duplicate)
+[INFO] |  |  +- (org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:provided - omitted for duplicate)
+[INFO] |  |  +- org.codehaus.jackson:jackson-jaxrs:jar:1.9.13:provided
+[INFO] |  |  |  +- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:provided - omitted for duplicate)
+[INFO] |  |  |  \- (org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:provided - omitted for duplicate)
+[INFO] |  |  +- org.codehaus.jackson:jackson-xc:jar:1.9.13:provided
+[INFO] |  |  |  +- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:provided - omitted for duplicate)
+[INFO] |  |  |  \- (org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:provided - omitted for duplicate)
+[INFO] |  |  +- com.google.guava:guava:jar:19.0:provided
+[INFO] |  |  +- (commons-logging:commons-logging:jar:1.1.3:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- (commons-cli:commons-cli:jar:1.2:provided - omitted for duplicate)
+[INFO] |  |  +- (org.slf4j:slf4j-api:jar:1.7.10:provided - omitted for conflict with 1.7.10)
+[INFO] |  |  +- (org.apache.hadoop:hadoop-annotations:jar:2.7.2:provided - omitted for duplicate)
+[INFO] |  |  +- (com.google.inject.extensions:guice-servlet:jar:3.0:provided - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:provided - omitted for duplicate)
+[INFO] |  |  +- commons-io:commons-io:jar:2.4:provided
+[INFO] |  |  +- com.google.inject:guice:jar:3.0:provided
+[INFO] |  |  |  +- (javax.inject:javax.inject:jar:1:provided - omitted for duplicate)
+[INFO] |  |  |  \- aopalliance:aopalliance:jar:1.0:provided
+[INFO] |  |  +- com.sun.jersey:jersey-server:jar:1.9:provided
+[INFO] |  |  |  +- asm:asm:jar:3.1:provided
+[INFO] |  |  |  \- (com.sun.jersey:jersey-core:jar:1.9:provided - omitted for duplicate)
+[INFO] |  |  +- com.sun.jersey:jersey-json:jar:1.9:provided
+[INFO] |  |  |  +- org.codehaus.jettison:jettison:jar:1.1:provided
+[INFO] |  |  |  +- com.sun.xml.bind:jaxb-impl:jar:2.2.3-1:provided
+[INFO] |  |  |  |  \- (javax.xml.bind:jaxb-api:jar:2.2.2:provided - omitted for duplicate)
+[INFO] |  |  |  +- (org.codehaus.jackson:jackson-core-asl:jar:1.8.3:provided - omitted for conflict with 1.9.13)
+[INFO] |  |  |  +- (org.codehaus.jackson:jackson-mapper-asl:jar:1.8.3:provided - omitted for conflict with 1.9.13)
+[INFO] |  |  |  +- (org.codehaus.jackson:jackson-jaxrs:jar:1.8.3:provided - omitted for conflict with 1.9.13)
+[INFO] |  |  |  +- (org.codehaus.jackson:jackson-xc:jar:1.8.3:provided - omitted for conflict with 1.9.13)
+[INFO] |  |  |  \- (com.sun.jersey:jersey-core:jar:1.9:provided - omitted for duplicate)
+[INFO] |  |  +- com.sun.jersey.contribs:jersey-guice:jar:1.9:provided
+[INFO] |  |  |  +- (javax.inject:javax.inject:jar:1:provided - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.inject:guice:jar:3.0:provided - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.inject.extensions:guice-servlet:jar:3.0:provided - omitted for duplicate)
+[INFO] |  |  |  \- (com.sun.jersey:jersey-server:jar:1.9:provided - omitted for duplicate)
+[INFO] |  |  \- log4j:log4j:jar:1.2.17:provided
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:provided - omitted for duplicate)
+[INFO] |  +- (org.apache.avro:avro:jar:1.7.4:provided - omitted for conflict with 1.8.1)
+[INFO] |  +- (org.slf4j:slf4j-api:jar:1.7.10:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  +- org.slf4j:slf4j-log4j12:jar:1.7.10:provided
+[INFO] |  |  +- (org.slf4j:slf4j-api:jar:1.7.10:provided - omitted for duplicate)
+[INFO] |  |  \- (log4j:log4j:jar:1.2.17:provided - omitted for duplicate)
+[INFO] |  +- org.apache.hadoop:hadoop-annotations:jar:2.7.2:provided
+[INFO] |  |  \- jdk.tools:jdk.tools:jar:1.8:system
+[INFO] |  +- com.google.inject.extensions:guice-servlet:jar:3.0:provided
+[INFO] |  |  \- (com.google.inject:guice:jar:3.0:provided - omitted for duplicate)
+[INFO] |  \- io.netty:netty:jar:3.6.2.Final:provided
+[INFO] +- com.google.protobuf:protobuf-java:jar:2.5.0:compile
+[INFO] +- org.xerial.snappy:snappy-java:jar:1.1.1.3:compile
+[INFO] \- org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile
+[INFO]    +- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO]    +- com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-databind:jar:2.8.8:compile
+[INFO]    |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.0:compile - omitted for conflict with 2.8.8)
+[INFO]    |  \- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- org.slf4j:slf4j-api:jar:1.7.14:compile
+[INFO]    +- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO]    +- (org.xerial.snappy:snappy-java:jar:1.1.4-M3:compile - omitted for conflict with 1.1.1.3)
+[INFO]    \- joda-time:joda-time:jar:2.4:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Onyx Compiler Frontend 0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ onyx-compiler-frontend ---
+[INFO] edu.snu.onyx:onyx-compiler-frontend:jar:0.1-SNAPSHOT
+[INFO] +- edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- org.apache.reef:reef-io:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:reef-webserver:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty:jar:6.1.26:compile
+[INFO] |  |  |  |  +- (org.mortbay.jetty:jetty-util:jar:6.1.26:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- org.mortbay.jetty:servlet-api:jar:2.5-20081211:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty-util:jar:6.1.26:compile
+[INFO] |  |  |  +- (org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-annotations:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-utils:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  |  |  \- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- cglib:cglib:jar:3.1:compile
+[INFO] |  |  |  |  \- org.ow2.asm:asm:jar:4.2:compile
+[INFO] |  |  |  +- io.netty:netty-all:jar:4.1.16.Final:compile (version managed from 4.0.23.Final)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.github.lukehutch:fast-classpath-scanner:jar:2.4.5:compile
+[INFO] |  |  +- org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- commons-configuration:commons-configuration:jar:1.10:compile
+[INFO] |  |  |  |  +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] |  |  |  |  \- commons-logging:commons-logging:jar:1.1.1:compile
+[INFO] |  |  |  +- commons-cli:commons-cli:jar:1.2:compile
+[INFO] |  |  |  +- (javax.inject:javax.inject:jar:1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  +- net.jcip:jcip-annotations:jar:1.0:compile
+[INFO] |  |  +- org.apache.commons:commons-lang3:jar:3.3.2:compile
+[INFO] |  |  \- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile
+[INFO] +- com.google.protobuf:protobuf-java:jar:2.5.0:compile
+[INFO] +- org.xerial.snappy:snappy-java:jar:1.1.1.3:compile
+[INFO] \- org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile
+[INFO]    +- com.google.code.findbugs:jsr305:jar:3.0.1:compile
+[INFO]    +- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- com.fasterxml.jackson.core:jackson-databind:jar:2.8.8:compile
+[INFO]    |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.0:compile - omitted for conflict with 2.8.8)
+[INFO]    |  \- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- org.slf4j:slf4j-api:jar:1.7.14:compile
+[INFO]    +- org.apache.avro:avro:jar:1.8.1:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+[INFO]    |  |  \- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO]    |  +- com.thoughtworks.paranamer:paranamer:jar:2.7:compile
+[INFO]    |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO]    |  +- org.apache.commons:commons-compress:jar:1.8.1:compile
+[INFO]    |  +- org.tukaani:xz:jar:1.5:compile
+[INFO]    |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.7.14)
+[INFO]    +- (org.xerial.snappy:snappy-java:jar:1.1.4-M3:compile - omitted for conflict with 1.1.1.3)
+[INFO]    \- joda-time:joda-time:jar:2.4:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Onyx Runtime Common 0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ onyx-runtime-common ---
+[INFO] edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT
+[INFO] +- edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- org.apache.reef:reef-io:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:reef-webserver:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty:jar:6.1.26:compile
+[INFO] |  |  |  |  +- (org.mortbay.jetty:jetty-util:jar:6.1.26:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- org.mortbay.jetty:servlet-api:jar:2.5-20081211:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty-util:jar:6.1.26:compile
+[INFO] |  |  |  +- (org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-annotations:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-utils:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  |  |  \- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- cglib:cglib:jar:3.1:compile
+[INFO] |  |  |  |  \- org.ow2.asm:asm:jar:4.2:compile
+[INFO] |  |  |  +- io.netty:netty-all:jar:4.1.16.Final:compile (version managed from 4.0.23.Final)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.github.lukehutch:fast-classpath-scanner:jar:2.4.5:compile
+[INFO] |  |  +- org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- commons-configuration:commons-configuration:jar:1.10:compile
+[INFO] |  |  |  |  +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] |  |  |  |  \- commons-logging:commons-logging:jar:1.1.1:compile
+[INFO] |  |  |  +- commons-cli:commons-cli:jar:1.2:compile
+[INFO] |  |  |  +- (javax.inject:javax.inject:jar:1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  +- net.jcip:jcip-annotations:jar:1.0:compile
+[INFO] |  |  +- org.apache.commons:commons-lang3:jar:3.3.2:compile
+[INFO] |  |  \- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- io.grpc:grpc-netty:jar:1.7.0:compile
+[INFO] |  +- io.grpc:grpc-core:jar:1.7.0:compile
+[INFO] |  |  +- io.grpc:grpc-context:jar:1.7.0:compile
+[INFO] |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  +- com.google.errorprone:error_prone_annotations:jar:2.0.19:compile
+[INFO] |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  +- com.google.instrumentation:instrumentation-api:jar:0.4.3:compile
+[INFO] |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  \- io.opencensus:opencensus-api:jar:0.6.0:compile
+[INFO] |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  +- io.netty:netty-codec-http2:jar:4.1.16.Final:compile
+[INFO] |  |  +- io.netty:netty-codec-http:jar:4.1.16.Final:compile
+[INFO] |  |  |  \- io.netty:netty-codec:jar:4.1.16.Final:compile
+[INFO] |  |  |     \- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  \- io.netty:netty-handler:jar:4.1.16.Final:compile
+[INFO] |  |     +- io.netty:netty-buffer:jar:4.1.16.Final:compile
+[INFO] |  |     |  \- io.netty:netty-common:jar:4.1.16.Final:compile
+[INFO] |  |     +- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  \- io.netty:netty-handler-proxy:jar:4.1.16.Final:compile
+[INFO] |     +- io.netty:netty-transport:jar:4.1.16.Final:compile
+[INFO] |     |  +- (io.netty:netty-buffer:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |     |  \- io.netty:netty-resolver:jar:4.1.16.Final:compile
+[INFO] |     |     \- (io.netty:netty-common:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |     +- io.netty:netty-codec-socks:jar:4.1.16.Final:compile
+[INFO] |     |  \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |     \- (io.netty:netty-codec-http:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] +- io.grpc:grpc-protobuf:jar:1.7.0:compile
+[INFO] |  +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  +- com.google.guava:guava:jar:19.0:compile
+[INFO] |  +- com.google.protobuf:protobuf-java-util:jar:3.4.0:compile
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  \- com.google.code.gson:gson:jar:2.7:compile
+[INFO] |  +- com.google.api.grpc:proto-google-common-protos:jar:0.1.9:compile
+[INFO] |  \- io.grpc:grpc-protobuf-lite:jar:1.7.0:compile
+[INFO] |     +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] +- io.grpc:grpc-stub:jar:1.7.0:compile
+[INFO] |  \- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] +- io.grpc:grpc-testing:jar:1.7.0:test
+[INFO] |  +- (io.grpc:grpc-core:jar:1.7.0:test - omitted for duplicate)
+[INFO] |  +- (io.grpc:grpc-stub:jar:1.7.0:test - omitted for duplicate)
+[INFO] |  +- junit:junit:jar:4.11:test
+[INFO] |  |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] |  \- org.mockito:mockito-core:jar:1.9.5:test
+[INFO] |     \- org.objenesis:objenesis:jar:1.0:test
+[INFO] +- com.google.protobuf:protobuf-java:jar:2.5.0:compile
+[INFO] +- org.xerial.snappy:snappy-java:jar:1.1.1.3:compile
+[INFO] \- org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile
+[INFO]    +- com.google.code.findbugs:jsr305:jar:3.0.1:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-databind:jar:2.8.8:compile
+[INFO]    |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.0:compile - omitted for conflict with 2.8.8)
+[INFO]    |  \- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- org.slf4j:slf4j-api:jar:1.7.14:compile
+[INFO]    +- org.apache.avro:avro:jar:1.8.1:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+[INFO]    |  |  \- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO]    |  +- com.thoughtworks.paranamer:paranamer:jar:2.7:compile
+[INFO]    |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO]    |  +- org.apache.commons:commons-compress:jar:1.8.1:compile
+[INFO]    |  +- org.tukaani:xz:jar:1.5:compile
+[INFO]    |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.7.14)
+[INFO]    +- (org.xerial.snappy:snappy-java:jar:1.1.4-M3:compile - omitted for conflict with 1.1.1.3)
+[INFO]    \- joda-time:joda-time:jar:2.4:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Onyx Compiler Backend 0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ onyx-compiler-backend ---
+[INFO] edu.snu.onyx:onyx-compiler-backend:jar:0.1-SNAPSHOT
+[INFO] +- edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- org.apache.reef:reef-io:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:reef-webserver:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty:jar:6.1.26:compile
+[INFO] |  |  |  |  +- (org.mortbay.jetty:jetty-util:jar:6.1.26:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- org.mortbay.jetty:servlet-api:jar:2.5-20081211:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty-util:jar:6.1.26:compile
+[INFO] |  |  |  +- (org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-annotations:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-utils:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  |  |  \- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- cglib:cglib:jar:3.1:compile
+[INFO] |  |  |  |  \- org.ow2.asm:asm:jar:4.2:compile
+[INFO] |  |  |  +- io.netty:netty-all:jar:4.1.16.Final:compile (version managed from 4.0.23.Final)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.github.lukehutch:fast-classpath-scanner:jar:2.4.5:compile
+[INFO] |  |  +- org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- commons-configuration:commons-configuration:jar:1.10:compile
+[INFO] |  |  |  |  +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] |  |  |  |  \- commons-logging:commons-logging:jar:1.1.1:compile
+[INFO] |  |  |  +- commons-cli:commons-cli:jar:1.2:compile
+[INFO] |  |  |  +- (javax.inject:javax.inject:jar:1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  +- net.jcip:jcip-annotations:jar:1.0:compile
+[INFO] |  |  +- org.apache.commons:commons-lang3:jar:3.3.2:compile
+[INFO] |  |  \- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  +- io.grpc:grpc-netty:jar:1.7.0:compile
+[INFO] |  |  +- io.grpc:grpc-core:jar:1.7.0:compile
+[INFO] |  |  |  +- io.grpc:grpc-context:jar:1.7.0:compile
+[INFO] |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- com.google.errorprone:error_prone_annotations:jar:2.0.19:compile
+[INFO] |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  +- com.google.instrumentation:instrumentation-api:jar:0.4.3:compile
+[INFO] |  |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  |  \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.opencensus:opencensus-api:jar:0.6.0:compile
+[INFO] |  |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  +- io.netty:netty-codec-http2:jar:4.1.16.Final:compile
+[INFO] |  |  |  +- io.netty:netty-codec-http:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  \- io.netty:netty-codec:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     \- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.netty:netty-handler:jar:4.1.16.Final:compile
+[INFO] |  |  |     +- io.netty:netty-buffer:jar:4.1.16.Final:compile
+[INFO] |  |  |     |  \- io.netty:netty-common:jar:4.1.16.Final:compile
+[INFO] |  |  |     +- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |     \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  \- io.netty:netty-handler-proxy:jar:4.1.16.Final:compile
+[INFO] |  |     +- io.netty:netty-transport:jar:4.1.16.Final:compile
+[INFO] |  |     |  +- (io.netty:netty-buffer:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     |  \- io.netty:netty-resolver:jar:4.1.16.Final:compile
+[INFO] |  |     |     \- (io.netty:netty-common:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     +- io.netty:netty-codec-socks:jar:4.1.16.Final:compile
+[INFO] |  |     |  \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     \- (io.netty:netty-codec-http:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  +- io.grpc:grpc-protobuf:jar:1.7.0:compile
+[INFO] |  |  +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  +- com.google.guava:guava:jar:19.0:compile
+[INFO] |  |  +- com.google.protobuf:protobuf-java-util:jar:3.4.0:compile
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  \- com.google.code.gson:gson:jar:2.7:compile
+[INFO] |  |  +- com.google.api.grpc:proto-google-common-protos:jar:0.1.9:compile
+[INFO] |  |  \- io.grpc:grpc-protobuf-lite:jar:1.7.0:compile
+[INFO] |  |     +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  +- io.grpc:grpc-stub:jar:1.7.0:compile
+[INFO] |  |  \- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- com.google.protobuf:protobuf-java:jar:2.5.0:compile
+[INFO] +- org.xerial.snappy:snappy-java:jar:1.1.1.3:compile
+[INFO] \- org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile
+[INFO]    +- com.google.code.findbugs:jsr305:jar:3.0.1:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-databind:jar:2.8.8:compile
+[INFO]    |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.0:compile - omitted for conflict with 2.8.8)
+[INFO]    |  \- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- org.slf4j:slf4j-api:jar:1.7.14:compile
+[INFO]    +- org.apache.avro:avro:jar:1.8.1:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+[INFO]    |  |  \- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO]    |  +- com.thoughtworks.paranamer:paranamer:jar:2.7:compile
+[INFO]    |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO]    |  +- org.apache.commons:commons-compress:jar:1.8.1:compile
+[INFO]    |  +- org.tukaani:xz:jar:1.5:compile
+[INFO]    |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.7.14)
+[INFO]    +- (org.xerial.snappy:snappy-java:jar:1.1.4-M3:compile - omitted for conflict with 1.1.1.3)
+[INFO]    \- joda-time:joda-time:jar:2.4:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Onyx Compiler Optimizer 0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ onyx-compiler-optimizer ---
+[INFO] edu.snu.onyx:onyx-compiler-optimizer:jar:0.1-SNAPSHOT
+[INFO] +- edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- org.apache.reef:reef-io:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:reef-webserver:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty:jar:6.1.26:compile
+[INFO] |  |  |  |  +- (org.mortbay.jetty:jetty-util:jar:6.1.26:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- org.mortbay.jetty:servlet-api:jar:2.5-20081211:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty-util:jar:6.1.26:compile
+[INFO] |  |  |  +- (org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-annotations:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-utils:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  |  |  \- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- cglib:cglib:jar:3.1:compile
+[INFO] |  |  |  |  \- org.ow2.asm:asm:jar:4.2:compile
+[INFO] |  |  |  +- io.netty:netty-all:jar:4.1.16.Final:compile (version managed from 4.0.23.Final)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.github.lukehutch:fast-classpath-scanner:jar:2.4.5:compile
+[INFO] |  |  +- org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- commons-configuration:commons-configuration:jar:1.10:compile
+[INFO] |  |  |  |  +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] |  |  |  |  \- commons-logging:commons-logging:jar:1.1.1:compile
+[INFO] |  |  |  +- commons-cli:commons-cli:jar:1.2:compile
+[INFO] |  |  |  +- (javax.inject:javax.inject:jar:1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  +- net.jcip:jcip-annotations:jar:1.0:compile
+[INFO] |  |  +- org.apache.commons:commons-lang3:jar:3.3.2:compile
+[INFO] |  |  \- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-compiler-frontend:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  +- io.grpc:grpc-netty:jar:1.7.0:compile
+[INFO] |  |  +- io.grpc:grpc-core:jar:1.7.0:compile
+[INFO] |  |  |  +- io.grpc:grpc-context:jar:1.7.0:compile
+[INFO] |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- com.google.errorprone:error_prone_annotations:jar:2.0.19:compile
+[INFO] |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  +- com.google.instrumentation:instrumentation-api:jar:0.4.3:compile
+[INFO] |  |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  |  \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.opencensus:opencensus-api:jar:0.6.0:compile
+[INFO] |  |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  +- io.netty:netty-codec-http2:jar:4.1.16.Final:compile
+[INFO] |  |  |  +- io.netty:netty-codec-http:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  \- io.netty:netty-codec:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     \- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.netty:netty-handler:jar:4.1.16.Final:compile
+[INFO] |  |  |     +- io.netty:netty-buffer:jar:4.1.16.Final:compile
+[INFO] |  |  |     |  \- io.netty:netty-common:jar:4.1.16.Final:compile
+[INFO] |  |  |     +- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |     \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  \- io.netty:netty-handler-proxy:jar:4.1.16.Final:compile
+[INFO] |  |     +- io.netty:netty-transport:jar:4.1.16.Final:compile
+[INFO] |  |     |  +- (io.netty:netty-buffer:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     |  \- io.netty:netty-resolver:jar:4.1.16.Final:compile
+[INFO] |  |     |     \- (io.netty:netty-common:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     +- io.netty:netty-codec-socks:jar:4.1.16.Final:compile
+[INFO] |  |     |  \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     \- (io.netty:netty-codec-http:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  +- io.grpc:grpc-protobuf:jar:1.7.0:compile
+[INFO] |  |  +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  +- com.google.guava:guava:jar:19.0:compile
+[INFO] |  |  +- com.google.protobuf:protobuf-java-util:jar:3.4.0:compile
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  \- com.google.code.gson:gson:jar:2.7:compile
+[INFO] |  |  +- com.google.api.grpc:proto-google-common-protos:jar:0.1.9:compile
+[INFO] |  |  \- io.grpc:grpc-protobuf-lite:jar:1.7.0:compile
+[INFO] |  |     +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  +- io.grpc:grpc-stub:jar:1.7.0:compile
+[INFO] |  |  \- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- com.google.protobuf:protobuf-java:jar:2.5.0:compile
+[INFO] +- org.xerial.snappy:snappy-java:jar:1.1.1.3:compile
+[INFO] \- org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile
+[INFO]    +- com.google.code.findbugs:jsr305:jar:3.0.1:compile
+[INFO]    +- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- com.fasterxml.jackson.core:jackson-databind:jar:2.8.8:compile
+[INFO]    |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.0:compile - omitted for conflict with 2.8.8)
+[INFO]    |  \- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- org.slf4j:slf4j-api:jar:1.7.14:compile
+[INFO]    +- org.apache.avro:avro:jar:1.8.1:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+[INFO]    |  |  \- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO]    |  +- com.thoughtworks.paranamer:paranamer:jar:2.7:compile
+[INFO]    |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO]    |  +- org.apache.commons:commons-compress:jar:1.8.1:compile
+[INFO]    |  +- org.tukaani:xz:jar:1.5:compile
+[INFO]    |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.7.14)
+[INFO]    +- (org.xerial.snappy:snappy-java:jar:1.1.4-M3:compile - omitted for conflict with 1.1.1.3)
+[INFO]    \- joda-time:joda-time:jar:2.4:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Onyx Runtime Executor 0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ onyx-runtime-executor ---
+[INFO] edu.snu.onyx:onyx-runtime-executor:jar:0.1-SNAPSHOT
+[INFO] +- edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- org.apache.reef:reef-io:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:reef-webserver:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty:jar:6.1.26:compile
+[INFO] |  |  |  |  +- (org.mortbay.jetty:jetty-util:jar:6.1.26:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- org.mortbay.jetty:servlet-api:jar:2.5-20081211:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty-util:jar:6.1.26:compile
+[INFO] |  |  |  +- (org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-annotations:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-utils:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  |  |  \- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- cglib:cglib:jar:3.1:compile
+[INFO] |  |  |  |  \- org.ow2.asm:asm:jar:4.2:compile
+[INFO] |  |  |  +- io.netty:netty-all:jar:4.1.16.Final:compile (version managed from 4.0.23.Final)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.github.lukehutch:fast-classpath-scanner:jar:2.4.5:compile
+[INFO] |  |  +- org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- commons-configuration:commons-configuration:jar:1.10:compile
+[INFO] |  |  |  |  +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] |  |  |  |  \- commons-logging:commons-logging:jar:1.1.1:compile
+[INFO] |  |  |  +- commons-cli:commons-cli:jar:1.2:compile
+[INFO] |  |  |  +- (javax.inject:javax.inject:jar:1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  +- net.jcip:jcip-annotations:jar:1.0:compile
+[INFO] |  |  +- org.apache.commons:commons-lang3:jar:3.3.2:compile
+[INFO] |  |  \- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- io.grpc:grpc-netty:jar:1.7.0:compile
+[INFO] |  |  +- io.grpc:grpc-core:jar:1.7.0:compile
+[INFO] |  |  |  +- io.grpc:grpc-context:jar:1.7.0:compile
+[INFO] |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- com.google.errorprone:error_prone_annotations:jar:2.0.19:compile
+[INFO] |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  +- com.google.instrumentation:instrumentation-api:jar:0.4.3:compile
+[INFO] |  |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  |  \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.opencensus:opencensus-api:jar:0.6.0:compile
+[INFO] |  |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  +- io.netty:netty-codec-http2:jar:4.1.16.Final:compile
+[INFO] |  |  |  +- io.netty:netty-codec-http:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  \- io.netty:netty-codec:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     \- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.netty:netty-handler:jar:4.1.16.Final:compile
+[INFO] |  |  |     +- io.netty:netty-buffer:jar:4.1.16.Final:compile
+[INFO] |  |  |     |  \- io.netty:netty-common:jar:4.1.16.Final:compile
+[INFO] |  |  |     +- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |     \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  \- io.netty:netty-handler-proxy:jar:4.1.16.Final:compile
+[INFO] |  |     +- io.netty:netty-transport:jar:4.1.16.Final:compile
+[INFO] |  |     |  +- (io.netty:netty-buffer:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     |  \- io.netty:netty-resolver:jar:4.1.16.Final:compile
+[INFO] |  |     |     \- (io.netty:netty-common:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     +- io.netty:netty-codec-socks:jar:4.1.16.Final:compile
+[INFO] |  |     |  \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     \- (io.netty:netty-codec-http:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  +- io.grpc:grpc-protobuf:jar:1.7.0:compile
+[INFO] |  |  +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  +- com.google.guava:guava:jar:19.0:compile
+[INFO] |  |  +- com.google.protobuf:protobuf-java-util:jar:3.4.0:compile
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  \- com.google.code.gson:gson:jar:2.7:compile
+[INFO] |  |  +- com.google.api.grpc:proto-google-common-protos:jar:0.1.9:compile
+[INFO] |  |  \- io.grpc:grpc-protobuf-lite:jar:1.7.0:compile
+[INFO] |  |     +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  +- io.grpc:grpc-stub:jar:1.7.0:compile
+[INFO] |  |  \- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- com.google.protobuf:protobuf-java:jar:2.5.0:compile
+[INFO] +- org.xerial.snappy:snappy-java:jar:1.1.1.3:compile
+[INFO] \- org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile
+[INFO]    +- com.google.code.findbugs:jsr305:jar:3.0.1:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-databind:jar:2.8.8:compile
+[INFO]    |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.0:compile - omitted for conflict with 2.8.8)
+[INFO]    |  \- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- org.slf4j:slf4j-api:jar:1.7.14:compile
+[INFO]    +- org.apache.avro:avro:jar:1.8.1:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+[INFO]    |  |  \- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO]    |  +- com.thoughtworks.paranamer:paranamer:jar:2.7:compile
+[INFO]    |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO]    |  +- org.apache.commons:commons-compress:jar:1.8.1:compile
+[INFO]    |  +- org.tukaani:xz:jar:1.5:compile
+[INFO]    |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.7.14)
+[INFO]    +- (org.xerial.snappy:snappy-java:jar:1.1.4-M3:compile - omitted for conflict with 1.1.1.3)
+[INFO]    \- joda-time:joda-time:jar:2.4:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Onyx Runtime Master 0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ onyx-runtime-master ---
+[INFO] edu.snu.onyx:onyx-runtime-master:jar:0.1-SNAPSHOT
+[INFO] +- edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- org.apache.reef:reef-io:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:reef-webserver:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty:jar:6.1.26:compile
+[INFO] |  |  |  |  +- (org.mortbay.jetty:jetty-util:jar:6.1.26:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- org.mortbay.jetty:servlet-api:jar:2.5-20081211:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty-util:jar:6.1.26:compile
+[INFO] |  |  |  +- (org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-annotations:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-utils:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  |  |  \- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- cglib:cglib:jar:3.1:compile
+[INFO] |  |  |  |  \- org.ow2.asm:asm:jar:4.2:compile
+[INFO] |  |  |  +- io.netty:netty-all:jar:4.1.16.Final:compile (version managed from 4.0.23.Final)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.github.lukehutch:fast-classpath-scanner:jar:2.4.5:compile
+[INFO] |  |  +- org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- commons-configuration:commons-configuration:jar:1.10:compile
+[INFO] |  |  |  |  +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] |  |  |  |  \- commons-logging:commons-logging:jar:1.1.1:compile
+[INFO] |  |  |  +- commons-cli:commons-cli:jar:1.2:compile
+[INFO] |  |  |  +- (javax.inject:javax.inject:jar:1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  +- net.jcip:jcip-annotations:jar:1.0:compile
+[INFO] |  |  +- org.apache.commons:commons-lang3:jar:3.3.2:compile
+[INFO] |  |  \- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- io.grpc:grpc-netty:jar:1.7.0:compile
+[INFO] |  |  +- io.grpc:grpc-core:jar:1.7.0:compile
+[INFO] |  |  |  +- io.grpc:grpc-context:jar:1.7.0:compile
+[INFO] |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- com.google.errorprone:error_prone_annotations:jar:2.0.19:compile
+[INFO] |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  +- com.google.instrumentation:instrumentation-api:jar:0.4.3:compile
+[INFO] |  |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  |  \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.opencensus:opencensus-api:jar:0.6.0:compile
+[INFO] |  |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  +- io.netty:netty-codec-http2:jar:4.1.16.Final:compile
+[INFO] |  |  |  +- io.netty:netty-codec-http:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  \- io.netty:netty-codec:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     \- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.netty:netty-handler:jar:4.1.16.Final:compile
+[INFO] |  |  |     +- io.netty:netty-buffer:jar:4.1.16.Final:compile
+[INFO] |  |  |     |  \- io.netty:netty-common:jar:4.1.16.Final:compile
+[INFO] |  |  |     +- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |     \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  \- io.netty:netty-handler-proxy:jar:4.1.16.Final:compile
+[INFO] |  |     +- io.netty:netty-transport:jar:4.1.16.Final:compile
+[INFO] |  |     |  +- (io.netty:netty-buffer:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     |  \- io.netty:netty-resolver:jar:4.1.16.Final:compile
+[INFO] |  |     |     \- (io.netty:netty-common:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     +- io.netty:netty-codec-socks:jar:4.1.16.Final:compile
+[INFO] |  |     |  \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     \- (io.netty:netty-codec-http:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  +- io.grpc:grpc-protobuf:jar:1.7.0:compile
+[INFO] |  |  +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  +- com.google.guava:guava:jar:19.0:compile
+[INFO] |  |  +- com.google.protobuf:protobuf-java-util:jar:3.4.0:compile
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  \- com.google.code.gson:gson:jar:2.7:compile
+[INFO] |  |  +- com.google.api.grpc:proto-google-common-protos:jar:0.1.9:compile
+[INFO] |  |  \- io.grpc:grpc-protobuf-lite:jar:1.7.0:compile
+[INFO] |  |     +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  +- io.grpc:grpc-stub:jar:1.7.0:compile
+[INFO] |  |  \- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- com.google.protobuf:protobuf-java:jar:2.5.0:compile
+[INFO] +- org.xerial.snappy:snappy-java:jar:1.1.1.3:compile
+[INFO] \- org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile
+[INFO]    +- com.google.code.findbugs:jsr305:jar:3.0.1:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-databind:jar:2.8.8:compile
+[INFO]    |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.0:compile - omitted for conflict with 2.8.8)
+[INFO]    |  \- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- org.slf4j:slf4j-api:jar:1.7.14:compile
+[INFO]    +- org.apache.avro:avro:jar:1.8.1:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+[INFO]    |  |  \- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO]    |  +- com.thoughtworks.paranamer:paranamer:jar:2.7:compile
+[INFO]    |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO]    |  +- org.apache.commons:commons-compress:jar:1.8.1:compile
+[INFO]    |  +- org.tukaani:xz:jar:1.5:compile
+[INFO]    |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.7.14)
+[INFO]    +- (org.xerial.snappy:snappy-java:jar:1.1.4-M3:compile - omitted for conflict with 1.1.1.3)
+[INFO]    \- joda-time:joda-time:jar:2.4:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Onyx Driver 0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ onyx-driver ---
+[INFO] edu.snu.onyx:onyx-driver:jar:0.1-SNAPSHOT
+[INFO] +- edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- org.apache.reef:reef-io:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:reef-webserver:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty:jar:6.1.26:compile
+[INFO] |  |  |  |  +- (org.mortbay.jetty:jetty-util:jar:6.1.26:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- org.mortbay.jetty:servlet-api:jar:2.5-20081211:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty-util:jar:6.1.26:compile
+[INFO] |  |  |  +- (org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-annotations:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-utils:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  |  |  \- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- cglib:cglib:jar:3.1:compile
+[INFO] |  |  |  |  \- org.ow2.asm:asm:jar:4.2:compile
+[INFO] |  |  |  +- io.netty:netty-all:jar:4.1.16.Final:compile (version managed from 4.0.23.Final)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.github.lukehutch:fast-classpath-scanner:jar:2.4.5:compile
+[INFO] |  |  +- org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- commons-configuration:commons-configuration:jar:1.10:compile
+[INFO] |  |  |  |  +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] |  |  |  |  \- commons-logging:commons-logging:jar:1.1.1:compile
+[INFO] |  |  |  +- commons-cli:commons-cli:jar:1.2:compile
+[INFO] |  |  |  +- (javax.inject:javax.inject:jar:1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  +- net.jcip:jcip-annotations:jar:1.0:compile
+[INFO] |  |  +- org.apache.commons:commons-lang3:jar:3.3.2:compile
+[INFO] |  |  \- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-compiler-frontend:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-compiler-backend:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-compiler-optimizer:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (edu.snu.onyx:onyx-compiler-frontend:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- io.grpc:grpc-netty:jar:1.7.0:compile
+[INFO] |  |  +- io.grpc:grpc-core:jar:1.7.0:compile
+[INFO] |  |  |  +- io.grpc:grpc-context:jar:1.7.0:compile
+[INFO] |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- com.google.errorprone:error_prone_annotations:jar:2.0.19:compile
+[INFO] |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  +- com.google.instrumentation:instrumentation-api:jar:0.4.3:compile
+[INFO] |  |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  |  \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.opencensus:opencensus-api:jar:0.6.0:compile
+[INFO] |  |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  +- io.netty:netty-codec-http2:jar:4.1.16.Final:compile
+[INFO] |  |  |  +- io.netty:netty-codec-http:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  \- io.netty:netty-codec:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     \- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.netty:netty-handler:jar:4.1.16.Final:compile
+[INFO] |  |  |     +- io.netty:netty-buffer:jar:4.1.16.Final:compile
+[INFO] |  |  |     |  \- io.netty:netty-common:jar:4.1.16.Final:compile
+[INFO] |  |  |     +- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |     \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  \- io.netty:netty-handler-proxy:jar:4.1.16.Final:compile
+[INFO] |  |     +- io.netty:netty-transport:jar:4.1.16.Final:compile
+[INFO] |  |     |  +- (io.netty:netty-buffer:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     |  \- io.netty:netty-resolver:jar:4.1.16.Final:compile
+[INFO] |  |     |     \- (io.netty:netty-common:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     +- io.netty:netty-codec-socks:jar:4.1.16.Final:compile
+[INFO] |  |     |  \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |     \- (io.netty:netty-codec-http:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  +- io.grpc:grpc-protobuf:jar:1.7.0:compile
+[INFO] |  |  +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  +- com.google.guava:guava:jar:19.0:compile
+[INFO] |  |  +- com.google.protobuf:protobuf-java-util:jar:3.4.0:compile
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  \- com.google.code.gson:gson:jar:2.7:compile
+[INFO] |  |  +- com.google.api.grpc:proto-google-common-protos:jar:0.1.9:compile
+[INFO] |  |  \- io.grpc:grpc-protobuf-lite:jar:1.7.0:compile
+[INFO] |  |     +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  +- io.grpc:grpc-stub:jar:1.7.0:compile
+[INFO] |  |  \- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-runtime-executor:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-runtime-master:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- com.google.protobuf:protobuf-java:jar:2.5.0:compile
+[INFO] +- org.xerial.snappy:snappy-java:jar:1.1.1.3:compile
+[INFO] \- org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile
+[INFO]    +- com.google.code.findbugs:jsr305:jar:3.0.1:compile
+[INFO]    +- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- com.fasterxml.jackson.core:jackson-databind:jar:2.8.8:compile
+[INFO]    |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.0:compile - omitted for conflict with 2.8.8)
+[INFO]    |  \- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- org.slf4j:slf4j-api:jar:1.7.14:compile
+[INFO]    +- org.apache.avro:avro:jar:1.8.1:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+[INFO]    |  |  \- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO]    |  +- com.thoughtworks.paranamer:paranamer:jar:2.7:compile
+[INFO]    |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO]    |  +- org.apache.commons:commons-compress:jar:1.8.1:compile
+[INFO]    |  +- org.tukaani:xz:jar:1.5:compile
+[INFO]    |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.7.14)
+[INFO]    +- (org.xerial.snappy:snappy-java:jar:1.1.4-M3:compile - omitted for conflict with 1.1.1.3)
+[INFO]    \- joda-time:joda-time:jar:2.4:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Onyx Client 0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ onyx-client ---
+[INFO] edu.snu.onyx:onyx-client:jar:0.1-SNAPSHOT
+[INFO] +- edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- org.apache.reef:reef-io:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (org.apache.reef:reef-webserver:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-annotations:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-utils:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  |  |  \- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- cglib:cglib:jar:3.1:compile
+[INFO] |  |  |  |  \- org.ow2.asm:asm:jar:4.2:compile
+[INFO] |  |  |  +- io.netty:netty-all:jar:4.1.16.Final:compile (version managed from 4.0.23.Final)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.github.lukehutch:fast-classpath-scanner:jar:2.4.5:compile
+[INFO] |  |  +- org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- commons-configuration:commons-configuration:jar:1.10:compile
+[INFO] |  |  |  |  +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] |  |  |  |  \- commons-logging:commons-logging:jar:1.1.1:compile
+[INFO] |  |  |  +- commons-cli:commons-cli:jar:1.2:compile
+[INFO] |  |  |  +- (javax.inject:javax.inject:jar:1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  +- net.jcip:jcip-annotations:jar:1.0:compile
+[INFO] |  |  +- org.apache.commons:commons-lang3:jar:3.3.2:compile
+[INFO] |  |  \- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-driver:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- edu.snu.onyx:onyx-compiler-frontend:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile - omitted for duplicate)
+[INFO] |  |  +- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  +- edu.snu.onyx:onyx-compiler-backend:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  +- edu.snu.onyx:onyx-compiler-optimizer:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (edu.snu.onyx:onyx-compiler-frontend:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  +- edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- io.grpc:grpc-netty:jar:1.7.0:compile
+[INFO] |  |  |  +- io.grpc:grpc-core:jar:1.7.0:compile
+[INFO] |  |  |  |  +- io.grpc:grpc-context:jar:1.7.0:compile
+[INFO] |  |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  +- com.google.errorprone:error_prone_annotations:jar:2.0.19:compile
+[INFO] |  |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  |  +- com.google.instrumentation:instrumentation-api:jar:0.4.3:compile
+[INFO] |  |  |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  |  |  \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- io.opencensus:opencensus-api:jar:0.6.0:compile
+[INFO] |  |  |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- io.netty:netty-codec-http2:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  +- io.netty:netty-codec-http:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  |  \- io.netty:netty-codec:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  |     \- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- io.netty:netty-handler:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     +- io.netty:netty-buffer:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     |  \- io.netty:netty-common:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     +- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  |     \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.netty:netty-handler-proxy:jar:4.1.16.Final:compile
+[INFO] |  |  |     +- io.netty:netty-transport:jar:4.1.16.Final:compile
+[INFO] |  |  |     |  +- (io.netty:netty-buffer:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |     |  \- io.netty:netty-resolver:jar:4.1.16.Final:compile
+[INFO] |  |  |     |     \- (io.netty:netty-common:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |     +- io.netty:netty-codec-socks:jar:4.1.16.Final:compile
+[INFO] |  |  |     |  \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |     \- (io.netty:netty-codec-http:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  +- io.grpc:grpc-protobuf:jar:1.7.0:compile
+[INFO] |  |  |  +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  |  +- com.google.guava:guava:jar:19.0:compile
+[INFO] |  |  |  +- com.google.protobuf:protobuf-java-util:jar:3.4.0:compile
+[INFO] |  |  |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- com.google.code.gson:gson:jar:2.7:compile
+[INFO] |  |  |  +- com.google.api.grpc:proto-google-common-protos:jar:0.1.9:compile
+[INFO] |  |  |  \- io.grpc:grpc-protobuf-lite:jar:1.7.0:compile
+[INFO] |  |  |     +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  +- io.grpc:grpc-stub:jar:1.7.0:compile
+[INFO] |  |  |  \- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  +- edu.snu.onyx:onyx-runtime-executor:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  +- edu.snu.onyx:onyx-runtime-master:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- org.apache.reef:reef-runtime-local:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  \- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] +- org.apache.reef:reef-runtime-yarn:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:reef-webserver:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.mortbay.jetty:jetty:jar:6.1.26:compile
+[INFO] |  |  |  +- (org.mortbay.jetty:jetty-util:jar:6.1.26:compile - omitted for duplicate)
+[INFO] |  |  |  \- org.mortbay.jetty:servlet-api:jar:2.5-20081211:compile
+[INFO] |  |  +- org.mortbay.jetty:jetty-util:jar:6.1.26:compile
+[INFO] |  |  +- (org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  \- org.apache.reef:reef-utils-hadoop:jar:0.17.0-SNAPSHOT:compile
+[INFO] |     \- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] +- com.google.protobuf:protobuf-java:jar:2.5.0:compile
+[INFO] +- org.xerial.snappy:snappy-java:jar:1.1.1.3:compile
+[INFO] \- org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile
+[INFO]    +- com.google.code.findbugs:jsr305:jar:3.0.1:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-databind:jar:2.8.8:compile
+[INFO]    |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.0:compile - omitted for conflict with 2.8.8)
+[INFO]    |  \- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- org.slf4j:slf4j-api:jar:1.7.14:compile
+[INFO]    +- org.apache.avro:avro:jar:1.8.1:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+[INFO]    |  |  \- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO]    |  +- com.thoughtworks.paranamer:paranamer:jar:2.7:compile
+[INFO]    |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO]    |  +- org.apache.commons:commons-compress:jar:1.8.1:compile
+[INFO]    |  +- org.tukaani:xz:jar:1.5:compile
+[INFO]    |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.7.14)
+[INFO]    +- (org.xerial.snappy:snappy-java:jar:1.1.4-M3:compile - omitted for conflict with 1.1.1.3)
+[INFO]    \- joda-time:joda-time:jar:2.4:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Onyx Examples 0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ onyx-examples ---
+[INFO] edu.snu.onyx:onyx-examples:jar:0.1-SNAPSHOT
+[INFO] +- edu.snu.onyx:onyx-client:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-io:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:reef-webserver:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- org.apache.reef:reef-annotations:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- org.apache.reef:reef-utils:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  |  |  |  \- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  |  +- cglib:cglib:jar:3.1:compile
+[INFO] |  |  |  |  |  \- org.ow2.asm:asm:jar:4.2:compile
+[INFO] |  |  |  |  +- io.netty:netty-all:jar:4.1.16.Final:compile (version managed from 4.0.23.Final)
+[INFO] |  |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  |  +- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  +- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- io.github.lukehutch:fast-classpath-scanner:jar:2.4.5:compile
+[INFO] |  |  |  +- org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  +- (commons-configuration:commons-configuration:jar:1.10:compile - omitted for conflict with 1.6)
+[INFO] |  |  |  |  +- (commons-cli:commons-cli:jar:1.2:compile - omitted for duplicate)
+[INFO] |  |  |  |  +- (javax.inject:javax.inject:jar:1:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  |  +- net.jcip:jcip-annotations:jar:1.0:compile
+[INFO] |  |  |  +- org.apache.commons:commons-lang3:jar:3.3.2:compile
+[INFO] |  |  |  \- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  +- edu.snu.onyx:onyx-driver:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- edu.snu.onyx:onyx-compiler-frontend:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  |  +- edu.snu.onyx:onyx-compiler-backend:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  |  +- edu.snu.onyx:onyx-compiler-optimizer:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-compiler-frontend:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  |  +- edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- io.grpc:grpc-netty:jar:1.7.0:compile
+[INFO] |  |  |  |  +- io.grpc:grpc-core:jar:1.7.0:compile
+[INFO] |  |  |  |  |  +- io.grpc:grpc-context:jar:1.7.0:compile
+[INFO] |  |  |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  |  +- com.google.errorprone:error_prone_annotations:jar:2.0.19:compile
+[INFO] |  |  |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  |  |  +- com.google.instrumentation:instrumentation-api:jar:0.4.3:compile
+[INFO] |  |  |  |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  |  |  |  \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  |  \- io.opencensus:opencensus-api:jar:0.6.0:compile
+[INFO] |  |  |  |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  +- io.netty:netty-codec-http2:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  |  +- io.netty:netty-codec-http:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  |  |  \- io.netty:netty-codec:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  |  |     \- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  |  |  \- io.netty:netty-handler:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  |     +- io.netty:netty-buffer:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  |     |  \- io.netty:netty-common:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  |     +- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  |  |     \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- io.netty:netty-handler-proxy:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     +- io.netty:netty-transport:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     |  +- (io.netty:netty-buffer:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  |     |  \- io.netty:netty-resolver:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     |     \- (io.netty:netty-common:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  |     +- io.netty:netty-codec-socks:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     |  \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  |     \- (io.netty:netty-codec-http:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  +- io.grpc:grpc-protobuf:jar:1.7.0:compile
+[INFO] |  |  |  |  +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  |  |  +- (com.google.guava:guava:jar:19.0:compile - version managed from 11.0.2; omitted for duplicate)
+[INFO] |  |  |  |  +- com.google.protobuf:protobuf-java-util:jar:3.4.0:compile
+[INFO] |  |  |  |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  |  \- (com.google.code.gson:gson:jar:2.7:compile - omitted for conflict with 2.2.4)
+[INFO] |  |  |  |  +- com.google.api.grpc:proto-google-common-protos:jar:0.1.9:compile
+[INFO] |  |  |  |  \- io.grpc:grpc-protobuf-lite:jar:1.7.0:compile
+[INFO] |  |  |  |     +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |  |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- io.grpc:grpc-stub:jar:1.7.0:compile
+[INFO] |  |  |  |  \- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  |  +- edu.snu.onyx:onyx-runtime-executor:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  |  +- edu.snu.onyx:onyx-runtime-master:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  +- edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:reef-runtime-local:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  \- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:reef-runtime-yarn:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:reef-webserver:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- (org.mortbay.jetty:jetty:jar:6.1.26:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.mortbay.jetty:jetty-util:jar:6.1.26:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  \- org.apache.reef:reef-utils-hadoop:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |     \- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- com.github.fommil.netlib:all:pom:1.1.2:compile
+[INFO] |  +- net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile
+[INFO] |  +- com.github.fommil.netlib:core:jar:1.1.2:compile
+[INFO] |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  +- com.github.fommil.netlib:netlib-native_ref-osx-x86_64:jar:natives:1.1:compile
+[INFO] |  |  +- com.github.fommil.netlib:native_ref-java:jar:1.1:compile
+[INFO] |  |  |  +- com.github.fommil:jniloader:jar:1.1:compile
+[INFO] |  |  |  +- (com.github.fommil.netlib:core:jar:1.1:compile - omitted for conflict with 1.1.2)
+[INFO] |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  +- com.github.fommil.netlib:netlib-native_ref-linux-x86_64:jar:natives:1.1:compile
+[INFO] |  |  +- (com.github.fommil.netlib:native_ref-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  +- com.github.fommil.netlib:netlib-native_ref-linux-i686:jar:natives:1.1:compile
+[INFO] |  |  +- (com.github.fommil.netlib:native_ref-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  +- com.github.fommil.netlib:netlib-native_ref-win-x86_64:jar:natives:1.1:compile
+[INFO] |  |  +- (com.github.fommil.netlib:native_ref-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  +- com.github.fommil.netlib:netlib-native_ref-win-i686:jar:natives:1.1:compile
+[INFO] |  |  +- (com.github.fommil.netlib:native_ref-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  +- com.github.fommil.netlib:netlib-native_ref-linux-armhf:jar:natives:1.1:compile
+[INFO] |  |  +- (com.github.fommil.netlib:native_ref-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  +- com.github.fommil.netlib:netlib-native_system-osx-x86_64:jar:natives:1.1:compile
+[INFO] |  |  +- com.github.fommil.netlib:native_system-java:jar:1.1:compile
+[INFO] |  |  |  +- (com.github.fommil:jniloader:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.github.fommil.netlib:core:jar:1.1:compile - omitted for conflict with 1.1.2)
+[INFO] |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  +- com.github.fommil.netlib:netlib-native_system-linux-x86_64:jar:natives:1.1:compile
+[INFO] |  |  +- (com.github.fommil.netlib:native_system-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  +- com.github.fommil.netlib:netlib-native_system-linux-i686:jar:natives:1.1:compile
+[INFO] |  |  +- (com.github.fommil.netlib:native_system-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  +- com.github.fommil.netlib:netlib-native_system-linux-armhf:jar:natives:1.1:compile
+[INFO] |  |  +- (com.github.fommil.netlib:native_system-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  +- com.github.fommil.netlib:netlib-native_system-win-x86_64:jar:natives:1.1:compile
+[INFO] |  |  +- (com.github.fommil.netlib:native_system-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  \- com.github.fommil.netlib:netlib-native_system-win-i686:jar:natives:1.1:compile
+[INFO] |     +- (com.github.fommil.netlib:native_system-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |     \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] +- org.apache.beam:beam-sdks-java-io-hadoop-input-format:jar:2.0.0:compile
+[INFO] |  +- org.slf4j:slf4j-api:jar:1.7.14:compile
+[INFO] |  +- com.google.code.findbugs:jsr305:jar:3.0.1:compile
+[INFO] |  +- org.apache.beam:beam-sdks-java-io-hadoop-common:jar:2.0.0:compile
+[INFO] |  |  +- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  |  \- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- org.apache.hadoop:hadoop-mapreduce-client-core:jar:2.7.2:provided
+[INFO] |  +- org.apache.hadoop:hadoop-yarn-common:jar:2.7.2:provided
+[INFO] |  |  +- org.apache.hadoop:hadoop-yarn-api:jar:2.7.2:provided
+[INFO] |  |  |  +- (commons-lang:commons-lang:jar:2.6:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  |  +- (com.google.guava:guava:jar:19.0:compile - version managed from 11.0.2; scope updated from provided; omitted for duplicate)
+[INFO] |  |  |  +- (commons-logging:commons-logging:jar:1.1.3:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.hadoop:hadoop-annotations:jar:2.7.2:provided - omitted for duplicate)
+[INFO] |  |  |  \- (com.google.protobuf:protobuf-java:jar:2.5.0:provided - omitted for duplicate)
+[INFO] |  |  +- (javax.xml.bind:jaxb-api:jar:2.2.2:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- (org.apache.commons:commons-compress:jar:1.4.1:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- (commons-lang:commons-lang:jar:2.6:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- (javax.servlet:servlet-api:jar:2.5:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- (commons-codec:commons-codec:jar:1.4:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- (org.mortbay.jetty:jetty-util:jar:6.1.26:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- (com.sun.jersey:jersey-core:jar:1.9:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- com.sun.jersey:jersey-client:jar:1.9:provided
+[INFO] |  |  |  \- (com.sun.jersey:jersey-core:jar:1.9:provided - omitted for duplicate)
+[INFO] |  |  +- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- (org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- (org.codehaus.jackson:jackson-jaxrs:jar:1.9.13:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- (org.codehaus.jackson:jackson-xc:jar:1.9.13:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- (com.google.guava:guava:jar:19.0:compile - version managed from 11.0.2; scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- (commons-logging:commons-logging:jar:1.1.3:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- (commons-cli:commons-cli:jar:1.2:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- (org.slf4j:slf4j-api:jar:1.7.10:provided - omitted for conflict with 1.7.14)
+[INFO] |  |  +- (org.apache.hadoop:hadoop-annotations:jar:2.7.2:provided - omitted for duplicate)
+[INFO] |  |  +- (com.google.inject.extensions:guice-servlet:jar:3.0:provided - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:provided - omitted for duplicate)
+[INFO] |  |  +- (commons-io:commons-io:jar:2.4:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- com.google.inject:guice:jar:3.0:provided
+[INFO] |  |  |  +- (javax.inject:javax.inject:jar:1:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  |  \- aopalliance:aopalliance:jar:1.0:provided
+[INFO] |  |  +- (com.sun.jersey:jersey-server:jar:1.9:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- (com.sun.jersey:jersey-json:jar:1.9:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  +- com.sun.jersey.contribs:jersey-guice:jar:1.9:provided
+[INFO] |  |  |  +- (javax.inject:javax.inject:jar:1:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  |  |  +- (com.google.inject:guice:jar:3.0:provided - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.inject.extensions:guice-servlet:jar:3.0:provided - omitted for duplicate)
+[INFO] |  |  |  \- (com.sun.jersey:jersey-server:jar:1.9:provided - omitted for duplicate)
+[INFO] |  |  \- (log4j:log4j:jar:1.2.17:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:provided - omitted for duplicate)
+[INFO] |  +- (org.apache.avro:avro:jar:1.7.4:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  +- (org.slf4j:slf4j-api:jar:1.7.10:provided - omitted for conflict with 1.7.14)
+[INFO] |  +- (org.slf4j:slf4j-log4j12:jar:1.7.10:runtime - scope updated from provided; omitted for duplicate)
+[INFO] |  +- (org.apache.hadoop:hadoop-annotations:jar:2.7.2:compile - scope updated from provided; omitted for duplicate)
+[INFO] |  +- com.google.inject.extensions:guice-servlet:jar:3.0:provided
+[INFO] |  |  \- (com.google.inject:guice:jar:3.0:provided - omitted for duplicate)
+[INFO] |  \- (io.netty:netty:jar:3.6.2.Final:compile - scope updated from provided; omitted for duplicate)
+[INFO] +- org.apache.hadoop:hadoop-aws:jar:2.7.2:compile
+[INFO] |  +- org.apache.hadoop:hadoop-common:jar:2.7.2:compile
+[INFO] |  |  +- org.apache.hadoop:hadoop-annotations:jar:2.7.2:compile
+[INFO] |  |  |  \- jdk.tools:jdk.tools:jar:1.8:system
+[INFO] |  |  +- com.google.guava:guava:jar:19.0:compile
+[INFO] |  |  +- commons-cli:commons-cli:jar:1.2:compile
+[INFO] |  |  +- org.apache.commons:commons-math3:jar:3.1.1:compile
+[INFO] |  |  +- xmlenc:xmlenc:jar:0.52:compile
+[INFO] |  |  +- commons-httpclient:commons-httpclient:jar:3.1:compile
+[INFO] |  |  |  +- (commons-logging:commons-logging:jar:1.0.4:compile - omitted for conflict with 1.1.3)
+[INFO] |  |  |  \- (commons-codec:commons-codec:jar:1.4:compile - omitted for duplicate)
+[INFO] |  |  +- commons-codec:commons-codec:jar:1.4:compile
+[INFO] |  |  +- commons-io:commons-io:jar:2.4:compile
+[INFO] |  |  +- commons-net:commons-net:jar:3.1:compile
+[INFO] |  |  +- commons-collections:commons-collections:jar:3.2.2:compile
+[INFO] |  |  +- javax.servlet:servlet-api:jar:2.5:compile
+[INFO] |  |  +- org.mortbay.jetty:jetty:jar:6.1.26:compile
+[INFO] |  |  |  \- (org.mortbay.jetty:jetty-util:jar:6.1.26:compile - omitted for duplicate)
+[INFO] |  |  +- org.mortbay.jetty:jetty-util:jar:6.1.26:compile
+[INFO] |  |  +- javax.servlet.jsp:jsp-api:jar:2.1:runtime
+[INFO] |  |  +- com.sun.jersey:jersey-core:jar:1.9:compile
+[INFO] |  |  +- com.sun.jersey:jersey-json:jar:1.9:compile
+[INFO] |  |  |  +- org.codehaus.jettison:jettison:jar:1.1:compile
+[INFO] |  |  |  +- com.sun.xml.bind:jaxb-impl:jar:2.2.3-1:compile
+[INFO] |  |  |  |  \- javax.xml.bind:jaxb-api:jar:2.2.2:compile
+[INFO] |  |  |  |     +- javax.xml.stream:stax-api:jar:1.0-2:compile
+[INFO] |  |  |  |     \- javax.activation:activation:jar:1.1:compile
+[INFO] |  |  |  +- (org.codehaus.jackson:jackson-core-asl:jar:1.8.3:compile - omitted for conflict with 1.9.13)
+[INFO] |  |  |  +- (org.codehaus.jackson:jackson-mapper-asl:jar:1.8.3:compile - omitted for conflict with 1.9.13)
+[INFO] |  |  |  +- org.codehaus.jackson:jackson-jaxrs:jar:1.9.13:compile
+[INFO] |  |  |  |  +- (org.codehaus.jackson:jackson-core-asl:jar:1.8.3:compile - omitted for conflict with 1.9.13)
+[INFO] |  |  |  |  \- (org.codehaus.jackson:jackson-mapper-asl:jar:1.8.3:compile - omitted for conflict with 1.9.13)
+[INFO] |  |  |  +- org.codehaus.jackson:jackson-xc:jar:1.9.13:compile
+[INFO] |  |  |  |  +- (org.codehaus.jackson:jackson-core-asl:jar:1.8.3:compile - omitted for conflict with 1.9.13)
+[INFO] |  |  |  |  \- (org.codehaus.jackson:jackson-mapper-asl:jar:1.8.3:compile - omitted for conflict with 1.9.13)
+[INFO] |  |  |  \- (com.sun.jersey:jersey-core:jar:1.9:compile - omitted for duplicate)
+[INFO] |  |  +- com.sun.jersey:jersey-server:jar:1.9:compile
+[INFO] |  |  |  +- asm:asm:jar:3.1:compile
+[INFO] |  |  |  \- (com.sun.jersey:jersey-core:jar:1.9:compile - omitted for duplicate)
+[INFO] |  |  +- commons-logging:commons-logging:jar:1.1.3:compile
+[INFO] |  |  +- log4j:log4j:jar:1.2.17:compile
+[INFO] |  |  +- net.java.dev.jets3t:jets3t:jar:0.9.0:compile
+[INFO] |  |  |  +- (commons-codec:commons-codec:jar:1.4:compile - omitted for duplicate)
+[INFO] |  |  |  +- (commons-logging:commons-logging:jar:1.1.1:compile - omitted for conflict with 1.1.3)
+[INFO] |  |  |  +- (org.apache.httpcomponents:httpclient:jar:4.1.2:compile - omitted for conflict with 4.2)
+[INFO] |  |  |  +- org.apache.httpcomponents:httpcore:jar:4.1.2:compile
+[INFO] |  |  |  \- com.jamesmurty.utils:java-xmlbuilder:jar:0.4:compile
+[INFO] |  |  +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] |  |  +- commons-configuration:commons-configuration:jar:1.6:compile
+[INFO] |  |  |  +- (commons-collections:commons-collections:jar:3.2.1:compile - omitted for conflict with 3.2.2)
+[INFO] |  |  |  +- (commons-lang:commons-lang:jar:2.4:compile - omitted for conflict with 2.6)
+[INFO] |  |  |  +- (commons-logging:commons-logging:jar:1.1.1:compile - omitted for conflict with 1.1.3)
+[INFO] |  |  |  +- commons-digester:commons-digester:jar:1.8:compile
+[INFO] |  |  |  |  +- commons-beanutils:commons-beanutils:jar:1.7.0:compile
+[INFO] |  |  |  |  |  \- (commons-logging:commons-logging:jar:1.0.3:compile - omitted for conflict with 1.1.3)
+[INFO] |  |  |  |  \- (commons-logging:commons-logging:jar:1.1:compile - omitted for conflict with 1.1.3)
+[INFO] |  |  |  \- commons-beanutils:commons-beanutils-core:jar:1.8.0:compile
+[INFO] |  |  |     \- (commons-logging:commons-logging:jar:1.1.1:compile - omitted for conflict with 1.1.3)
+[INFO] |  |  +- (org.slf4j:slf4j-api:jar:1.7.10:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  +- (org.slf4j:slf4j-log4j12:jar:1.7.10:compile - scope updated from runtime; omitted for duplicate)
+[INFO] |  |  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+[INFO] |  |  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+[INFO] |  |  |  \- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO] |  |  +- (org.apache.avro:avro:jar:1.7.4:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- com.google.code.gson:gson:jar:2.2.4:compile
+[INFO] |  |  +- org.apache.hadoop:hadoop-auth:jar:2.7.2:compile
+[INFO] |  |  |  +- (org.slf4j:slf4j-api:jar:1.7.10:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  +- (commons-codec:commons-codec:jar:1.4:compile - omitted for duplicate)
+[INFO] |  |  |  +- (log4j:log4j:jar:1.2.17:runtime - omitted for duplicate)
+[INFO] |  |  |  +- (org.slf4j:slf4j-log4j12:jar:1.7.10:runtime - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.httpcomponents:httpclient:jar:4.2.5:compile - omitted for conflict with 4.1.2)
+[INFO] |  |  |  +- org.apache.directory.server:apacheds-kerberos-codec:jar:2.0.0-M15:compile
+[INFO] |  |  |  |  +- org.apache.directory.server:apacheds-i18n:jar:2.0.0-M15:compile
+[INFO] |  |  |  |  |  \- (org.slf4j:slf4j-api:jar:1.7.5:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  |  +- org.apache.directory.api:api-asn1-api:jar:1.0.0-M20:compile
+[INFO] |  |  |  |  |  \- (org.slf4j:slf4j-api:jar:1.7.5:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  |  +- org.apache.directory.api:api-util:jar:1.0.0-M20:compile
+[INFO] |  |  |  |  |  \- (org.slf4j:slf4j-api:jar:1.7.5:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  |  \- (org.slf4j:slf4j-api:jar:1.7.5:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  +- (org.apache.zookeeper:zookeeper:jar:3.4.6:compile - omitted for duplicate)
+[INFO] |  |  |  \- org.apache.curator:curator-framework:jar:2.7.1:compile
+[INFO] |  |  |     +- (org.apache.curator:curator-client:jar:2.7.1:compile - omitted for duplicate)
+[INFO] |  |  |     +- (org.apache.zookeeper:zookeeper:jar:3.4.6:compile - omitted for duplicate)
+[INFO] |  |  |     \- (com.google.guava:guava:jar:19.0:compile - version managed from 16.0.1; omitted for duplicate)
+[INFO] |  |  +- com.jcraft:jsch:jar:0.1.42:compile
+[INFO] |  |  +- org.apache.curator:curator-client:jar:2.7.1:compile
+[INFO] |  |  |  +- (org.slf4j:slf4j-api:jar:1.7.6:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  +- (org.apache.zookeeper:zookeeper:jar:3.4.6:compile - omitted for duplicate)
+[INFO] |  |  |  \- (com.google.guava:guava:jar:19.0:compile - version managed from 16.0.1; omitted for duplicate)
+[INFO] |  |  +- org.apache.curator:curator-recipes:jar:2.7.1:compile
+[INFO] |  |  |  +- (org.apache.curator:curator-framework:jar:2.7.1:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.zookeeper:zookeeper:jar:3.4.6:compile - omitted for duplicate)
+[INFO] |  |  |  \- (com.google.guava:guava:jar:19.0:compile - version managed from 16.0.1; omitted for duplicate)
+[INFO] |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  +- org.apache.htrace:htrace-core:jar:3.1.0-incubating:compile
+[INFO] |  |  +- org.apache.zookeeper:zookeeper:jar:3.4.6:compile
+[INFO] |  |  |  +- (org.slf4j:slf4j-api:jar:1.6.1:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  +- org.slf4j:slf4j-log4j12:jar:1.6.1:compile
+[INFO] |  |  |  |  +- (org.slf4j:slf4j-api:jar:1.6.1:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  |  \- (log4j:log4j:jar:1.2.16:compile - omitted for conflict with 1.2.17)
+[INFO] |  |  |  +- (log4j:log4j:jar:1.2.16:compile - omitted for conflict with 1.2.17)
+[INFO] |  |  |  \- io.netty:netty:jar:3.7.0.Final:compile
+[INFO] |  |  \- org.apache.commons:commons-compress:jar:1.4.1:compile
+[INFO] |  |     \- (org.tukaani:xz:jar:1.0:compile - omitted for conflict with 1.5)
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.2.3:compile
+[INFO] |  |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.2.3:compile - omitted for conflict with 2.8.8)
+[INFO] |  |  \- (com.fasterxml.jackson.core:jackson-core:jar:2.2.3:compile - omitted for conflict with 2.8.8)
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.2.3:compile
+[INFO] |  \- com.amazonaws:aws-java-sdk:jar:1.7.4:compile
+[INFO] |     +- (commons-logging:commons-logging:jar:1.1.1:compile - omitted for conflict with 1.1.3)
+[INFO] |     +- org.apache.httpcomponents:httpclient:jar:4.2:compile
+[INFO] |     |  +- (org.apache.httpcomponents:httpcore:jar:4.2:compile - omitted for conflict with 4.1.2)
+[INFO] |     |  +- (commons-logging:commons-logging:jar:1.1.1:compile - omitted for conflict with 1.1.3)
+[INFO] |     |  \- (commons-codec:commons-codec:jar:1.6:compile - omitted for conflict with 1.4)
+[INFO] |     +- (commons-codec:commons-codec:jar:1.3:compile - omitted for conflict with 1.4)
+[INFO] |     +- (com.fasterxml.jackson.core:jackson-core:jar:2.1.1:compile - omitted for conflict with 2.8.8)
+[INFO] |     +- (com.fasterxml.jackson.core:jackson-databind:jar:2.1.1:compile - omitted for conflict with 2.2.3)
+[INFO] |     +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.1.1:compile - omitted for conflict with 2.2.3)
+[INFO] |     \- (joda-time:joda-time:jar:2.4:compile - omitted for duplicate)
+[INFO] +- com.google.protobuf:protobuf-java:jar:2.5.0:compile
+[INFO] +- org.xerial.snappy:snappy-java:jar:1.1.1.3:compile
+[INFO] \- org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile
+[INFO]    +- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO]    +- com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile
+[INFO]    +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile - omitted for conflict with 2.2.3)
+[INFO]    +- (com.fasterxml.jackson.core:jackson-databind:jar:2.8.8:compile - omitted for conflict with 2.2.3)
+[INFO]    +- (org.slf4j:slf4j-api:jar:1.7.14:compile - omitted for duplicate)
+[INFO]    +- org.apache.avro:avro:jar:1.8.1:compile
+[INFO]    |  +- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO]    |  +- (org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO]    |  +- com.thoughtworks.paranamer:paranamer:jar:2.7:compile
+[INFO]    |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO]    |  +- (org.apache.commons:commons-compress:jar:1.8.1:compile - omitted for conflict with 1.4.1)
+[INFO]    |  +- org.tukaani:xz:jar:1.5:compile
+[INFO]    |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.7.14)
+[INFO]    +- (org.xerial.snappy:snappy-java:jar:1.1.4-M3:compile - omitted for conflict with 1.1.1.3)
+[INFO]    \- joda-time:joda-time:jar:2.4:compile
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Onyx Unit Tests and Integration Tests 0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ onyx-tests ---
+[INFO] edu.snu.onyx:onyx-tests:jar:0.1-SNAPSHOT
+[INFO] +- edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-annotations:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-utils:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  |  |  \- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- cglib:cglib:jar:3.1:compile
+[INFO] |  |  |  |  \- org.ow2.asm:asm:jar:4.2:compile
+[INFO] |  |  |  +- io.netty:netty-all:jar:4.1.16.Final:compile (version managed from 4.0.23.Final)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- io.github.lukehutch:fast-classpath-scanner:jar:2.4.5:compile
+[INFO] |  |  +- org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- commons-configuration:commons-configuration:jar:1.10:compile
+[INFO] |  |  |  |  +- (commons-lang:commons-lang:jar:2.6:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- (commons-logging:commons-logging:jar:1.1.1:compile - omitted for conflict with 1.1.3)
+[INFO] |  |  |  +- commons-cli:commons-cli:jar:1.2:compile
+[INFO] |  |  |  +- (javax.inject:javax.inject:jar:1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  +- net.jcip:jcip-annotations:jar:1.0:compile
+[INFO] |  |  +- org.apache.commons:commons-lang3:jar:3.3.2:compile
+[INFO] |  |  \- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-client:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.reef:reef-io:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:reef-webserver:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  +- edu.snu.onyx:onyx-driver:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- edu.snu.onyx:onyx-compiler-frontend:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  |  +- edu.snu.onyx:onyx-compiler-backend:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  |  +- edu.snu.onyx:onyx-compiler-optimizer:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-compiler-frontend:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  |  +- edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- io.grpc:grpc-netty:jar:1.7.0:compile
+[INFO] |  |  |  |  +- io.grpc:grpc-core:jar:1.7.0:compile
+[INFO] |  |  |  |  |  +- io.grpc:grpc-context:jar:1.7.0:compile
+[INFO] |  |  |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  |  +- com.google.errorprone:error_prone_annotations:jar:2.0.19:compile
+[INFO] |  |  |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  |  |  +- com.google.instrumentation:instrumentation-api:jar:0.4.3:compile
+[INFO] |  |  |  |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  |  |  |  \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  |  \- io.opencensus:opencensus-api:jar:0.6.0:compile
+[INFO] |  |  |  |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  +- io.netty:netty-codec-http2:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  |  +- io.netty:netty-codec-http:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  |  |  \- io.netty:netty-codec:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  |  |     \- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  |  |  \- io.netty:netty-handler:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  |     +- io.netty:netty-buffer:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  |     |  \- io.netty:netty-common:jar:4.1.16.Final:compile
+[INFO] |  |  |  |  |     +- (io.netty:netty-transport:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  |  |     \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- io.netty:netty-handler-proxy:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     +- io.netty:netty-transport:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     |  +- (io.netty:netty-buffer:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  |     |  \- io.netty:netty-resolver:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     |     \- (io.netty:netty-common:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  |     +- io.netty:netty-codec-socks:jar:4.1.16.Final:compile
+[INFO] |  |  |  |     |  \- (io.netty:netty-codec:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  |     \- (io.netty:netty-codec-http:jar:4.1.16.Final:compile - omitted for duplicate)
+[INFO] |  |  |  +- io.grpc:grpc-protobuf:jar:1.7.0:compile
+[INFO] |  |  |  |  +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  |  |  +- (com.google.guava:guava:jar:19.0:compile - version managed from 11.0.2; omitted for duplicate)
+[INFO] |  |  |  |  +- com.google.protobuf:protobuf-java-util:jar:3.4.0:compile
+[INFO] |  |  |  |  |  +- (com.google.protobuf:protobuf-java:jar:3.4.0:compile - omitted for conflict with 2.5.0)
+[INFO] |  |  |  |  |  +- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  |  |  \- (com.google.code.gson:gson:jar:2.7:compile - omitted for conflict with 2.2.4)
+[INFO] |  |  |  |  +- com.google.api.grpc:proto-google-common-protos:jar:0.1.9:compile
+[INFO] |  |  |  |  \- io.grpc:grpc-protobuf-lite:jar:1.7.0:compile
+[INFO] |  |  |  |     +- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |  |  |     \- (com.google.guava:guava:jar:19.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- io.grpc:grpc-stub:jar:1.7.0:compile
+[INFO] |  |  |  |  \- (io.grpc:grpc-core:jar:1.7.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  |  +- edu.snu.onyx:onyx-runtime-executor:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  |  +- edu.snu.onyx:onyx-runtime-master:jar:0.1-SNAPSHOT:compile
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-runtime-common:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  +- (edu.snu.onyx:onyx-conf:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:reef-runtime-local:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  \- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- org.apache.reef:reef-runtime-yarn:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.reef:reef-webserver:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty:jar:6.1.26:compile
+[INFO] |  |  |  |  +- (org.mortbay.jetty:jetty-util:jar:6.1.26:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- org.mortbay.jetty:servlet-api:jar:2.5-20081211:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty-util:jar:6.1.26:compile
+[INFO] |  |  |  +- (org.apache.reef:wake:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:tang:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  |  |  \- (org.apache.avro:avro:jar:1.8.1:compile - omitted for duplicate)
+[INFO] |  |  \- org.apache.reef:reef-utils-hadoop:jar:0.17.0-SNAPSHOT:compile
+[INFO] |  |     \- (org.apache.reef:reef-common:jar:0.17.0-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- edu.snu.onyx:onyx-examples:jar:0.1-SNAPSHOT:compile
+[INFO] |  +- (edu.snu.onyx:onyx-client:jar:0.1-SNAPSHOT:compile - omitted for duplicate)
+[INFO] |  +- com.github.fommil.netlib:all:pom:1.1.2:compile
+[INFO] |  |  +- net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile
+[INFO] |  |  +- com.github.fommil.netlib:core:jar:1.1.2:compile
+[INFO] |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  +- com.github.fommil.netlib:netlib-native_ref-osx-x86_64:jar:natives:1.1:compile
+[INFO] |  |  |  +- com.github.fommil.netlib:native_ref-java:jar:1.1:compile
+[INFO] |  |  |  |  +- com.github.fommil:jniloader:jar:1.1:compile
+[INFO] |  |  |  |  +- (com.github.fommil.netlib:core:jar:1.1:compile - omitted for conflict with 1.1.2)
+[INFO] |  |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  +- com.github.fommil.netlib:netlib-native_ref-linux-x86_64:jar:natives:1.1:compile
+[INFO] |  |  |  +- (com.github.fommil.netlib:native_ref-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  +- com.github.fommil.netlib:netlib-native_ref-linux-i686:jar:natives:1.1:compile
+[INFO] |  |  |  +- (com.github.fommil.netlib:native_ref-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  +- com.github.fommil.netlib:netlib-native_ref-win-x86_64:jar:natives:1.1:compile
+[INFO] |  |  |  +- (com.github.fommil.netlib:native_ref-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  +- com.github.fommil.netlib:netlib-native_ref-win-i686:jar:natives:1.1:compile
+[INFO] |  |  |  +- (com.github.fommil.netlib:native_ref-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  +- com.github.fommil.netlib:netlib-native_ref-linux-armhf:jar:natives:1.1:compile
+[INFO] |  |  |  +- (com.github.fommil.netlib:native_ref-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  +- com.github.fommil.netlib:netlib-native_system-osx-x86_64:jar:natives:1.1:compile
+[INFO] |  |  |  +- com.github.fommil.netlib:native_system-java:jar:1.1:compile
+[INFO] |  |  |  |  +- (com.github.fommil:jniloader:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  |  |  +- (com.github.fommil.netlib:core:jar:1.1:compile - omitted for conflict with 1.1.2)
+[INFO] |  |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  +- com.github.fommil.netlib:netlib-native_system-linux-x86_64:jar:natives:1.1:compile
+[INFO] |  |  |  +- (com.github.fommil.netlib:native_system-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  +- com.github.fommil.netlib:netlib-native_system-linux-i686:jar:natives:1.1:compile
+[INFO] |  |  |  +- (com.github.fommil.netlib:native_system-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  +- com.github.fommil.netlib:netlib-native_system-linux-armhf:jar:natives:1.1:compile
+[INFO] |  |  |  +- (com.github.fommil.netlib:native_system-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  +- com.github.fommil.netlib:netlib-native_system-win-x86_64:jar:natives:1.1:compile
+[INFO] |  |  |  +- (com.github.fommil.netlib:native_system-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  |  \- com.github.fommil.netlib:netlib-native_system-win-i686:jar:natives:1.1:compile
+[INFO] |  |     +- (com.github.fommil.netlib:native_system-java:jar:1.1:compile - omitted for duplicate)
+[INFO] |  |     \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
+[INFO] |  +- org.apache.beam:beam-sdks-java-io-hadoop-input-format:jar:2.0.0:compile
+[INFO] |  |  +- (org.slf4j:slf4j-api:jar:1.7.14:compile - omitted for duplicate)
+[INFO] |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO] |  |  +- org.apache.beam:beam-sdks-java-io-hadoop-common:jar:2.0.0:compile
+[INFO] |  |  |  +- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  |  |  \- (com.google.code.findbugs:jsr305:jar:3.0.1:compile - omitted for duplicate)
+[INFO] |  |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] |  +- org.apache.hadoop:hadoop-aws:jar:2.7.2:compile
+[INFO] |  |  +- org.apache.hadoop:hadoop-common:jar:2.7.2:compile
+[INFO] |  |  |  +- org.apache.hadoop:hadoop-annotations:jar:2.7.2:compile
+[INFO] |  |  |  |  \- jdk.tools:jdk.tools:jar:1.8:system
+[INFO] |  |  |  +- com.google.guava:guava:jar:19.0:compile
+[INFO] |  |  |  +- (commons-cli:commons-cli:jar:1.2:compile - omitted for duplicate)
+[INFO] |  |  |  +- org.apache.commons:commons-math3:jar:3.1.1:compile
+[INFO] |  |  |  +- xmlenc:xmlenc:jar:0.52:compile
+[INFO] |  |  |  +- commons-httpclient:commons-httpclient:jar:3.1:compile
+[INFO] |  |  |  |  +- (commons-logging:commons-logging:jar:1.0.4:compile - omitted for conflict with 1.1.1)
+[INFO] |  |  |  |  \- (commons-codec:commons-codec:jar:1.2:compile - omitted for conflict with 1.4)
+[INFO] |  |  |  +- commons-codec:commons-codec:jar:1.4:compile
+[INFO] |  |  |  +- commons-io:commons-io:jar:2.4:compile
+[INFO] |  |  |  +- commons-net:commons-net:jar:3.1:compile
+[INFO] |  |  |  +- commons-collections:commons-collections:jar:3.2.2:compile
+[INFO] |  |  |  +- javax.servlet:servlet-api:jar:2.5:compile
+[INFO] |  |  |  +- (org.mortbay.jetty:jetty:jar:6.1.26:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.mortbay.jetty:jetty-util:jar:6.1.26:compile - omitted for duplicate)
+[INFO] |  |  |  +- javax.servlet.jsp:jsp-api:jar:2.1:runtime
+[INFO] |  |  |  +- com.sun.jersey:jersey-core:jar:1.9:compile
+[INFO] |  |  |  +- com.sun.jersey:jersey-json:jar:1.9:compile
+[INFO] |  |  |  |  +- org.codehaus.jettison:jettison:jar:1.1:compile
+[INFO] |  |  |  |  +- com.sun.xml.bind:jaxb-impl:jar:2.2.3-1:compile
+[INFO] |  |  |  |  |  \- javax.xml.bind:jaxb-api:jar:2.2.2:compile
+[INFO] |  |  |  |  |     +- javax.xml.stream:stax-api:jar:1.0-2:compile
+[INFO] |  |  |  |  |     \- javax.activation:activation:jar:1.1:compile
+[INFO] |  |  |  |  +- (org.codehaus.jackson:jackson-core-asl:jar:1.8.3:compile - omitted for conflict with 1.9.13)
+[INFO] |  |  |  |  +- (org.codehaus.jackson:jackson-mapper-asl:jar:1.8.3:compile - omitted for conflict with 1.9.13)
+[INFO] |  |  |  |  +- org.codehaus.jackson:jackson-jaxrs:jar:1.8.3:compile
+[INFO] |  |  |  |  |  +- (org.codehaus.jackson:jackson-core-asl:jar:1.8.3:compile - omitted for conflict with 1.9.13)
+[INFO] |  |  |  |  |  \- (org.codehaus.jackson:jackson-mapper-asl:jar:1.8.3:compile - omitted for conflict with 1.9.13)
+[INFO] |  |  |  |  +- org.codehaus.jackson:jackson-xc:jar:1.8.3:compile
+[INFO] |  |  |  |  |  +- (org.codehaus.jackson:jackson-core-asl:jar:1.8.3:compile - omitted for conflict with 1.9.13)
+[INFO] |  |  |  |  |  \- (org.codehaus.jackson:jackson-mapper-asl:jar:1.8.3:compile - omitted for conflict with 1.9.13)
+[INFO] |  |  |  |  \- (com.sun.jersey:jersey-core:jar:1.9:compile - omitted for duplicate)
+[INFO] |  |  |  +- com.sun.jersey:jersey-server:jar:1.9:compile
+[INFO] |  |  |  |  +- asm:asm:jar:3.1:compile
+[INFO] |  |  |  |  \- (com.sun.jersey:jersey-core:jar:1.9:compile - omitted for duplicate)
+[INFO] |  |  |  +- commons-logging:commons-logging:jar:1.1.3:compile
+[INFO] |  |  |  +- log4j:log4j:jar:1.2.17:compile
+[INFO] |  |  |  +- net.java.dev.jets3t:jets3t:jar:0.9.0:compile
+[INFO] |  |  |  |  +- (commons-codec:commons-codec:jar:1.4:compile - omitted for duplicate)
+[INFO] |  |  |  |  +- (commons-logging:commons-logging:jar:1.1.1:compile - omitted for conflict with 1.1.3)
+[INFO] |  |  |  |  +- (org.apache.httpcomponents:httpclient:jar:4.1.2:compile - omitted for conflict with 4.2)
+[INFO] |  |  |  |  +- org.apache.httpcomponents:httpcore:jar:4.1.2:compile
+[INFO] |  |  |  |  \- com.jamesmurty.utils:java-xmlbuilder:jar:0.4:compile
+[INFO] |  |  |  +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] |  |  |  +- (commons-configuration:commons-configuration:jar:1.6:compile - omitted for conflict with 1.10)
+[INFO] |  |  |  +- (org.slf4j:slf4j-api:jar:1.7.10:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  +- (org.slf4j:slf4j-log4j12:jar:1.7.10:compile - scope updated from runtime; omitted for duplicate)
+[INFO] |  |  |  +- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO] |  |  |  +- (org.apache.avro:avro:jar:1.7.4:compile - omitted for conflict with 1.8.1)
+[INFO] |  |  |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  |  |  +- com.google.code.gson:gson:jar:2.2.4:compile
+[INFO] |  |  |  +- org.apache.hadoop:hadoop-auth:jar:2.7.2:compile
+[INFO] |  |  |  |  +- (org.slf4j:slf4j-api:jar:1.7.10:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  |  +- (commons-codec:commons-codec:jar:1.4:compile - omitted for duplicate)
+[INFO] |  |  |  |  +- (log4j:log4j:jar:1.2.17:runtime - omitted for duplicate)
+[INFO] |  |  |  |  +- (org.slf4j:slf4j-log4j12:jar:1.7.10:runtime - omitted for duplicate)
+[INFO] |  |  |  |  +- (org.apache.httpcomponents:httpclient:jar:4.2.5:compile - omitted for conflict with 4.1.2)
+[INFO] |  |  |  |  +- org.apache.directory.server:apacheds-kerberos-codec:jar:2.0.0-M15:compile
+[INFO] |  |  |  |  |  +- org.apache.directory.server:apacheds-i18n:jar:2.0.0-M15:compile
+[INFO] |  |  |  |  |  |  \- (org.slf4j:slf4j-api:jar:1.7.5:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  |  |  +- org.apache.directory.api:api-asn1-api:jar:1.0.0-M20:compile
+[INFO] |  |  |  |  |  |  \- (org.slf4j:slf4j-api:jar:1.7.5:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  |  |  +- org.apache.directory.api:api-util:jar:1.0.0-M20:compile
+[INFO] |  |  |  |  |  |  \- (org.slf4j:slf4j-api:jar:1.7.5:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  |  |  \- (org.slf4j:slf4j-api:jar:1.7.5:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  |  +- (org.apache.zookeeper:zookeeper:jar:3.4.6:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- org.apache.curator:curator-framework:jar:2.7.1:compile
+[INFO] |  |  |  |     +- (org.apache.curator:curator-client:jar:2.7.1:compile - omitted for duplicate)
+[INFO] |  |  |  |     +- (org.apache.zookeeper:zookeeper:jar:3.4.6:compile - omitted for duplicate)
+[INFO] |  |  |  |     \- (com.google.guava:guava:jar:19.0:compile - version managed from 16.0.1; omitted for duplicate)
+[INFO] |  |  |  +- com.jcraft:jsch:jar:0.1.42:compile
+[INFO] |  |  |  +- org.apache.curator:curator-client:jar:2.7.1:compile
+[INFO] |  |  |  |  +- (org.slf4j:slf4j-api:jar:1.7.6:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  |  +- (org.apache.zookeeper:zookeeper:jar:3.4.6:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- (com.google.guava:guava:jar:19.0:compile - version managed from 16.0.1; omitted for duplicate)
+[INFO] |  |  |  +- org.apache.curator:curator-recipes:jar:2.7.1:compile
+[INFO] |  |  |  |  +- (org.apache.curator:curator-framework:jar:2.7.1:compile - omitted for duplicate)
+[INFO] |  |  |  |  +- (org.apache.zookeeper:zookeeper:jar:3.4.6:compile - omitted for duplicate)
+[INFO] |  |  |  |  \- (com.google.guava:guava:jar:19.0:compile - version managed from 16.0.1; omitted for duplicate)
+[INFO] |  |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.0:compile - omitted for conflict with 3.0.1)
+[INFO] |  |  |  +- org.apache.htrace:htrace-core:jar:3.1.0-incubating:compile
+[INFO] |  |  |  +- org.apache.zookeeper:zookeeper:jar:3.4.6:compile
+[INFO] |  |  |  |  +- (org.slf4j:slf4j-api:jar:1.6.1:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  |  +- org.slf4j:slf4j-log4j12:jar:1.6.1:compile
+[INFO] |  |  |  |  |  +- (org.slf4j:slf4j-api:jar:1.6.1:compile - omitted for conflict with 1.7.14)
+[INFO] |  |  |  |  |  \- (log4j:log4j:jar:1.2.16:compile - omitted for conflict with 1.2.17)
+[INFO] |  |  |  |  +- (log4j:log4j:jar:1.2.16:compile - omitted for conflict with 1.2.17)
+[INFO] |  |  |  |  \- io.netty:netty:jar:3.7.0.Final:compile
+[INFO] |  |  |  \- (org.apache.commons:commons-compress:jar:1.4.1:compile - omitted for conflict with 1.8.1)
+[INFO] |  |  +- (com.fasterxml.jackson.core:jackson-databind:jar:2.2.3:compile - omitted for conflict with 2.8.8)
+[INFO] |  |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.2.3:compile - omitted for conflict with 2.8.8)
+[INFO] |  |  \- com.amazonaws:aws-java-sdk:jar:1.7.4:compile
+[INFO] |  |     +- (commons-logging:commons-logging:jar:1.1.1:compile - omitted for conflict with 1.1.3)
+[INFO] |  |     +- org.apache.httpcomponents:httpclient:jar:4.2:compile
+[INFO] |  |     |  +- (org.apache.httpcomponents:httpcore:jar:4.2:compile - omitted for conflict with 4.1.2)
+[INFO] |  |     |  +- (commons-logging:commons-logging:jar:1.1.1:compile - omitted for conflict with 1.1.3)
+[INFO] |  |     |  \- (commons-codec:commons-codec:jar:1.6:compile - omitted for conflict with 1.4)
+[INFO] |  |     +- (commons-codec:commons-codec:jar:1.3:compile - omitted for conflict with 1.4)
+[INFO] |  |     +- (com.fasterxml.jackson.core:jackson-core:jar:2.1.1:compile - omitted for conflict with 2.8.8)
+[INFO] |  |     +- (com.fasterxml.jackson.core:jackson-databind:jar:2.1.1:compile - omitted for conflict with 2.8.8)
+[INFO] |  |     +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.1.1:compile - omitted for conflict with 2.8.8)
+[INFO] |  |     \- (joda-time:joda-time:jar:2.4:compile - omitted for duplicate)
+[INFO] |  +- (com.google.protobuf:protobuf-java:jar:2.5.0:compile - omitted for duplicate)
+[INFO] |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO] |  \- (org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile - omitted for duplicate)
+[INFO] +- junit:junit:jar:4.12:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.mockito:mockito-all:jar:1.10.19:compile
+[INFO] +- org.powermock:powermock-module-junit4:jar:1.6.6:test
+[INFO] |  +- (junit:junit:jar:4.12:test - omitted for duplicate)
+[INFO] |  \- org.powermock:powermock-module-junit4-common:jar:1.6.6:test
+[INFO] |     +- (junit:junit:jar:4.12:test - omitted for duplicate)
+[INFO] |     +- org.powermock:powermock-core:jar:1.6.6:test
+[INFO] |     |  +- (org.powermock:powermock-reflect:jar:1.6.6:test - omitted for duplicate)
+[INFO] |     |  \- org.javassist:javassist:jar:3.21.0-GA:test
+[INFO] |     \- org.powermock:powermock-reflect:jar:1.6.6:test
+[INFO] |        \- (org.objenesis:objenesis:jar:2.4:test - omitted for conflict with 2.1)
+[INFO] +- org.powermock:powermock-api-mockito:jar:1.6.6:test
+[INFO] |  +- org.mockito:mockito-core:jar:1.10.19:test
+[INFO] |  |  +- (org.hamcrest:hamcrest-core:jar:1.1:test - omitted for conflict with 1.3)
+[INFO] |  |  \- org.objenesis:objenesis:jar:2.1:test
+[INFO] |  +- (org.hamcrest:hamcrest-core:jar:1.3:test - omitted for duplicate)
+[INFO] |  \- org.powermock:powermock-api-mockito-common:jar:1.6.6:test
+[INFO] |     +- (org.hamcrest:hamcrest-core:jar:1.3:test - omitted for duplicate)
+[INFO] |     \- org.powermock:powermock-api-support:jar:1.6.6:test
+[INFO] |        +- (org.powermock:powermock-core:jar:1.6.6:test - omitted for duplicate)
+[INFO] |        \- (org.powermock:powermock-reflect:jar:1.6.6:test - omitted for duplicate)
+[INFO] +- com.google.protobuf:protobuf-java:jar:2.5.0:compile
+[INFO] +- org.xerial.snappy:snappy-java:jar:1.1.1.3:compile
+[INFO] \- org.apache.beam:beam-sdks-java-core:jar:2.0.0:compile
+[INFO]    +- com.google.code.findbugs:jsr305:jar:3.0.1:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-annotations:jar:2.8.8:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-databind:jar:2.8.8:compile
+[INFO]    |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.8.0:compile - omitted for conflict with 2.8.8)
+[INFO]    |  \- (com.fasterxml.jackson.core:jackson-core:jar:2.8.8:compile - omitted for duplicate)
+[INFO]    +- org.slf4j:slf4j-api:jar:1.7.14:compile
+[INFO]    +- org.apache.avro:avro:jar:1.8.1:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+[INFO]    |  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+[INFO]    |  |  \- (org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile - omitted for duplicate)
+[INFO]    |  +- com.thoughtworks.paranamer:paranamer:jar:2.7:compile
+[INFO]    |  +- (org.xerial.snappy:snappy-java:jar:1.1.1.3:compile - omitted for duplicate)
+[INFO]    |  +- org.apache.commons:commons-compress:jar:1.8.1:compile
+[INFO]    |  +- org.tukaani:xz:jar:1.5:compile
+[INFO]    |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.7.14)
+[INFO]    +- (org.xerial.snappy:snappy-java:jar:1.1.4-M3:compile - omitted for conflict with 1.1.1.3)
+[INFO]    \- joda-time:joda-time:jar:2.4:compile
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] Onyx Project ....................................... SUCCESS [  0.680 s]
+[INFO] Onyx Job Configuration ............................. SUCCESS [  0.373 s]
+[INFO] Onyx Common ........................................ SUCCESS [  0.542 s]
+[INFO] Onyx Compiler Frontend ............................. SUCCESS [  0.313 s]
+[INFO] Onyx Runtime Common ................................ SUCCESS [  0.369 s]
+[INFO] Onyx Compiler Backend .............................. SUCCESS [  0.315 s]
+[INFO] Onyx Compiler Optimizer ............................ SUCCESS [  0.281 s]
+[INFO] Onyx Runtime Executor .............................. SUCCESS [  0.307 s]
+[INFO] Onyx Runtime Master ................................ SUCCESS [  0.364 s]
+[INFO] Onyx Driver ........................................ SUCCESS [  0.323 s]
+[INFO] Onyx Client ........................................ SUCCESS [  0.295 s]
+[INFO] Onyx Examples ...................................... SUCCESS [  0.969 s]
+[INFO] Onyx Unit Tests and Integration Tests .............. SUCCESS [  0.826 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 6.348 s
+[INFO] Finished at: 2017-12-15T15:11:12+09:00
+[INFO] Final Memory: 46M/1210M
+[INFO] ------------------------------------------------------------------------
