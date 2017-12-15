@@ -184,6 +184,39 @@ public final class PartitionManagerWorker {
     return CompletableFuture.completedFuture(resultElement);
   }
 
+  private CompletableFuture<NonSerializedElement> requestPipeInRemoteWorker(
+      final String pipeId,
+      final String runtimeEdgeId) {
+    // Let's see if a remote worker has it
+    // Ask Master for the location
+    final CompletableFuture<ControlMessage.Message> responseFromMasterFuture = persistentConnectionToMasterMap
+        .getMessageSender(MessageEnvironment.PARTITION_MANAGER_MASTER_MESSAGE_LISTENER_ID).request(
+            ControlMessage.Message.newBuilder()
+                .setId(RuntimeIdGenerator.generateMessageId())
+                .setListenerId(MessageEnvironment.PARTITION_MANAGER_MASTER_MESSAGE_LISTENER_ID)
+                .setType(ControlMessage.MessageType.RequestPartitionLocation)
+                .setRequestPartitionLocationMsg(
+                    ControlMessage.RequestPartitionLocationMsg.newBuilder()
+                        .setExecutorId(executorId)
+                        .setPartitionId(pipeId)
+                        .build())
+                .build());
+    // Using thenCompose so that fetching partition data starts after getting response from master.
+    return responseFromMasterFuture.thenCompose(responseFromMaster -> {
+      assert (responseFromMaster.getType() == ControlMessage.MessageType.PartitionLocationInfo);
+      final ControlMessage.PartitionLocationInfoMsg partitionLocationInfoMsg =
+          responseFromMaster.getPartitionLocationInfoMsg();
+      if (!partitionLocationInfoMsg.hasOwnerExecutorId()) {
+        throw new PartitionFetchException(new Throwable(
+            "Pipe " + pipeId + " not found both in the local storage and the remote storage");
+      }
+      // This is the executor id that we wanted to know
+      final String remoteWorkerId = partitionLocationInfoMsg.getOwnerExecutorId();
+      return partitionTransfer.initiatePush(remoteWorkerId, false,
+          DataStoreProperty.Value.MemoryStore, pipeId, runtimeEdgeId).getCompleteFuture();
+    });
+  }
+
   /**
    * Requests data in a specific hash value range from a partition which resides in a remote worker asynchronously.
    * If the hash value range is [0, int.max), it will retrieve the whole data from the partition.

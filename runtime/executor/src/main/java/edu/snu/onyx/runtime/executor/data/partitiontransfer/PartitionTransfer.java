@@ -24,6 +24,7 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import org.apache.hadoop.util.hash.Hash;
 import org.apache.reef.tang.InjectionFuture;
 import org.apache.reef.tang.annotations.Parameter;
 import org.slf4j.Logger;
@@ -117,23 +118,32 @@ public final class PartitionTransfer extends SimpleChannelInboundHandler<Partiti
     return inputStream;
   }
 
+  public PartitionInputStream initiatePull(final String executorId,
+                                           final DataStoreProperty.Value partitionStore,
+                                           final String pipeId,
+                                           final String runtimeEdgeId) {
+    final PartitionInputStream inputStream = new PartitionInputStream(executorId, false,
+        Optional.of(partitionStore), pipeId, runtimeEdgeId, HashRange.all());
+    inputStreamToStatusMap.putIfAbsent(inputStream, false);
+    inputStream.setCoderAndExecutorService(partitionManagerWorker.get().getCoder(runtimeEdgeId),
+        inboundExecutorService);
+    write(executorId, inputStream, inputStream::onExceptionCaught);
+    return inputStream;
+  }
+
   /**
    * Initiate a push-based partition transfer.
    *
    * @param executorId              the id of the destination executor
-   * @param encodePartialPartition  whether to start encoding even though the whole partition has not been written yet
-   * @param partitionId             the id of the partition to transfer
+   * @param pipeId                  the id of the pipe to transfer
    * @param runtimeEdgeId           the runtime edge id
-   * @param hashRange               the hash range
    * @return a {@link PartitionOutputStream} to which data can be written
    */
   public PartitionOutputStream initiatePush(final String executorId,
-                                            final boolean encodePartialPartition,
-                                            final String partitionId,
-                                            final String runtimeEdgeId,
-                                            final HashRange hashRange) {
-    final PartitionOutputStream stream = new PartitionOutputStream(executorId, encodePartialPartition, Optional.empty(),
-        partitionId, runtimeEdgeId, hashRange);
+                                            final String pipeId,
+                                            final String runtimeEdgeId) {
+    final PartitionOutputStream stream = new PartitionOutputStream(executorId, false,
+        Optional.empty(), pipeId, runtimeEdgeId, HashRange.all());
     stream.setCoderAndExecutorServiceAndBufferSize(partitionManagerWorker.get().getCoder(runtimeEdgeId),
         outboundExecutorService, bufferSize);
     write(executorId, stream, stream::onExceptionCaught);
